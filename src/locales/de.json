@@ -1,0 +1,131 @@
+{
+  "common": {
+    "appName": "MP3 Konverter",
+    "langCode": "DE",
+    "skipToMain": "Zum Hauptinhalt springen",
+    "toggleTheme": "Theme wechseln",
+    "toggleLanguage": "Sprache wechseln"
+  },
+  "hero": {
+    "title": "MP3-Konvertierung in Sekunden",
+    "subtitle": "Schnell, sicher und kostenlos - Professionelle Audio-Konvertierung auf deutschen Servern",
+    "trustBadge1": "100% Sicher",
+    "trustBadge2": "Blitzschnell",
+    "trustBadge3": "Kostenlos",
+    "trustBadge4": "DSGVO-konform"
+  },
+  "converter": {
+    "title": "MP3 Konverter",
+    "upload": {
+      "heading": "Dateien hochladen",
+      "instruction": "Audiodateien hierher ziehen oder klicken zum Auswählen",
+      "button": "Dateien auswählen",
+      "ariaLabel": "Audiodateien auswählen"
+    },
+    "fileList": {
+      "heading": "Ausgewählte Dateien",
+      "removeFile": "Datei {name} entfernen"
+    },
+    "options": {
+      "heading": "Konvertierungsoptionen",
+      "codecLabel": "Audio-Codec:",
+      "bitrateLabel": "Bitrate:",
+      "outputFormatLabel": "Ausgabeformat:",
+      "outputCodecLabel": "Codec:"
+    },
+    "actions": {
+      "convert": "Konvertieren",
+      "converting": "Konvertiere...",
+      "retry": "Erneut versuchen",
+      "download": "Herunterladen"
+    },
+    "progress": {
+      "heading": "Konvertierungsfortschritt",
+      "ariaLabel": "Konvertierungsfortschritt"
+    },
+    "status": {
+      "loadingApp": "Anwendung wird geladen...",
+      "invalidFiles": "Bitte wählen Sie gültige Audiodateien aus",
+      "filesSelected": "{count} Datei ausgewählt | {count} Dateien ausgewählt",
+      "noFiles": "Keine Dateien ausgewählt",
+      "noFilesToConvert": "Keine Dateien zum Konvertieren ausgewählt",
+      "convertingFileProgress": "Konvertiere {fileName}...",
+      "allFilesConverted": "Alle {count} Dateien erfolgreich konvertiert!",
+      "conversionError": "Fehler bei der Konvertierung: {message}",
+      "unknownError": "Unbekannter Fehler",
+      "ffmpegReady": "FFmpeg bereit - Wählen Sie Audiodateien aus",
+      "ffmpegLoaded": "FFmpeg erfolgreich geladen - Bereit für Konvertierung",
+      "ffmpegLoadError": "Fehler beim Laden von FFmpeg: {message}",
+      "ffmpegInit": "FFmpeg initialisiert",
+      "readyForNext": "Bereit für die nächste Konvertierung."
+    }
+  },
+  "features": {
+    "title": "Warum unser MP3 Konverter?",
+    "speed": {
+      "title": "Blitzschnelle Konvertierung",
+      "desc": "Modernste Web-Technologie für maximale Geschwindigkeit"
+    },
+    "security": {
+      "title": "Maximale Sicherheit",
+      "desc": "Ihre Dateien werden sicher auf deutschen DSGVO-konformen Servern verarbeitet und danach automatisch gelöscht"
+    },
+    "free": {
+      "title": "Komplett kostenlos",
+      "desc": "Keine versteckten Kosten, keine Registrierung erforderlich"
+    },
+    "privacy": {
+      "title": "DSGVO-konform",
+      "desc": "Vollständige Einhaltung europäischer Datenschutzbestimmungen"
+    },
+    "formats": {
+      "title": "Viele Formate",
+      "desc": "Unterstützt alle gängigen Audioformate für maximale Flexibilität"
+    },
+    "responsive": {
+      "title": "Überall verfügbar",
+      "desc": "Funktioniert perfekt auf Desktop, Tablet und Smartphone"
+    }
+  },
+  "tools": {
+    "title": "Entdecken Sie unsere anderen Tools",
+    "tool1": {
+      "icon": "🎧",
+      "title": "Playlist Generator",
+      "desc": "Erstellen Sie personalisierte Playlists basierend auf Ihren Lieblingskünstlern und -genres."
+    },
+    "tool2": {
+      "icon": "🎶",
+      "title": "Audio Visualizer",
+      "desc": "Erleben Sie Ihre Musik visuell mit beeindruckenden Echtzeit-Animationen und Effekten."
+    },
+    "tool3": {
+      "icon": "🖼️",
+      "title": "Bild Stapelverarbeitung",
+      "desc": "Bearbeiten Sie mehrere Bilder gleichzeitig – Größe ändern, zuschneiden und Effekte anwenden."
+    }
+  },
+  "faq": {
+    "title": "Häufig gestellte Fragen",
+    "q1": {
+      "question": "Wie funktioniert die Konvertierung?",
+      "answer": "Die Konvertierung erfolgt auf unseren sicheren, deutschen DSGVO-konformen Servern mithilfe modernster Technologie. Ihre Dateien werden nach der Konvertierung automatisch gelöscht."
+    },
+    "q2": {
+      "question": "Welche Formate werden unterstützt?",
+      "answer": "Wir unterstützen alle gängigen Audioformate wie WAV, FLAC, OGG, M4A, AAC und viele mehr. Die Ausgabe erfolgt als hochwertige MP3-Dateien."
+    },
+    "q3": {
+      "question": "Gibt es Dateigrößen-Limits?",
+      "answer": "Die maximale Dateigröße hängt von Ihrem verfügbaren Arbeitsspeicher ab. In der Regel können Dateien bis zu 100MB problemlos verarbeitet werden."
+    },
+    "q4": {
+      "question": "Ist die Nutzung wirklich kostenlos?",
+      "answer": "Ja, unser MP3-Konverter ist vollständig kostenlos. Es gibt keine versteckten Kosten oder Premium-Funktionen."
+    },
+    "q5": {
+      "question": "Werden meine Dateien gespeichert?",
+      "answer": "Nein, alle Dateien werden nur temporär auf unseren deutschen Servern verarbeitet und unmittelbar nach der Konvertierung automatisch gelöscht."
+    }
+  }
+}

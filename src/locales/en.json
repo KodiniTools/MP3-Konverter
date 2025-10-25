@@ -1,0 +1,131 @@
+{
+  "common": {
+    "appName": "MP3 Converter",
+    "langCode": "EN",
+    "skipToMain": "Skip to main content",
+    "toggleTheme": "Toggle theme",
+    "toggleLanguage": "Toggle language"
+  },
+  "hero": {
+    "title": "Convert to MP3 in seconds",
+    "subtitle": "Fast, secure and free - Professional audio conversion on German servers",
+    "trustBadge1": "100% Secure",
+    "trustBadge2": "Lightning Fast",
+    "trustBadge3": "Free",
+    "trustBadge4": "GDPR Compliant"
+  },
+  "converter": {
+    "title": "MP3 Converter",
+    "upload": {
+      "heading": "Upload Files",
+      "instruction": "Drag & drop audio files here, or click to select",
+      "button": "Select Files",
+      "ariaLabel": "Select audio files"
+    },
+    "fileList": {
+      "heading": "Selected Files",
+      "removeFile": "Remove file {name}"
+    },
+    "options": {
+      "heading": "Conversion Options",
+      "codecLabel": "Audio Codec:",
+      "bitrateLabel": "Bitrate:",
+      "outputFormatLabel": "Output Format:",
+      "outputCodecLabel": "Codec:"
+    },
+    "actions": {
+      "convert": "Convert",
+      "converting": "Converting...",
+      "retry": "Retry",
+      "download": "Download"
+    },
+    "progress": {
+      "heading": "Conversion Progress",
+      "ariaLabel": "Conversion progress"
+    },
+    "status": {
+      "loadingApp": "Loading application...",
+      "invalidFiles": "Please select valid audio files",
+      "filesSelected": "{count} file selected | {count} files selected",
+      "noFiles": "No files selected",
+      "noFilesToConvert": "No files selected for conversion",
+      "convertingFileProgress": "Converting {fileName}...",
+      "allFilesConverted": "All {count} files converted successfully!",
+      "conversionError": "Conversion failed: {message}",
+      "unknownError": "Unknown error",
+      "ffmpegReady": "FFmpeg ready - Select audio files",
+      "ffmpegLoaded": "FFmpeg loaded successfully - Ready to convert",
+      "ffmpegLoadError": "Error loading FFmpeg: {message}",
+      "ffmpegInit": "FFmpeg initialized",
+      "readyForNext": "Ready for the next conversion."
+    }
+  },
+  "features": {
+    "title": "Why choose our MP3 Converter?",
+    "speed": {
+      "title": "Lightning Fast Conversion",
+      "desc": "State-of-the-art web technology for maximum speed"
+    },
+    "security": {
+      "title": "Maximum Security",
+      "desc": "Your files are securely processed on German GDPR-compliant servers and automatically deleted afterwards"
+    },
+    "free": {
+      "title": "Completely Free",
+      "desc": "No hidden costs, no registration required"
+    },
+    "privacy": {
+      "title": "GDPR Compliant",
+      "desc": "Full compliance with European data protection regulations"
+    },
+    "formats": {
+      "title": "Multiple Formats",
+      "desc": "Supports all common audio formats for maximum flexibility"
+    },
+    "responsive": {
+      "title": "Available Everywhere",
+      "desc": "Works perfectly on desktop, tablet and smartphone"
+    }
+  },
+  "tools": {
+    "title": "Discover Our Other Tools",
+    "tool1": {
+      "icon": "🎧",
+      "title": "Playlist Generator",
+      "desc": "Create personalized playlists based on your favorite artists and genres."
+    },
+    "tool2": {
+      "icon": "🎶",
+      "title": "Audio Visualizer",
+      "desc": "Experience your music visually with stunning real-time animations and effects."
+    },
+    "tool3": {
+      "icon": "🖼️",
+      "title": "Batch Image Editor",
+      "desc": "Edit multiple images at once – resize, crop, and apply effects with ease."
+    }
+  },
+  "faq": {
+    "title": "Frequently Asked Questions",
+    "q1": {
+      "question": "How does the conversion work?",
+      "answer": "The conversion happens on our secure, German GDPR-compliant servers using state-of-the-art technology. Your files are automatically deleted after conversion."
+    },
+    "q2": {
+      "question": "Which formats are supported?",
+      "answer": "We support all common audio formats like WAV, FLAC, OGG, M4A, AAC and many more. Output is delivered as high-quality MP3 files."
+    },
+    "q3": {
+      "question": "Are there file size limits?",
+      "answer": "The maximum file size depends on your available memory. Generally, files up to 100MB can be processed without issues."
+    },
+    "q4": {
+      "question": "Is it really free to use?",
+      "answer": "Yes, our MP3 converter is completely free. There are no hidden costs or premium features."
+    },
+    "q5": {
+      "question": "Are my files stored?",
+      "answer": "No, all files are only processed temporarily on our German servers and automatically deleted immediately after conversion."
+    }
+  }
+}
