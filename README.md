@@ -1,4 +1,4 @@
-# 🎵 MP3 Konverter - Vue.js Migration
+# 🎵 MP3 Konverter 
 
 Eine moderne Vue 3-Anwendung für Browser-basierte MP3-Konvertierung mit FFmpeg.wasm.
 
@@ -409,3 +409,6 @@ Deine bestehende Lizenz
 **Viel Erfolg mit der Vue.js-Migration! 🚀**
 
 Bei Fragen oder Problemen: Dokumentation lesen oder Community fragen!
+
+## Autor
+Dinko Ramić Kodini Tools kodinitools.com
