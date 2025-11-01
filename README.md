@@ -401,8 +401,8 @@ export function useFileUpload() {
 ```
 
 ## 📝 Lizenz
-
-Deine bestehende Lizenz
+ 
+MIT Lizenz
 
 ---
 
