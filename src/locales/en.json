@@ -105,6 +105,10 @@
       "desc": "Edit multiple images at once – resize, crop, and apply effects with ease."
     }
   },
+  "donate": {
+    "title": "Support This Project",
+    "description": "If you like this free tool and want to support its development, I would appreciate a small donation."
+  },
   "faq": {
     "title": "Frequently Asked Questions",
     "q1": {
