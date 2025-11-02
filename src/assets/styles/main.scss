@@ -177,7 +177,7 @@
 .website-header {
   position: sticky;
   top: 0;
-  z-index: 1000;
+  z-index: 100;
   padding: 1rem 0;
   backdrop-filter: blur(25px);
   -webkit-backdrop-filter: blur(25px);
@@ -1398,6 +1398,30 @@
   .features-grid {
     break-inside: avoid;
   }
+}
+
+/* ===== GLOBAL NAVIGATION Z-INDEX FIX ===== */
+/* Ensure global navigation (SSI included) appears above website-header */
+nav,
+header nav,
+.navigation,
+.nav-menu,
+.main-nav,
+.global-nav {
+  z-index: 1000 !important;
+  position: relative;
+}
+
+/* Dropdown menus from global navigation */
+nav ul,
+nav .dropdown,
+nav .dropdown-menu,
+nav .submenu,
+.navigation .dropdown,
+.nav-menu .dropdown,
+.main-nav .dropdown,
+.global-nav .dropdown {
+  z-index: 1100 !important;
 }
 
 /* ===== DARK MODE SPECIFIC ENHANCEMENTS ===== */
