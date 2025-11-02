@@ -107,7 +107,8 @@
   },
   "donate": {
     "title": "Support This Project",
-    "description": "If you like this free tool and want to support its development, I would appreciate a small donation."
+    "description": "If you like this free tool and want to support its development, I would appreciate a small donation.",
+    "buttonText": "Donate"
   },
   "faq": {
     "title": "Frequently Asked Questions",

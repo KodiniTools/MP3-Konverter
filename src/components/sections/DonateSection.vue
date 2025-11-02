@@ -11,21 +11,10 @@
         class="donate-form"
       >
         <input type="hidden" name="hosted_button_id" value="8RGLGQ2BFMHU6" />
-        <input
-          type="image"
-          src="https://www.paypalobjects.com/de_DE/CH/i/btn/btn_donate_LG.gif"
-          border="0"
-          name="submit"
-          title="PayPal - The safer, easier way to pay online!"
-          alt="Spenden mit dem PayPal-Button"
-        />
-        <img
-          alt=""
-          border="0"
-          src="https://www.paypal.com/de_CH/i/scr/pixel.gif"
-          width="1"
-          height="1"
-        />
+        <button type="submit" class="paypal-button" title="PayPal - The safer, easier way to pay online!">
+          <span class="paypal-logo">PayPal</span>
+          <span class="donate-text">{{ $t('donate.buttonText') }}</span>
+        </button>
       </form>
     </div>
   </section>
@@ -75,17 +64,50 @@ const { t } = useI18n()
     .donate-form {
       display: inline-block;
 
-      input[type="image"] {
-        transition: transform 0.2s ease, opacity 0.2s ease;
+      .paypal-button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        padding: 0.75rem 2rem;
+        background: #0070ba;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-size: 1.1rem;
+        font-weight: 600;
         cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 12px rgba(0, 112, 186, 0.3);
+
+        .paypal-logo {
+          font-weight: 700;
+          font-size: 1.2rem;
+          letter-spacing: -0.5px;
+        }
+
+        .donate-text {
+          font-weight: 500;
+        }
 
         &:hover {
-          transform: scale(1.05);
-          opacity: 0.9;
+          background: #005a95;
+          transform: translateY(-2px);
+          box-shadow: 0 6px 16px rgba(0, 112, 186, 0.4);
         }
 
         &:active {
-          transform: scale(0.98);
+          transform: translateY(0);
+          box-shadow: 0 2px 8px rgba(0, 112, 186, 0.3);
+        }
+
+        @media (max-width: 768px) {
+          font-size: 1rem;
+          padding: 0.65rem 1.5rem;
+
+          .paypal-logo {
+            font-size: 1.1rem;
+          }
         }
       }
     }
