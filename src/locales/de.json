@@ -107,7 +107,8 @@
   },
   "donate": {
     "title": "Unterstützen Sie dieses Projekt",
-    "description": "Wenn Ihnen dieses kostenlose Tool gefällt und Sie die Entwicklung unterstützen möchten, würde ich mich über eine kleine Spende freuen."
+    "description": "Wenn Ihnen dieses kostenlose Tool gefällt und Sie die Entwicklung unterstützen möchten, würde ich mich über eine kleine Spende freuen.",
+    "buttonText": "Spenden"
   },
   "faq": {
     "title": "Häufig gestellte Fragen",
