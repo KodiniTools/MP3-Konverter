@@ -109,6 +109,10 @@ export const useConverterStore = defineStore('converter', () => {
     try {
       console.log(`🎬 Konvertiere ${file.name} über Backend...`)
 
+      // Speichere originalen Basisnamen für Download-Dateiname
+      const originalBaseName = file.name.replace(/\.[^/.]+$/, '')
+      const expectedFilename = `${originalBaseName}.${outputFormat.value.ext}`
+
       // Erstelle FormData für Upload
       const formData = new FormData()
       formData.append('file', file)
@@ -129,16 +133,20 @@ export const useConverterStore = defineStore('converter', () => {
       }
 
       const result = await response.json()
-      
+
       if (!result.ok) {
         throw new Error(result.error || 'Konvertierung fehlgeschlagen')
       }
 
-      // Download konvertierte Datei - URL bereits mit /mp3konverter/files/
-      console.log(`📥 Lade herunter: ${result.filename}`)
-      await downloadFromBackend(result.url, result.filename)
+      // Verwende originalen Dateinamen mit neuer Erweiterung für den Download
+      // Falls Backend einen anderen Namen zurückgibt, bevorzuge den originalen Namen
+      const downloadFilename = expectedFilename
 
-      console.log(`✅ ${result.filename} erfolgreich konvertiert`)
+      // Download konvertierte Datei - URL bereits mit /mp3konverter/files/
+      console.log(`📥 Lade herunter: ${downloadFilename}`)
+      await downloadFromBackend(result.url, downloadFilename)
+
+      console.log(`✅ ${downloadFilename} erfolgreich konvertiert`)
 
     } catch (error) {
       console.error(`❌ Fehler bei ${file.name}:`, error)
