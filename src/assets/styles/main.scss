@@ -6,47 +6,48 @@
 
 /* ===== ORIGINAL CSS RESET & BASE STYLES (ERHALTEN) ===== */
 :root {
-  /* Original Variables (Erhalten) */
-  --primary-color: #2563eb;
-  --primary-hover: #1d4ed8;
-  --secondary-color: #64748b;
-  --success-color: #16a34a;
-  --error-color: #dc2626;
-  --warning-color: #d97706;
-  --background: #ffffff;
-  --background-secondary: #f8fafc;
+  /* New Color Palette - Light Theme */
+  /* #F2E28E (Gold), #A28680 (Mauve), #5E5F69 (Dark Gray), #AEAFB7 (Light Gray), #0C0C10 (Near Black) */
+  --primary-color: #A28680;
+  --primary-hover: #8a726c;
+  --secondary-color: #5E5F69;
+  --success-color: #6b9080;
+  --error-color: #c45b5b;
+  --warning-color: #d4a84b;
+  --background: #faf9f6;
+  --background-secondary: #f2f1ee;
   --surface: #ffffff;
-  --text-primary: #0f172a;
-  --text-secondary: #64748b;
-  --border: #e2e8f0;
-  --border-focus: #3b82f6;
-  --shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
-  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  --text-primary: #5E5F69;
+  --text-secondary: #AEAFB7;
+  --border: #e0ddd8;
+  --border-focus: #A28680;
+  --shadow: 0 1px 3px 0 rgba(12, 12, 16, 0.08), 0 1px 2px 0 rgba(12, 12, 16, 0.04);
+  --shadow-lg: 0 10px 15px -3px rgba(12, 12, 16, 0.1), 0 4px 6px -2px rgba(12, 12, 16, 0.05);
   --radius: 0.5rem;
   --radius-lg: 0.75rem;
   --transition: all 0.2s ease-in-out;
 
   /* ===== NEUE FUTURISTIC VARIABLES ===== */
-  /* Futuristic Color Palette */
-  --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  --primary-solid: #667eea;
-  --primary-dark: #5a67d8;
-  --secondary-accent: #64ffda;
-  --accent: #ff6b6b;
-  --success-accent: #4ecdc4;
-  --warning-accent: #ffe66d;
-  
+  /* Updated Color Palette */
+  --primary-gradient: linear-gradient(135deg, #F2E28E 0%, #A28680 100%);
+  --primary-solid: #A28680;
+  --primary-dark: #8a726c;
+  --secondary-accent: #F2E28E;
+  --accent: #F2E28E;
+  --success-accent: #6b9080;
+  --warning-accent: #F2E28E;
+
   /* Glassmorphism & Neumorphism */
-  --glass-bg: rgba(255, 255, 255, 0.1);
-  --glass-border: rgba(255, 255, 255, 0.2);
-  --glass-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
-  --neu-shadow-light: 20px 20px 60px #bebebe, -20px -20px 60px #ffffff;
+  --glass-bg: rgba(250, 249, 246, 0.7);
+  --glass-border: rgba(162, 134, 128, 0.2);
+  --glass-shadow: 0 8px 32px 0 rgba(12, 12, 16, 0.15);
+  --neu-shadow-light: 20px 20px 60px #d9d8d5, -20px -20px 60px #ffffff;
   --neu-shadow-dark: 20px 20px 60px #0a0a0a, -20px -20px 60px #1a1a1a;
-  
+
   /* Typography */
   --font-main: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
   --font-heading: 'Poppins', sans-serif;
-  
+
   /* Animations */
   --hover-scale: scale(1.02);
   --bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
@@ -54,23 +55,31 @@
 
 /* Dark Theme (Original + Erweitert) */
 [data-theme="dark"] {
-  --primary-color: #3b82f6;
-  --primary-hover: #2563eb;
-  --secondary-color: #94a3b8;
-  --success-color: #22c55e;
-  --error-color: #ef4444;
-  --warning-color: #f59e0b;
-  --background: #0f172a;
-  --background-secondary: #1e293b;
-  --surface: #334155;
-  --text-primary: #f1f5f9;
-  --text-secondary: #cbd5e1;
-  --border: #475569;
-  --border-focus: #60a5fa;
-  
+  /* New Color Palette - Dark Theme with improved contrast */
+  --primary-color: #F2E28E;
+  --primary-hover: #e6d67a;
+  --secondary-color: #AEAFB7;
+  --success-color: #8cb8a5;
+  --error-color: #e07878;
+  --warning-color: #F2E28E;
+  --background: #0C0C10;
+  --background-secondary: #18181f;
+  --surface: #222229;
+  --text-primary: #f5f5f5;
+  --text-secondary: #AEAFB7;
+  --border: #3a3a42;
+  --border-focus: #F2E28E;
+
   /* Dark Theme Futuristic */
-  --glass-bg: rgba(0, 0, 0, 0.3);
+  --glass-bg: rgba(12, 12, 16, 0.8);
+  --glass-border: rgba(242, 226, 142, 0.15);
+  --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.4);
   --neu-shadow-light: var(--neu-shadow-dark);
+
+  /* Updated gradient for dark mode */
+  --primary-gradient: linear-gradient(135deg, #F2E28E 0%, #d4c77a 100%);
+  --primary-solid: #F2E28E;
+  --primary-dark: #e6d67a;
 }
 
 /* ===== IMPORT FONTS ===== */
@@ -106,7 +115,7 @@
   width: 100%;
   height: 100%;
   z-index: -1;
-  background: linear-gradient(-45deg, #667eea, #764ba2, #64ffda, #ff6b6b);
+  background: linear-gradient(-45deg, #F2E28E, #A28680, #5E5F69, #AEAFB7);
   background-size: 400% 400%;
   animation: gradientShift 15s ease infinite;
   opacity: 0.05;
@@ -385,7 +394,7 @@
 .select-btn,
 .action-btn {
   background: var(--primary-color);
-  color: white;
+  color: #ffffff;
   border: none;
   border-radius: var(--radius);
   padding: 0.75rem 1.5rem;
@@ -399,6 +408,17 @@
   /* Futuristic Enhancement */
   position: relative;
   overflow: hidden;
+}
+
+/* Dark mode button text color for better contrast with gold background */
+[data-theme="dark"] .select-btn,
+[data-theme="dark"] .action-btn {
+  color: #0C0C10;
+}
+
+[data-theme="dark"] .select-btn:hover,
+[data-theme="dark"] .action-btn:hover {
+  color: #0C0C10;
 }
 
 .select-btn::before,
@@ -446,6 +466,27 @@
 
 .btn-icon {
   font-size: 1.125rem;
+}
+
+.btn-icon-svg {
+  width: 24px;
+  height: 24px;
+  transition: var(--transition);
+}
+
+/* Icon-Only Button Variant */
+.select-btn--icon-only {
+  padding: 1rem;
+  border-radius: 50%;
+  width: 56px;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.select-btn--icon-only:hover .btn-icon-svg {
+  transform: translateY(-2px);
 }
 
 .convert-btn {
@@ -584,7 +625,7 @@
   font-weight: 600;
   color: var(--text-primary);
   font-size: 0.875rem;
-  text-transform: uppercase;
+  text-transform: lowercase;
   letter-spacing: 0.025em;
 }
 
@@ -1364,7 +1405,7 @@
 
   .bg-animated {
     animation: none;
-    background: var(--primary-solid);
+    background: #A28680;
     opacity: 0.03;
   }
 
@@ -1426,21 +1467,31 @@ nav .submenu,
 
 /* ===== DARK MODE SPECIFIC ENHANCEMENTS ===== */
 [data-theme="dark"] {
-  /* Enhanced glassmorphism for dark mode */
-  --glass-bg: rgba(15, 23, 42, 0.6);
-  --glass-border: rgba(255, 255, 255, 0.1);
+  /* Enhanced glassmorphism for dark mode with new color palette */
+  --glass-bg: rgba(12, 12, 16, 0.8);
+  --glass-border: rgba(242, 226, 142, 0.15);
 }
 
 [data-theme="dark"] .glass-card {
-  box-shadow: 
+  box-shadow:
     0 8px 32px 0 rgba(0, 0, 0, 0.5),
-    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    inset 0 1px 0 rgba(242, 226, 142, 0.1);
 }
 
 [data-theme="dark"] .progress-bar {
-  box-shadow: 
-    0 0 20px rgba(59, 130, 246, 0.8),
+  box-shadow:
+    0 0 20px rgba(242, 226, 142, 0.6),
     inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+/* Dark mode download button contrast */
+[data-theme="dark"] .download-btn {
+  color: #0C0C10;
+}
+
+/* Dark mode cookie button contrast */
+[data-theme="dark"] .cookie-btn.primary {
+  color: #0C0C10;
 }
 
 /* ===== ACCESSIBILITY ENHANCEMENTS ===== */
@@ -1535,19 +1586,31 @@ nav .submenu,
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--primary-color);
+  background: #A28680;
   border-radius: 4px;
   transition: background 0.2s;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--primary-hover);
+  background: #8a726c;
+}
+
+[data-theme="dark"] ::-webkit-scrollbar-thumb {
+  background: #F2E28E;
+}
+
+[data-theme="dark"] ::-webkit-scrollbar-thumb:hover {
+  background: #e6d67a;
 }
 
 /* Firefox */
 * {
   scrollbar-width: thin;
-  scrollbar-color: var(--primary-color) var(--background-secondary);
+  scrollbar-color: #A28680 var(--background-secondary);
+}
+
+[data-theme="dark"] * {
+  scrollbar-color: #F2E28E var(--background-secondary);
 }
 
 /* ===== SELECTION STYLING ===== */
@@ -1561,6 +1624,16 @@ nav .submenu,
   background: var(--primary-color);
   color: white;
   text-shadow: none;
+}
+
+[data-theme="dark"] ::selection {
+  background: #F2E28E;
+  color: #0C0C10;
+}
+
+[data-theme="dark"] ::-moz-selection {
+  background: #F2E28E;
+  color: #0C0C10;
 }
 
 /* ===== ERROR STATES ===== */
@@ -1584,6 +1657,37 @@ nav .submenu,
 @keyframes bounce {
   0%, 100% { transform: scale(1); }
   50% { transform: scale(1.05); }
+}
+
+/* ===== LOWERCASE STYLING ===== */
+/* Apply lowercase styling throughout the UI */
+h1, h2, h3, h4, h5, h6,
+.website-logo,
+.app-title,
+.section-title,
+.section-heading,
+.option-label,
+.feature-card h3,
+.tool-card h3,
+.faq-question,
+.cookie-content h3,
+.trust-badge,
+.select-btn,
+.action-btn,
+.lang-toggle,
+.footer-link,
+.privacy-link,
+.download-btn,
+.cookie-btn,
+button {
+  text-transform: lowercase;
+}
+
+/* Preserve uppercase for specific elements like language codes */
+.lang-toggle span,
+.info-value,
+.file-name {
+  text-transform: none;
 }
 
 /* ===== FINAL INTEGRATION OVERRIDES ===== */
