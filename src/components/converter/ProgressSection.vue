@@ -3,10 +3,10 @@
     <h2 id="progress-heading" class="visually-hidden">
       {{ $t('converter.progress.heading') }}
     </h2>
-    
+
     <div class="progress-container">
-      <div class="progress-bar-container">
-        <div 
+      <div class="progress-bar-container" :class="{ 'shimmer-active': isProcessing }">
+        <div
           class="progress-bar"
           role="progressbar"
           :aria-valuenow="progress"
@@ -28,6 +28,10 @@ defineProps({
     type: Number,
     required: true,
     validator: (value) => value >= 0 && value <= 100
+  },
+  isProcessing: {
+    type: Boolean,
+    default: false
   }
 })
 </script>

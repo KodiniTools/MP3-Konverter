@@ -9,14 +9,63 @@ export const useConverterStore = defineStore('converter', () => {
     bitrate: '192k',
     format: 'mp3'
   })
-  
+
   const isConverting = ref(false)
+  const isProcessingFile = ref(false) // Für Shimmer-Animation während einzelner Datei
   const progress = ref(0)
   const showProgress = ref(false)
   const statusMessage = ref('Bereit - Wählen Sie Audiodateien aus')
   const statusType = ref('info')
   const showRetry = ref(false)
   const filesCompleted = ref(0)
+
+  // Audio Context für Erfolgston
+  let audioContext = null
+
+  // Erfolgston abspielen
+  function playSuccessSound() {
+    try {
+      if (!audioContext) {
+        audioContext = new (window.AudioContext || window.webkitAudioContext)()
+      }
+
+      const oscillator = audioContext.createOscillator()
+      const gainNode = audioContext.createGain()
+
+      oscillator.connect(gainNode)
+      gainNode.connect(audioContext.destination)
+
+      oscillator.frequency.setValueAtTime(800, audioContext.currentTime)
+      oscillator.frequency.setValueAtTime(1000, audioContext.currentTime + 0.1)
+      oscillator.frequency.setValueAtTime(1200, audioContext.currentTime + 0.2)
+
+      gainNode.gain.setValueAtTime(0.3, audioContext.currentTime)
+      gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.4)
+
+      oscillator.start(audioContext.currentTime)
+      oscillator.stop(audioContext.currentTime + 0.4)
+    } catch (e) {
+      console.log('Audio nicht verfügbar:', e)
+    }
+  }
+
+  // Browser-Benachrichtigung anzeigen
+  async function showNotification(title, body) {
+    try {
+      if ('Notification' in window) {
+        if (Notification.permission === 'granted') {
+          new Notification(title, { body, icon: '🎵' })
+        } else if (Notification.permission !== 'denied') {
+          const permission = await Notification.requestPermission()
+          if (permission === 'granted') {
+            new Notification(title, { body, icon: '🎵' })
+          }
+        }
+      }
+    } catch (e) {
+      console.log('Benachrichtigungen nicht verfügbar:', e)
+    }
+  }
 
   // Backend API Base URL - KORRIGIERT für /mp3konverter/api/
   const API_BASE = '/mp3konverter/api'
@@ -74,22 +123,35 @@ export const useConverterStore = defineStore('converter', () => {
 
       for (let i = 0; i < totalFiles; i++) {
         const file = files.value[i]
-        
+
         // Update progress for current file
         const baseProgress = (i / totalFiles) * 100
         progress.value = Math.round(baseProgress)
-        
+
         updateStatus(`Konvertiere: ${file.name}`, 'info')
+
+        // Shimmer-Animation während Backend-Verarbeitung
+        isProcessingFile.value = true
         await convertFile(file)
-        
+        isProcessingFile.value = false
+
         filesCompleted.value++
-        
+
         // Update progress after file completion
         progress.value = Math.round(((i + 1) / totalFiles) * 100)
       }
 
       updateStatus(`${totalFiles} Datei(en) erfolgreich konvertiert!`, 'success')
       progress.value = 100
+
+      // Erfolgston abspielen
+      playSuccessSound()
+
+      // Browser-Benachrichtigung
+      showNotification(
+        'Konvertierung abgeschlossen!',
+        `${totalFiles} Datei(en) erfolgreich konvertiert.`
+      )
 
       // Reset nach erfolgreicher Konvertierung
       setTimeout(() => {
@@ -100,6 +162,7 @@ export const useConverterStore = defineStore('converter', () => {
       console.error('❌ Konvertierungsfehler:', error)
       updateStatus(`Konvertierungsfehler: ${error.message}`, 'error')
       showRetry.value = true
+      isProcessingFile.value = false
     } finally {
       isConverting.value = false
     }
@@ -205,13 +268,14 @@ export const useConverterStore = defineStore('converter', () => {
     files,
     settings,
     isConverting,
+    isProcessingFile,
     progress,
     showProgress,
     statusMessage,
     statusType,
     showRetry,
     filesCompleted,
-    
+
     // Actions
     addFiles,
     removeFile,
