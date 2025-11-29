@@ -1,8 +1,9 @@
 <template>
   <section class="action-section">
-    <button 
+    <button
       type="button"
       class="convert-btn action-btn"
+      :class="{ 'converting-pulse': isConverting }"
       :disabled="disabled"
       @click="$emit('convert')"
     >
