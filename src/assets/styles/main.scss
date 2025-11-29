@@ -709,6 +709,34 @@
   backdrop-filter: blur(5px);
 }
 
+/* Shimmer Animation während Backend-Verarbeitung */
+.progress-bar-container.shimmer-active::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -150%;
+  width: 150%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(107, 144, 128, 0.4),
+    transparent
+  );
+  animation: progressShimmer 1.5s ease-in-out infinite;
+  z-index: 10;
+  pointer-events: none;
+}
+
+@keyframes progressShimmer {
+  0% {
+    left: -150%;
+  }
+  100% {
+    left: 150%;
+  }
+}
+
 .progress-bar {
   background: linear-gradient(90deg, var(--primary-color), var(--success-color));
   height: 100%;

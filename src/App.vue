@@ -54,6 +54,7 @@
             <ProgressSection
               v-if="showProgress"
               :progress="progress"
+              :is-processing="isProcessingFile"
             />
             
             <StatusMessage
@@ -82,7 +83,7 @@
 </template>
 
 <script setup>
-import { ref, computed, watch } from 'vue'
+import { ref, computed, watch, onMounted, onUnmounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useConverterStore } from './stores/converter'
 import { useThemeStore } from './stores/theme'
@@ -110,6 +111,7 @@ const themeStore = useThemeStore()
 const files = computed(() => converterStore.files)
 const conversionSettings = computed(() => converterStore.settings)
 const isConverting = computed(() => converterStore.isConverting)
+const isProcessingFile = computed(() => converterStore.isProcessingFile)
 const progress = computed(() => converterStore.progress)
 const showProgress = computed(() => converterStore.showProgress)
 const statusMessage = computed(() => converterStore.statusMessage)
@@ -152,6 +154,48 @@ function toggleLanguage() {
   locale.value = newLang
   localStorage.setItem('preferred-language', newLang)
 }
+
+// Tastaturkürzel
+function handleKeydown(event) {
+  // Ignoriere wenn in einem Input-Feld
+  if (event.target.tagName === 'INPUT' || event.target.tagName === 'TEXTAREA') {
+    return
+  }
+
+  // Strg+O: Dateien auswählen
+  if (event.ctrlKey && event.key === 'o') {
+    event.preventDefault()
+    const fileInput = document.querySelector('.file-input')
+    if (fileInput) fileInput.click()
+  }
+
+  // Enter: Konvertierung starten (wenn möglich)
+  if (event.key === 'Enter' && !event.ctrlKey && !event.shiftKey) {
+    if (canConvert.value) {
+      event.preventDefault()
+      startConversion()
+    }
+  }
+
+  // Escape: Dateien löschen
+  if (event.key === 'Escape') {
+    if (files.value.length > 0 && !isConverting.value) {
+      event.preventDefault()
+      // Alle Dateien entfernen
+      while (converterStore.files.length > 0) {
+        converterStore.removeFile(0)
+      }
+    }
+  }
+}
+
+onMounted(() => {
+  document.addEventListener('keydown', handleKeydown)
+})
+
+onUnmounted(() => {
+  document.removeEventListener('keydown', handleKeydown)
+})
 
 // Initialize - Backend version needs no initialization
 console.log('MP3 Konverter - Backend Mode')
