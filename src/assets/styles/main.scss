@@ -625,7 +625,6 @@
   font-weight: 600;
   color: var(--text-primary);
   font-size: 0.875rem;
-  text-transform: lowercase;
   letter-spacing: 0.025em;
 }
 
@@ -1700,37 +1699,6 @@ nav .submenu,
 @keyframes bounce {
   0%, 100% { transform: scale(1); }
   50% { transform: scale(1.05); }
-}
-
-/* ===== LOWERCASE STYLING ===== */
-/* Apply lowercase styling throughout the UI */
-h1, h2, h3, h4, h5, h6,
-.website-logo,
-.app-title,
-.section-title,
-.section-heading,
-.option-label,
-.feature-card h3,
-.tool-card h3,
-.faq-question,
-.cookie-content h3,
-.trust-badge,
-.select-btn,
-.action-btn,
-.lang-toggle,
-.footer-link,
-.privacy-link,
-.download-btn,
-.cookie-btn,
-button {
-  text-transform: lowercase;
-}
-
-/* Preserve uppercase for specific elements like language codes */
-.lang-toggle span,
-.info-value,
-.file-name {
-  text-transform: none;
 }
 
 /* ===== FINAL INTEGRATION OVERRIDES ===== */
