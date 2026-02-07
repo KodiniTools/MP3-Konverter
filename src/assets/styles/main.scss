@@ -7,41 +7,41 @@
 /* ===== ORIGINAL CSS RESET & BASE STYLES (ERHALTEN) ===== */
 :root {
   /* New Color Palette - Light Theme */
-  /* #F2E28E (Gold), #A28680 (Mauve), #5E5F69 (Dark Gray), #AEAFB7 (Light Gray), #0C0C10 (Near Black) */
-  --primary-color: #A28680;
-  --primary-hover: #8a726c;
-  --secondary-color: #5E5F69;
+  /* #c9984d (Gold), #014f99 (Blue), #003971 (Dark Blue), #f8e1a9 (Light Gold), #f9f2d5 (Cream) */
+  --primary-color: #014f99;
+  --primary-hover: #003971;
+  --secondary-color: #8899aa;
   --success-color: #6b9080;
   --error-color: #c45b5b;
-  --warning-color: #d4a84b;
-  --background: #faf9f6;
-  --background-secondary: #f2f1ee;
+  --warning-color: #c9984d;
+  --background: #f9f2d5;
+  --background-secondary: #f8e1a9;
   --surface: #ffffff;
-  --text-primary: #5E5F69;
-  --text-secondary: #AEAFB7;
-  --border: #e0ddd8;
-  --border-focus: #A28680;
-  --shadow: 0 1px 3px 0 rgba(12, 12, 16, 0.08), 0 1px 2px 0 rgba(12, 12, 16, 0.04);
-  --shadow-lg: 0 10px 15px -3px rgba(12, 12, 16, 0.1), 0 4px 6px -2px rgba(12, 12, 16, 0.05);
+  --text-primary: #003971;
+  --text-secondary: #5a7a96;
+  --border: #d8ccab;
+  --border-focus: #014f99;
+  --shadow: 0 1px 3px 0 rgba(0, 57, 113, 0.08), 0 1px 2px 0 rgba(0, 57, 113, 0.04);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 57, 113, 0.1), 0 4px 6px -2px rgba(0, 57, 113, 0.05);
   --radius: 0.5rem;
   --radius-lg: 0.75rem;
   --transition: all 0.2s ease-in-out;
 
   /* ===== NEUE FUTURISTIC VARIABLES ===== */
   /* Updated Color Palette */
-  --primary-gradient: linear-gradient(135deg, #F2E28E 0%, #A28680 100%);
-  --primary-solid: #A28680;
-  --primary-dark: #8a726c;
-  --secondary-accent: #F2E28E;
-  --accent: #F2E28E;
+  --primary-gradient: linear-gradient(135deg, #c9984d 0%, #014f99 100%);
+  --primary-solid: #014f99;
+  --primary-dark: #003971;
+  --secondary-accent: #c9984d;
+  --accent: #c9984d;
   --success-accent: #6b9080;
-  --warning-accent: #F2E28E;
+  --warning-accent: #c9984d;
 
   /* Glassmorphism & Neumorphism */
-  --glass-bg: rgba(250, 249, 246, 0.7);
-  --glass-border: rgba(162, 134, 128, 0.2);
-  --glass-shadow: 0 8px 32px 0 rgba(12, 12, 16, 0.15);
-  --neu-shadow-light: 20px 20px 60px #d9d8d5, -20px -20px 60px #ffffff;
+  --glass-bg: rgba(249, 242, 213, 0.7);
+  --glass-border: rgba(1, 79, 153, 0.2);
+  --glass-shadow: 0 8px 32px 0 rgba(0, 57, 113, 0.15);
+  --neu-shadow-light: 20px 20px 60px #d4c9a8, -20px -20px 60px #ffffff;
   --neu-shadow-dark: 20px 20px 60px #0a0a0a, -20px -20px 60px #1a1a1a;
 
   /* Typography */
@@ -115,7 +115,7 @@
   width: 100%;
   height: 100%;
   z-index: -1;
-  background: linear-gradient(-45deg, #F2E28E, #A28680, #5E5F69, #AEAFB7);
+  background: linear-gradient(-45deg, #c9984d, #014f99, #003971, #f8e1a9);
   background-size: 400% 400%;
   animation: gradientShift 15s ease infinite;
   opacity: 0.05;
@@ -162,7 +162,7 @@
 }
 
 .neu-btn:active {
-  box-shadow: inset 5px 5px 10px #bebebe, inset -5px -5px 10px #ffffff;
+  box-shadow: inset 5px 5px 10px #c9bd9c, inset -5px -5px 10px #ffffff;
 }
 
 [data-theme="dark"] .neu-btn:active {
@@ -394,7 +394,7 @@
 .select-btn,
 .action-btn {
   background: var(--primary-color);
-  color: #ffffff;
+  color: #F5F4D6;
   border: none;
   border-radius: var(--radius);
   padding: 0.75rem 1.5rem;
@@ -744,11 +744,11 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  color: white;
+  color: #F5F4D6;
   font-weight: 600;
   position: relative;
   /* Futuristic Enhancement */
-  box-shadow: 0 0 20px rgba(37, 99, 235, 0.5);
+  box-shadow: 0 0 20px rgba(1, 79, 153, 0.5);
 }
 
 .progress-text {
@@ -1148,7 +1148,7 @@
 
 .cookie-btn.primary {
   background: var(--primary-solid);
-  color: white;
+  color: #F5F4D6;
   border-color: var(--primary-solid);
 }
 
@@ -1447,7 +1447,7 @@
 
   .bg-animated {
     animation: none;
-    background: #A28680;
+    background: #014f99;
     opacity: 0.03;
   }
 
@@ -1543,7 +1543,7 @@ nav .submenu,
   top: -40px;
   left: 6px;
   background: var(--primary-color);
-  color: white;
+  color: #F5F4D6;
   padding: 8px;
   text-decoration: none;
   border-radius: 4px;
@@ -1628,13 +1628,13 @@ nav .submenu,
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #A28680;
+  background: #014f99;
   border-radius: 4px;
   transition: background 0.2s;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #8a726c;
+  background: #003971;
 }
 
 [data-theme="dark"] ::-webkit-scrollbar-thumb {
@@ -1648,7 +1648,7 @@ nav .submenu,
 /* Firefox */
 * {
   scrollbar-width: thin;
-  scrollbar-color: #A28680 var(--background-secondary);
+  scrollbar-color: #014f99 var(--background-secondary);
 }
 
 [data-theme="dark"] * {
@@ -1658,13 +1658,13 @@ nav .submenu,
 /* ===== SELECTION STYLING ===== */
 ::selection {
   background: var(--primary-color);
-  color: white;
+  color: #F5F4D6;
   text-shadow: none;
 }
 
 ::-moz-selection {
   background: var(--primary-color);
-  color: white;
+  color: #F5F4D6;
   text-shadow: none;
 }
 
