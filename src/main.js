@@ -1,23 +1,8 @@
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
-import { createI18n } from 'vue-i18n'
 import App from './App.vue'
+import i18n from './i18n'
 import './assets/styles/main.scss'
-
-// Translations
-import de from './locales/de.json'
-import en from './locales/en.json'
-
-// i18n Setup
-const i18n = createI18n({
-  legacy: false,
-  locale: localStorage.getItem('locale') || 'de',
-  fallbackLocale: 'en',
-  messages: {
-    de,
-    en
-  }
-})
 
 // Create Vue App
 const app = createApp(App)
