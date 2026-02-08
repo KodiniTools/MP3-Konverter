@@ -6,9 +6,6 @@
     <!-- Animated Background -->
     <div class="bg-animated"></div>
 
-    <!-- Website Header -->
-    <AppHeader />
-
     <!-- Hero Section -->
     <HeroSection />
 
@@ -85,7 +82,6 @@ import { useConverterStore } from './stores/converter'
 import { useThemeStore } from './stores/theme'
 
 // Components
-import AppHeader from './components/layout/AppHeader.vue'
 import HeroSection from './components/layout/HeroSection.vue'
 import FileUpload from './components/converter/FileUpload.vue'
 import FileList from './components/converter/FileList.vue'
