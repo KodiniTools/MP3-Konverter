@@ -11,7 +11,7 @@ import en from './locales/en.json'
 // i18n Setup
 const i18n = createI18n({
   legacy: false,
-  locale: localStorage.getItem('preferred-language') || 'de',
+  locale: localStorage.getItem('locale') || 'de',
   fallbackLocale: 'en',
   messages: {
     de,

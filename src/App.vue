@@ -7,10 +7,7 @@
     <div class="bg-animated"></div>
 
     <!-- Website Header -->
-    <AppHeader 
-      @toggle-theme="toggleTheme"
-      @toggle-language="toggleLanguage"
-    />
+    <AppHeader />
 
     <!-- Hero Section -->
     <HeroSection />
@@ -83,8 +80,7 @@
 </template>
 
 <script setup>
-import { ref, computed, watch, onMounted, onUnmounted } from 'vue'
-import { useI18n } from 'vue-i18n'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useConverterStore } from './stores/converter'
 import { useThemeStore } from './stores/theme'
 
@@ -103,7 +99,6 @@ import DonateSection from './components/sections/DonateSection.vue'
 import FAQSection from './components/sections/FAQSection.vue'
 
 // Composables
-const { locale } = useI18n()
 const converterStore = useConverterStore()
 const themeStore = useThemeStore()
 
@@ -143,16 +138,6 @@ async function startConversion() {
 
 function retryConversion() {
   converterStore.retryConversion()
-}
-
-function toggleTheme() {
-  themeStore.toggleTheme()
-}
-
-function toggleLanguage() {
-  const newLang = locale.value === 'de' ? 'en' : 'de'
-  locale.value = newLang
-  localStorage.setItem('preferred-language', newLang)
 }
 
 // Tastaturkürzel
