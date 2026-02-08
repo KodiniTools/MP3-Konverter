@@ -18,14 +18,11 @@ export const useLocaleStore = defineStore('locale', () => {
     })
   }, { immediate: true })
 
-  // Intercept SSI nav language button clicks in capture phase
-  // This runs before the SSI nav's bubbling handler, preventing window.location.reload()
+  // Handle SSI nav language button clicks in capture phase
+  // Updates vue-i18n immediately; SSI nav's own handler translates data-nav-i18n elements
   function handleLangClick(event) {
     const btn = event.target.closest('.global-nav-lang-btn')
     if (!btn) return
-
-    event.stopPropagation()
-    event.preventDefault()
 
     const targetLang = btn.getAttribute('data-lang')
     if (targetLang && ['de', 'en'].includes(targetLang) && targetLang !== locale.value) {
@@ -35,15 +32,15 @@ export const useLocaleStore = defineStore('locale', () => {
 
   document.addEventListener('click', handleLangClick, true)
 
-  // Listen for locale-changed custom events (mirrors theme-changed pattern)
-  function handleLocaleChanged(event) {
-    const newLocale = event.detail?.locale
+  // Listen for language-changed custom events from SSI nav
+  function handleLanguageChanged(event) {
+    const newLocale = event.detail?.lang
     if (newLocale && ['de', 'en'].includes(newLocale) && newLocale !== locale.value) {
       locale.value = newLocale
     }
   }
 
-  window.addEventListener('locale-changed', handleLocaleChanged)
+  window.addEventListener('language-changed', handleLanguageChanged)
 
   // Actions
   function setLocale(newLocale) {
@@ -54,7 +51,7 @@ export const useLocaleStore = defineStore('locale', () => {
 
   function cleanup() {
     document.removeEventListener('click', handleLangClick, true)
-    window.removeEventListener('locale-changed', handleLocaleChanged)
+    window.removeEventListener('language-changed', handleLanguageChanged)
   }
 
   return {
