@@ -42,7 +42,7 @@
   --glass-border: rgba(1, 79, 153, 0.2);
   --glass-shadow: 0 8px 32px 0 rgba(0, 57, 113, 0.15);
   --neu-shadow-light: 20px 20px 60px #d4c9a8, -20px -20px 60px #ffffff;
-  --neu-shadow-dark: 20px 20px 60px #0a0a0a, -20px -20px 60px #1a1a1a;
+  --neu-shadow-dark: 20px 20px 60px #050e1e, -20px -20px 60px #0d1e36;
 
   /* Typography */
   --font-main: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
@@ -55,31 +55,31 @@
 
 /* Dark Theme (Original + Erweitert) */
 [data-theme="dark"] {
-  /* New Color Palette - Dark Theme with improved contrast */
-  --primary-color: #F2E28E;
-  --primary-hover: #e6d67a;
-  --secondary-color: #AEAFB7;
+  /* Navy/Gold Color Palette - Dark Theme */
+  --primary-color: #c9984d;
+  --primary-hover: #f8e1a9;
+  --secondary-color: #7A8DA0;
   --success-color: #8cb8a5;
   --error-color: #e07878;
-  --warning-color: #F2E28E;
-  --background: #0C0C10;
-  --background-secondary: #18181f;
-  --surface: #222229;
-  --text-primary: #f5f5f5;
-  --text-secondary: #AEAFB7;
-  --border: #3a3a42;
-  --border-focus: #F2E28E;
+  --warning-color: #c9984d;
+  --background: #091428;
+  --background-secondary: #0E1C32;
+  --surface: #142640;
+  --text-primary: #f9f2d5;
+  --text-secondary: #f8e1a9;
+  --border: #1e3a5a;
+  --border-focus: #c9984d;
 
   /* Dark Theme Futuristic */
-  --glass-bg: rgba(12, 12, 16, 0.8);
-  --glass-border: rgba(242, 226, 142, 0.15);
+  --glass-bg: rgba(9, 20, 40, 0.85);
+  --glass-border: rgba(201, 152, 77, 0.15);
   --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.4);
   --neu-shadow-light: var(--neu-shadow-dark);
 
   /* Updated gradient for dark mode */
-  --primary-gradient: linear-gradient(135deg, #F2E28E 0%, #d4c77a 100%);
-  --primary-solid: #F2E28E;
-  --primary-dark: #e6d67a;
+  --primary-gradient: linear-gradient(135deg, #c9984d 0%, #014f99 100%);
+  --primary-solid: #c9984d;
+  --primary-dark: #014f99;
 }
 
 /* ===== IMPORT FONTS ===== */
@@ -166,7 +166,7 @@
 }
 
 [data-theme="dark"] .neu-btn:active {
-  box-shadow: inset 5px 5px 10px #0a0a0a, inset -5px -5px 10px #1a1a1a;
+  box-shadow: inset 5px 5px 10px #050e1e, inset -5px -5px 10px #0d1e36;
 }
 
 /* ===== ORIGINAL LAYOUT COMPONENTS (ERWEITERT) ===== */
@@ -413,12 +413,12 @@
 /* Dark mode button text color for better contrast with gold background */
 [data-theme="dark"] .select-btn,
 [data-theme="dark"] .action-btn {
-  color: #0C0C10;
+  color: #091428;
 }
 
 [data-theme="dark"] .select-btn:hover,
 [data-theme="dark"] .action-btn:hover {
-  color: #0C0C10;
+  color: #091428;
 }
 
 .select-btn::before,
@@ -1509,31 +1509,31 @@ nav .submenu,
 
 /* ===== DARK MODE SPECIFIC ENHANCEMENTS ===== */
 [data-theme="dark"] {
-  /* Enhanced glassmorphism for dark mode with new color palette */
-  --glass-bg: rgba(12, 12, 16, 0.8);
-  --glass-border: rgba(242, 226, 142, 0.15);
+  /* Enhanced glassmorphism for dark mode with navy/gold palette */
+  --glass-bg: rgba(9, 20, 40, 0.85);
+  --glass-border: rgba(201, 152, 77, 0.15);
 }
 
 [data-theme="dark"] .glass-card {
   box-shadow:
     0 8px 32px 0 rgba(0, 0, 0, 0.5),
-    inset 0 1px 0 rgba(242, 226, 142, 0.1);
+    inset 0 1px 0 rgba(201, 152, 77, 0.1);
 }
 
 [data-theme="dark"] .progress-bar {
   box-shadow:
-    0 0 20px rgba(242, 226, 142, 0.6),
+    0 0 20px rgba(201, 152, 77, 0.6),
     inset 0 1px 0 rgba(255, 255, 255, 0.2);
 }
 
 /* Dark mode download button contrast */
 [data-theme="dark"] .download-btn {
-  color: #0C0C10;
+  color: #091428;
 }
 
 /* Dark mode cookie button contrast */
 [data-theme="dark"] .cookie-btn.primary {
-  color: #0C0C10;
+  color: #091428;
 }
 
 /* ===== ACCESSIBILITY ENHANCEMENTS ===== */
@@ -1638,11 +1638,11 @@ nav .submenu,
 }
 
 [data-theme="dark"] ::-webkit-scrollbar-thumb {
-  background: #F2E28E;
+  background: #c9984d;
 }
 
 [data-theme="dark"] ::-webkit-scrollbar-thumb:hover {
-  background: #e6d67a;
+  background: #f8e1a9;
 }
 
 /* Firefox */
@@ -1652,7 +1652,7 @@ nav .submenu,
 }
 
 [data-theme="dark"] * {
-  scrollbar-color: #F2E28E var(--background-secondary);
+  scrollbar-color: #c9984d var(--background-secondary);
 }
 
 /* ===== SELECTION STYLING ===== */
@@ -1669,13 +1669,13 @@ nav .submenu,
 }
 
 [data-theme="dark"] ::selection {
-  background: #F2E28E;
-  color: #0C0C10;
+  background: #c9984d;
+  color: #091428;
 }
 
 [data-theme="dark"] ::-moz-selection {
-  background: #F2E28E;
-  color: #0C0C10;
+  background: #c9984d;
+  color: #091428;
 }
 
 /* ===== ERROR STATES ===== */
