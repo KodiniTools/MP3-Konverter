@@ -80,6 +80,7 @@
 import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useConverterStore } from './stores/converter'
 import { useThemeStore } from './stores/theme'
+import { useLocaleStore } from './stores/locale'
 
 // Components
 import HeroSection from './components/layout/HeroSection.vue'
@@ -97,6 +98,7 @@ import FAQSection from './components/sections/FAQSection.vue'
 // Composables
 const converterStore = useConverterStore()
 const themeStore = useThemeStore()
+const localeStore = useLocaleStore()
 
 // Reactive state
 const files = computed(() => converterStore.files)
