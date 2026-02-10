@@ -16,6 +16,16 @@ export const useLocaleStore = defineStore('locale', () => {
     document.querySelectorAll('.global-nav-lang-btn').forEach(btn => {
       btn.classList.toggle('active', btn.getAttribute('data-lang') === newLocale)
     })
+
+    // Translate all SSI elements using data-lang-de/data-lang-en pattern
+    document.querySelectorAll('[data-lang-' + newLocale + ']').forEach(el => {
+      el.textContent = el.getAttribute('data-lang-' + newLocale)
+    })
+
+    // Dispatch language-changed event so SSI partials can react
+    window.dispatchEvent(new CustomEvent('language-changed', {
+      detail: { lang: newLocale }
+    }))
   }, { immediate: true })
 
   // Listen for language-changed custom events from SSI nav
