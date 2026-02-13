@@ -9,7 +9,6 @@
           :key="feature.key"
           class="feature-card glass-card"
         >
-          <div class="feature-icon">{{ feature.icon }}</div>
           <h3>{{ $t(`features.${feature.key}.title`) }}</h3>
           <p>{{ $t(`features.${feature.key}.desc`) }}</p>
         </div>
@@ -20,11 +19,11 @@
 
 <script setup>
 const features = [
-  { key: 'speed', icon: '⚡' },
-  { key: 'security', icon: '🛡️' },
-  { key: 'free', icon: '🆓' },
-  { key: 'privacy', icon: '🔒' },
-  { key: 'formats', icon: '🎯' },
-  { key: 'responsive', icon: '📱' }
+  { key: 'speed' },
+  { key: 'security' },
+  { key: 'free' },
+  { key: 'privacy' },
+  { key: 'formats' },
+  { key: 'responsive' }
 ]
 </script>
