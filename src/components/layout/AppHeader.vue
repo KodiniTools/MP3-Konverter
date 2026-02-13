@@ -2,7 +2,6 @@
   <header class="website-header">
     <div class="website-header-container">
       <div class="website-logo">
-        <span>🎵</span>
         <span>{{ $t('common.appName') }}</span>
       </div>
     </div>
