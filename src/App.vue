@@ -13,14 +13,6 @@
     <section class="converter-section" id="main-content">
       <div class="converter-wrapper">
         <div class="container">
-          <!-- Converter Header -->
-          <header class="header">
-            <h1 class="app-title">
-              <span class="app-icon" aria-hidden="true">🎵</span>
-              <span>{{ $t('converter.title') }}</span>
-            </h1>
-          </header>
-
           <!-- Main Converter Content -->
           <main class="main-content">
             <FileUpload @files-selected="handleFilesSelected" />
