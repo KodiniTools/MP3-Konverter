@@ -12,7 +12,6 @@
           rel="noopener noreferrer"
           class="tool-card glass-card"
         >
-          <div class="tool-icon">{{ $t(`tools.${tool.key}.icon`) }}</div>
           <h3>{{ $t(`tools.${tool.key}.title`) }}</h3>
           <p>{{ $t(`tools.${tool.key}.desc`) }}</p>
         </a>
