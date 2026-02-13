@@ -441,6 +441,27 @@
   font-size: 1.125rem;
 }
 
+.btn-icon-svg {
+  width: 24px;
+  height: 24px;
+  transition: var(--transition);
+}
+
+/* Icon-Only Button Variant */
+.select-btn--icon-only {
+  padding: 1rem;
+  border-radius: 50%;
+  width: 56px;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.select-btn--icon-only:hover .btn-icon-svg {
+  transform: translateY(-2px);
+}
+
 
 .convert-btn {
   width: 100%;
@@ -1522,7 +1543,10 @@
     font-size: 0.9rem;
   }
 
-
+  .select-btn--icon-only {
+    width: 48px;
+    height: 48px;
+  }
 
   .converter-wrapper {
     padding: 1rem;
