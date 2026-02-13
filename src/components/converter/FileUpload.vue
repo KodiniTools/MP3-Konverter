@@ -18,7 +18,6 @@
       @drop.prevent="handleDrop"
     >
       <div class="drop-content">
-        <span class="drop-icon" aria-hidden="true">📁</span>
         <p>{{ $t('converter.upload.instruction') }}</p>
         
         <input 
