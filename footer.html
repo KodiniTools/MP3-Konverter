@@ -1,0 +1,159 @@
+<!-- KodiniTools Footer Partial -->
+<!-- Mit i18n Synchronisation -->
+
+<style>
+.site-footer {
+  background: #ffffff;
+  border-top: 1px solid #d4c09a;
+  padding: 1.5rem 2rem;
+  margin-top: 2rem;
+  font-family: 'Supreme', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+}
+
+[data-theme="dark"] .site-footer {
+  background: #16161c;
+  border-top-color: #5E5F69;
+}
+
+.footer-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.footer-links {
+  display: flex;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.footer-link {
+  color: #014f99;
+  text-decoration: none;
+  font-size: 0.85rem;
+  transition: color 0.2s ease;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+  padding: 0;
+}
+
+[data-theme="dark"] .footer-link {
+  color: #AEAFB7;
+}
+
+.footer-link:hover {
+  color: #c9984d;
+}
+
+[data-theme="dark"] .footer-link:hover {
+  color: #F2E28E;
+}
+
+.social-link {
+  display: inline-flex;
+  align-items: center;
+}
+
+.social-icon {
+  width: 1rem;
+  height: 1rem;
+  opacity: 0.7;
+  transition: opacity 0.2s ease;
+}
+
+.social-link:hover .social-icon {
+  opacity: 1;
+}
+
+.footer-copyright {
+  color: #4f6f8e;
+  font-size: 0.8rem;
+  margin: 0;
+}
+
+[data-theme="dark"] .footer-copyright {
+  color: #5E5F69;
+}
+
+@media (max-width: 768px) {
+  .site-footer {
+    padding: 1.25rem 1rem;
+  }
+  .footer-links {
+    gap: 1rem;
+  }
+  .footer-link {
+    font-size: 0.8rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .footer-links {
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+  }
+}
+</style>
+
+<footer class="site-footer">
+  <div class="footer-content">
+    <div class="footer-links">
+      <a href="https://kodinitools.com/datenschutz/" class="footer-link" data-i18n="footer.privacy">Datenschutz</a>
+      <a href="https://kodinitools.com/kontaktformular/" class="footer-link" data-i18n="footer.contact">Kontakt</a>
+      <button class="footer-link" onclick="CookieConsent.showSettings()" data-i18n="footer.cookieSettings">Cookie-Einstellungen</button>
+      <a href="https://www.facebook.com/KodiniTools" target="_blank" rel="noopener noreferrer" class="footer-link social-link" aria-label="Facebook">
+        <svg class="social-icon" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+          <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+        </svg>
+      </a>
+    </div>
+    <p class="footer-copyright">&copy; <script>document.write(new Date().getFullYear())</script> KodiniTools</p>
+  </div>
+</footer>
+
+<script>
+// Footer i18n
+(function() {
+  'use strict';
+
+  var FOOTER_TRANSLATIONS = {
+    de: {
+      'footer.privacy': 'Datenschutz',
+      'footer.contact': 'Kontakt',
+      'footer.cookieSettings': 'Cookie-Einstellungen'
+    },
+    en: {
+      'footer.privacy': 'Privacy Policy',
+      'footer.contact': 'Contact',
+      'footer.cookieSettings': 'Cookie Settings'
+    }
+  };
+
+  function applyFooterTranslations() {
+    var lang = localStorage.getItem('locale') || 'de';
+    var t = FOOTER_TRANSLATIONS[lang] || FOOTER_TRANSLATIONS['de'];
+    var footer = document.querySelector('.site-footer');
+    if (!footer) return;
+    footer.querySelectorAll('[data-i18n]').forEach(function(el) {
+      var key = el.getAttribute('data-i18n');
+      if (t[key]) el.textContent = t[key];
+    });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', applyFooterTranslations);
+  } else {
+    applyFooterTranslations();
+  }
+
+  // Live-Update bei Sprachwechsel (ohne Reload)
+  window.addEventListener('locale-changed', applyFooterTranslations);
+})();
+</script>
