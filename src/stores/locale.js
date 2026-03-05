@@ -24,14 +24,14 @@ export const useLocaleStore = defineStore('locale', () => {
 
     // Dispatch language-changed event so SSI partials can react
     window.dispatchEvent(new CustomEvent('language-changed', {
-      detail: { lang: newLocale }
+      detail: { language: newLocale }
     }))
   }, { immediate: true })
 
   // Listen for language-changed custom events from SSI nav
   // SSI nav handles click → translateNav() → dispatches this event
   function handleLanguageChanged(event) {
-    const newLocale = event.detail?.lang
+    const newLocale = event.detail?.language || event.detail?.lang
     if (newLocale && ['de', 'en'].includes(newLocale) && newLocale !== locale.value) {
       locale.value = newLocale
     }
