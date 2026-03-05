@@ -22,22 +22,20 @@ export const useLocaleStore = defineStore('locale', () => {
       el.textContent = el.getAttribute('data-lang-' + newLocale)
     })
 
-    // Dispatch language-changed event so SSI partials can react
-    window.dispatchEvent(new CustomEvent('language-changed', {
-      detail: { language: newLocale }
-    }))
   }, { immediate: true })
 
-  // Listen for language-changed custom events from SSI nav
-  // SSI nav handles click → translateNav() → dispatches this event
-  function handleLanguageChanged(event) {
-    const newLocale = event.detail?.language || event.detail?.lang
+  // Listen for clicks on SSI nav language buttons (event delegation)
+  // SSI nav buttons have class .global-nav-lang-btn with data-lang attribute
+  function handleNavLangClick(event) {
+    const btn = event.target.closest('.global-nav-lang-btn')
+    if (!btn) return
+    const newLocale = btn.getAttribute('data-lang')
     if (newLocale && ['de', 'en'].includes(newLocale) && newLocale !== locale.value) {
       locale.value = newLocale
     }
   }
 
-  window.addEventListener('language-changed', handleLanguageChanged)
+  document.addEventListener('click', handleNavLangClick)
 
   // Actions
   function setLocale(newLocale) {
@@ -47,7 +45,7 @@ export const useLocaleStore = defineStore('locale', () => {
   }
 
   function cleanup() {
-    window.removeEventListener('language-changed', handleLanguageChanged)
+    document.removeEventListener('click', handleNavLangClick)
   }
 
   return {
