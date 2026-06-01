@@ -4,11 +4,11 @@
       {{ $t('converter.upload.heading') }}
     </h2>
     
-    <div 
+    <div
       ref="dropArea"
-      class="drop-area" 
+      class="drop-area"
       :class="{ 'drag-over': isDragging }"
-      role="button" 
+      role="button"
       tabindex="0"
       @click="openFileDialog"
       @keydown.enter.space.prevent="openFileDialog"
@@ -18,7 +18,14 @@
       @drop.prevent="handleDrop"
     >
       <div class="drop-content">
-        <p>{{ $t('converter.upload.instruction') }}</p>
+        <div class="upload-icon-wrap" aria-hidden="true">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 15V4M12 4L8.5 7.5M12 4L15.5 7.5" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M3 15V17.5C3 18.8807 4.11929 20 5.5 20H18.5C19.8807 20 21 18.8807 21 17.5V15" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <p class="drop-title">{{ $t('converter.upload.instruction') }}</p>
+        <span class="drop-hint">{{ $t('converter.upload.button') }}</span>
 
         <input
           ref="fileInput"
@@ -29,19 +36,6 @@
           @change="handleFileSelect"
           :aria-label="$t('converter.upload.ariaLabel')"
         >
-
-        <button
-          type="button"
-          class="select-btn select-btn--icon-only"
-          @click.stop="openFileDialog"
-          :aria-label="$t('converter.upload.button')"
-          :title="$t('converter.upload.button')"
-        >
-          <svg class="btn-icon-svg" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-            <path d="M12 16V4M12 4L8 8M12 4L16 8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-            <path d="M3 15V17C3 18.6569 4.34315 20 6 20H18C19.6569 20 21 18.6569 21 17V15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
-        </button>
       </div>
     </div>
   </section>
