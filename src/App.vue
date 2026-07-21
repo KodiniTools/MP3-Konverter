@@ -65,6 +65,9 @@
     <FAQSection />
 
     <!-- Footer (wird später über SSI eingebunden) -->
+
+    <!-- Sticky Player Bar für die interaktive Playlist -->
+    <PlayerStickyBar />
   </div>
 </template>
 
@@ -82,6 +85,7 @@ import ConversionOptions from './components/converter/ConversionOptions.vue'
 import ActionButtons from './components/converter/ActionButtons.vue'
 import ProgressSection from './components/converter/ProgressSection.vue'
 import StatusMessage from './components/converter/StatusMessage.vue'
+import PlayerStickyBar from './components/converter/PlayerStickyBar.vue'
 import FeaturesSection from './components/sections/FeaturesSection.vue'
 import OtherToolsSection from './components/sections/OtherToolsSection.vue'
 import DonateSection from './components/sections/DonateSection.vue'

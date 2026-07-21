@@ -3,21 +3,41 @@
     <h2 id="files-heading" class="section-heading">
       {{ $t('converter.fileList.heading') }}
     </h2>
-    
+
     <div class="file-list" role="list" aria-live="polite">
-      <div 
-        v-for="(file, index) in files" 
+      <div
+        v-for="(file, index) in files"
         :key="`${file.name}-${index}`"
         class="file-item"
+        :class="{ 'is-active': index === currentTrackIndex }"
         role="listitem"
       >
-        <div class="file-icon" aria-hidden="true">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
-            <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/>
+        <button
+          type="button"
+          class="play-file-btn"
+          @click="togglePlay(index)"
+          :aria-label="isTrackPlaying(index)
+            ? $t('converter.fileList.pauseFile', { name: file.name })
+            : $t('converter.fileList.playFile', { name: file.name })"
+          :aria-pressed="isTrackPlaying(index)"
+        >
+          <!-- Pause-Symbol wenn dieser Track gerade läuft, sonst Play -->
+          <svg v-if="isTrackPlaying(index)" width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <rect x="6" y="5" width="4" height="14" rx="1"/>
+            <rect x="14" y="5" width="4" height="14" rx="1"/>
           </svg>
-        </div>
-        <div class="file-info">
-          <span class="file-name">{{ file.name }}</span>
+          <svg v-else width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <path d="M8 5.14v13.72a1 1 0 0 0 1.54.84l10.29-6.86a1 1 0 0 0 0-1.68L9.54 4.3A1 1 0 0 0 8 5.14z"/>
+          </svg>
+        </button>
+
+        <div class="file-info file-info--clickable" @click="togglePlay(index)">
+          <span class="file-name">
+            {{ file.name }}
+            <span v-if="index === currentTrackIndex" class="now-playing-badge">
+              {{ isPlaying ? $t('converter.fileList.playing') : $t('converter.fileList.paused') }}
+            </span>
+          </span>
           <span class="file-size">{{ formatFileSize(file.size) }}</span>
         </div>
 
@@ -35,6 +55,9 @@
 </template>
 
 <script setup>
+import { computed } from 'vue'
+import { useConverterStore } from '../../stores/converter'
+
 defineProps({
   files: {
     type: Array,
@@ -43,6 +66,25 @@ defineProps({
 })
 
 defineEmits(['remove-file'])
+
+const converterStore = useConverterStore()
+
+const currentTrackIndex = computed(() => converterStore.currentTrackIndex)
+const isPlaying = computed(() => converterStore.isPlaying)
+
+// Läuft genau dieser Track gerade (geladen + Wiedergabe aktiv)?
+function isTrackPlaying(index) {
+  return index === currentTrackIndex.value && isPlaying.value
+}
+
+// Klick auf einen Track: neuen Track starten oder aktuellen pausieren/fortsetzen
+function togglePlay(index) {
+  if (index === currentTrackIndex.value) {
+    converterStore.togglePlay()
+  } else {
+    converterStore.playTrack(index)
+  }
+}
 
 function formatFileSize(bytes) {
   if (bytes === 0) return '0 Bytes'
