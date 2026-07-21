@@ -23,8 +23,21 @@
       "ariaLabel": "Audiodateien auswählen"
     },
     "fileList": {
-      "heading": "Ausgewählte Dateien",
-      "removeFile": "Datei {name} entfernen"
+      "heading": "Playliste",
+      "removeFile": "Datei {name} entfernen",
+      "playFile": "{name} abspielen",
+      "pauseFile": "{name} pausieren",
+      "playing": "Läuft",
+      "paused": "Pausiert"
+    },
+    "player": {
+      "ariaLabel": "Audio-Player",
+      "play": "Abspielen",
+      "pause": "Pausieren",
+      "previous": "Vorheriger Titel",
+      "next": "Nächster Titel",
+      "seek": "Position ändern",
+      "close": "Player schließen"
     },
     "options": {
       "heading": "Konvertierungsoptionen",

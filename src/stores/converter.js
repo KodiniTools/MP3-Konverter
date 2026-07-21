@@ -19,6 +19,18 @@ export const useConverterStore = defineStore('converter', () => {
   const showRetry = ref(false)
   const filesCompleted = ref(0)
 
+  // ===== Playlist / Player State =====
+  // Index der aktuell im Sticky-Player geladenen Datei (null = keine)
+  const currentTrackIndex = ref(null)
+  // Ob die aktuelle Datei gerade abgespielt wird
+  const isPlaying = ref(false)
+
+  // Aktuell geladener Track (File-Objekt oder null)
+  const currentTrack = computed(() => {
+    if (currentTrackIndex.value === null) return null
+    return files.value[currentTrackIndex.value] || null
+  })
+
   // Audio Context für Erfolgston
   let audioContext = null
 
@@ -98,12 +110,69 @@ export const useConverterStore = defineStore('converter', () => {
 
   function removeFile(index) {
     files.value.splice(index, 1)
-    
+
+    // Player-Zustand an die veränderte Liste anpassen
+    if (currentTrackIndex.value !== null) {
+      if (index === currentTrackIndex.value) {
+        // Der aktuell geladene Track wurde entfernt -> Player stoppen
+        stopPlayback()
+      } else if (index < currentTrackIndex.value) {
+        // Ein Track vor dem aktuellen wurde entfernt -> Index nachziehen
+        currentTrackIndex.value -= 1
+      }
+    }
+
     if (files.value.length === 0) {
       updateStatus('Keine Dateien ausgewählt', 'info')
     } else {
       updateStatus(`${files.value.length} Datei(en) ausgewählt`, 'info')
     }
+  }
+
+  // ===== Playlist / Player Actions =====
+
+  // Einen bestimmten Track laden und abspielen
+  function playTrack(index) {
+    if (index < 0 || index >= files.value.length) return
+    currentTrackIndex.value = index
+    isPlaying.value = true
+  }
+
+  // Play/Pause für den aktuell geladenen Track umschalten
+  function togglePlay() {
+    if (currentTrackIndex.value === null) {
+      // Nichts geladen -> ersten Track starten
+      if (files.value.length > 0) playTrack(0)
+      return
+    }
+    isPlaying.value = !isPlaying.value
+  }
+
+  // Nächsten Track in der Playlist abspielen (mit Umbruch)
+  function playNext() {
+    if (files.value.length === 0) return
+    const current = currentTrackIndex.value === null ? -1 : currentTrackIndex.value
+    const next = (current + 1) % files.value.length
+    playTrack(next)
+  }
+
+  // Vorherigen Track in der Playlist abspielen (mit Umbruch)
+  function playPrevious() {
+    if (files.value.length === 0) return
+    const current = currentTrackIndex.value === null ? 0 : currentTrackIndex.value
+    const prev = (current - 1 + files.value.length) % files.value.length
+    playTrack(prev)
+  }
+
+  // Wiedergabe komplett beenden und Player ausblenden
+  function stopPlayback() {
+    currentTrackIndex.value = null
+    isPlaying.value = false
+  }
+
+  // Vom <audio>-Element gemeldeten Play/Pause-Status übernehmen
+  function setPlaying(value) {
+    isPlaying.value = value
   }
 
   async function startConversion() {
@@ -244,6 +313,7 @@ export const useConverterStore = defineStore('converter', () => {
 
   function resetAfterConversion() {
     files.value = []
+    stopPlayback()
     showProgress.value = false
     progress.value = 0
     updateStatus('Bereit für neue Konvertierung', 'info')
@@ -275,12 +345,21 @@ export const useConverterStore = defineStore('converter', () => {
     statusType,
     showRetry,
     filesCompleted,
+    currentTrackIndex,
+    isPlaying,
+    currentTrack,
 
     // Actions
     addFiles,
     removeFile,
     startConversion,
     retryConversion,
-    getOutputFormat
+    getOutputFormat,
+    playTrack,
+    togglePlay,
+    playNext,
+    playPrevious,
+    stopPlayback,
+    setPlaying
   }
 })
