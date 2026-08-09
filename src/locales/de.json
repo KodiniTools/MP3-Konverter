@@ -37,7 +37,8 @@
       "save": "Speichern",
       "saveAgain": "Erneut speichern",
       "saved": "Gespeichert",
-      "saveFile": "{name} speichern"
+      "saveFile": "{name} speichern",
+      "removeFile": "Konvertierte Datei {name} verwerfen"
     },
     "player": {
       "ariaLabel": "Audio-Player",
