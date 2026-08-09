@@ -43,6 +43,9 @@ export const useConverterStore = defineStore('converter', () => {
   // Steuert den Abbruch des laufenden Konvertierungslaufs
   let abortController = null
 
+  // Timer, um kurzlebige Statusmeldungen (z. B. "abgebrochen") auszublenden
+  let statusClearTimer = null
+
   // Erfolgston abspielen
   function playSuccessSound() {
     try {
@@ -275,12 +278,12 @@ export const useConverterStore = defineStore('converter', () => {
     showProgress.value = false
     progress.value = 0
     const done = filesCompleted.value
-    updateStatus(
-      done > 0
-        ? `Abgebrochen – ${done} Datei(en) bereits fertig, ${files.value.length} in der Liste`
-        : 'Konvertierung abgebrochen',
-      'info'
-    )
+    const message = done > 0
+      ? `Abgebrochen – ${done} Datei(en) bereits fertig, ${files.value.length} in der Liste`
+      : 'Konvertierung abgebrochen'
+    updateStatus(message, 'info')
+    // Abbruch-Hinweis nach einigen Sekunden automatisch ausblenden
+    scheduleStatusClear(message)
   }
 
   // Laufende Konvertierung sauber abbrechen (Nutzer-Aktion).
@@ -454,8 +457,25 @@ export const useConverterStore = defineStore('converter', () => {
   }
 
   function updateStatus(message, type = 'info') {
+    // Jede neue Statusmeldung hebt ein geplantes Ausblenden auf
+    if (statusClearTimer) {
+      clearTimeout(statusClearTimer)
+      statusClearTimer = null
+    }
     statusMessage.value = message
     statusType.value = type
+  }
+
+  // Statusmeldung nach kurzer Zeit ausblenden – aber nur, wenn sie
+  // in der Zwischenzeit nicht durch eine neue Meldung ersetzt wurde.
+  function scheduleStatusClear(expectedMessage, delay = 4000) {
+    if (statusClearTimer) clearTimeout(statusClearTimer)
+    statusClearTimer = setTimeout(() => {
+      if (statusMessage.value === expectedMessage) {
+        statusMessage.value = ''
+      }
+      statusClearTimer = null
+    }, delay)
   }
 
   function getOutputFormat() {

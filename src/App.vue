@@ -53,6 +53,7 @@
             />
 
             <StatusMessage
+              v-if="statusMessage"
               :message="statusMessage"
               :type="statusType"
             />
