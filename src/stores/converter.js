@@ -377,6 +377,13 @@ export const useConverterStore = defineStore('converter', () => {
     setTimeout(() => URL.revokeObjectURL(downloadUrl), 100)
   }
 
+  // Ein einzelnes konvertiertes Ergebnis verwerfen (z. B. falsche Bitrate).
+  // Die hochgeladene Quell-Datei in der Playliste bleibt unberührt.
+  function removeConvertedFile(index) {
+    if (index < 0 || index >= convertedFiles.value.length) return
+    convertedFiles.value.splice(index, 1)
+  }
+
   // Ergebnisliste leeren (z. B. für einen neuen Durchlauf)
   function clearConvertedFiles() {
     convertedFiles.value = []
@@ -428,6 +435,7 @@ export const useConverterStore = defineStore('converter', () => {
     startConversion,
     retryConversion,
     saveConvertedFile,
+    removeConvertedFile,
     clearConvertedFiles,
     getOutputFormat,
     playTrack,

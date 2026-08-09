@@ -36,6 +36,15 @@
           </svg>
           <span>{{ file.saved ? $t('converter.results.saveAgain') : $t('converter.results.save') }}</span>
         </button>
+
+        <button
+          type="button"
+          class="remove-file-btn"
+          @click="$emit('remove', index)"
+          :aria-label="$t('converter.results.removeFile', { name: file.name })"
+        >
+          ✕
+        </button>
       </div>
     </div>
   </section>
@@ -49,7 +58,7 @@ defineProps({
   }
 })
 
-defineEmits(['save'])
+defineEmits(['save', 'remove'])
 
 function formatFileSize(bytes) {
   if (!bytes || bytes === 0) return '0 Bytes'

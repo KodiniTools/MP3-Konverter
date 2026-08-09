@@ -47,6 +47,7 @@
               v-if="convertedFiles.length > 0"
               :files="convertedFiles"
               @save="saveConvertedFile"
+              @remove="removeConvertedFile"
             />
 
             <StatusMessage
@@ -189,6 +190,10 @@ function removeFile(index) {
 
 function saveConvertedFile(index) {
   converterStore.saveConvertedFile(index)
+}
+
+function removeConvertedFile(index) {
+  converterStore.removeConvertedFile(index)
 }
 
 async function startConversion() {

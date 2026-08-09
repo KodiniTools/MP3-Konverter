@@ -37,7 +37,8 @@
       "save": "Save",
       "saveAgain": "Save again",
       "saved": "Saved",
-      "saveFile": "Save {name}"
+      "saveFile": "Save {name}",
+      "removeFile": "Discard converted file {name}"
     },
     "player": {
       "ariaLabel": "Audio player",
