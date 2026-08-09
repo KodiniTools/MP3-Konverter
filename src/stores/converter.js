@@ -19,6 +19,10 @@ export const useConverterStore = defineStore('converter', () => {
   const showRetry = ref(false)
   const filesCompleted = ref(0)
 
+  // Konvertierte Ergebnisse, die der Nutzer per Speichern-Dialog sichern kann
+  // Aufbau je Eintrag: { name, blob, size, saved }
+  const convertedFiles = ref([])
+
   // ===== Playlist / Player State =====
   // Index der aktuell im Sticky-Player geladenen Datei (null = keine)
   const currentTrackIndex = ref(null)
@@ -186,6 +190,8 @@ export const useConverterStore = defineStore('converter', () => {
     filesCompleted.value = 0
     showProgress.value = true
     progress.value = 0
+    // Ergebnisse eines vorherigen Laufs verwerfen
+    convertedFiles.value = []
 
     try {
       const totalFiles = files.value.length
@@ -210,7 +216,10 @@ export const useConverterStore = defineStore('converter', () => {
         progress.value = Math.round(((i + 1) / totalFiles) * 100)
       }
 
-      updateStatus(`${totalFiles} Datei(en) erfolgreich konvertiert!`, 'success')
+      updateStatus(
+        `${totalFiles} Datei(en) konvertiert – jetzt speichern`,
+        'success'
+      )
       progress.value = 100
 
       // Erfolgston abspielen
@@ -222,10 +231,8 @@ export const useConverterStore = defineStore('converter', () => {
         `${totalFiles} Datei(en) erfolgreich konvertiert.`
       )
 
-      // Reset nach erfolgreicher Konvertierung
-      setTimeout(() => {
-        resetAfterConversion()
-      }, 2000)
+      // Kein Auto-Download mehr: Der Nutzer speichert die Dateien selbst
+      // über den Speichern-Dialog (Umbenennen + Speicherort).
 
     } catch (error) {
       console.error('❌ Konvertierungsfehler:', error)
@@ -270,13 +277,20 @@ export const useConverterStore = defineStore('converter', () => {
         throw new Error(result.error || 'Konvertierung fehlgeschlagen')
       }
 
-      // Verwende originalen Dateinamen mit neuer Erweiterung für den Download
+      // Verwende originalen Dateinamen mit neuer Erweiterung als Vorschlag
       // Falls Backend einen anderen Namen zurückgibt, bevorzuge den originalen Namen
       const downloadFilename = expectedFilename
 
-      // Download konvertierte Datei - URL bereits mit /mp3konverter/files/
-      console.log(`📥 Lade herunter: ${downloadFilename}`)
-      await downloadFromBackend(result.url, downloadFilename)
+      // Konvertierte Datei vom Backend holen und als Ergebnis ablegen.
+      // Gespeichert wird erst später über den Speichern-Dialog des Nutzers.
+      console.log(`📥 Hole Ergebnis: ${downloadFilename}`)
+      const blob = await fetchConvertedBlob(result.url)
+      convertedFiles.value.push({
+        name: downloadFilename,
+        blob,
+        size: blob.size,
+        saved: false
+      })
 
       console.log(`✅ ${downloadFilename} erfolgreich konvertiert`)
 
@@ -286,33 +300,91 @@ export const useConverterStore = defineStore('converter', () => {
     }
   }
 
-  async function downloadFromBackend(url, filename) {
-    try {
-      // URL kommt als "/files/..." vom Backend, muss zu "/mp3konverter/files/..." werden
-      const fullUrl = url.startsWith('/mp3konverter/') ? url : `/mp3konverter${url}`
-      
-      const response = await fetch(fullUrl)
-      if (!response.ok) throw new Error(`Download fehlgeschlagen: ${response.status}`)
-      
-      const blob = await response.blob()
-      const downloadUrl = URL.createObjectURL(blob)
-      const link = document.createElement('a')
-      link.href = downloadUrl
-      link.download = filename
-      document.body.appendChild(link)
-      link.click()
-      document.body.removeChild(link)
-      
-      setTimeout(() => URL.revokeObjectURL(downloadUrl), 100)
-      console.log(`💾 ${filename} heruntergeladen`)
-    } catch (error) {
-      console.error('Download-Fehler:', error)
-      throw new Error(`Download fehlgeschlagen: ${error.message}`)
+  // Lädt das konvertierte Blob vom Backend (ohne es zu speichern)
+  async function fetchConvertedBlob(url) {
+    // URL kommt als "/files/..." vom Backend, muss zu "/mp3konverter/files/..." werden
+    const fullUrl = url.startsWith('/mp3konverter/') ? url : `/mp3konverter${url}`
+
+    const response = await fetch(fullUrl)
+    if (!response.ok) throw new Error(`Abruf fehlgeschlagen: ${response.status}`)
+
+    return await response.blob()
+  }
+
+  // Passende MIME-Typen als Fallback, falls das Blob keinen Typ mitbringt
+  function mimeForExtension(ext) {
+    const map = {
+      mp3: 'audio/mpeg',
+      aac: 'audio/aac',
+      m4a: 'audio/mp4',
+      wav: 'audio/wav',
+      ogg: 'audio/ogg',
+      flac: 'audio/flac'
     }
+    return map[ext] || 'application/octet-stream'
+  }
+
+  // Ein konvertiertes Ergebnis speichern.
+  // Moderne Browser (Chromium): Dialog mit Umbenennen + Speicherort-Auswahl.
+  // Andere Browser (Firefox/Safari): klassischer Download als Fallback.
+  async function saveConvertedFile(index) {
+    const item = convertedFiles.value[index]
+    if (!item) return
+
+    const ext = item.name.includes('.') ? item.name.split('.').pop().toLowerCase() : ''
+    const mime = item.blob.type || mimeForExtension(ext)
+
+    // Bevorzugt: File System Access API (Speichern-unter-Dialog)
+    if (typeof window.showSaveFilePicker === 'function') {
+      try {
+        const options = { suggestedName: item.name }
+        if (ext) {
+          options.types = [{
+            description: 'Audiodatei',
+            accept: { [mime]: [`.${ext}`] }
+          }]
+        }
+        const handle = await window.showSaveFilePicker(options)
+        const writable = await handle.createWritable()
+        await writable.write(item.blob)
+        await writable.close()
+
+        item.saved = true
+        updateStatus(`Gespeichert: ${handle.name || item.name}`, 'success')
+        return
+      } catch (error) {
+        // Nutzer hat den Dialog abgebrochen -> kein Fehler, nichts tun
+        if (error && error.name === 'AbortError') return
+        // Andere Fehler (z. B. fehlende Nutzer-Geste): auf klassischen Download ausweichen
+        console.warn('Speichern-Dialog nicht möglich, nutze Fallback-Download:', error)
+      }
+    }
+
+    // Fallback: klassischer Download in den Standard-Download-Ordner
+    fallbackDownload(item.blob, item.name)
+    item.saved = true
+    updateStatus(`Heruntergeladen: ${item.name}`, 'success')
+  }
+
+  function fallbackDownload(blob, filename) {
+    const downloadUrl = URL.createObjectURL(blob)
+    const link = document.createElement('a')
+    link.href = downloadUrl
+    link.download = filename
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+    setTimeout(() => URL.revokeObjectURL(downloadUrl), 100)
+  }
+
+  // Ergebnisliste leeren (z. B. für einen neuen Durchlauf)
+  function clearConvertedFiles() {
+    convertedFiles.value = []
   }
 
   function resetAfterConversion() {
     files.value = []
+    convertedFiles.value = []
     stopPlayback()
     showProgress.value = false
     progress.value = 0
@@ -345,6 +417,7 @@ export const useConverterStore = defineStore('converter', () => {
     statusType,
     showRetry,
     filesCompleted,
+    convertedFiles,
     currentTrackIndex,
     isPlaying,
     currentTrack,
@@ -354,6 +427,8 @@ export const useConverterStore = defineStore('converter', () => {
     removeFile,
     startConversion,
     retryConversion,
+    saveConvertedFile,
+    clearConvertedFiles,
     getOutputFormat,
     playTrack,
     togglePlay,
