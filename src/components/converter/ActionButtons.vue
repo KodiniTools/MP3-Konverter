@@ -19,6 +19,21 @@
     </button>
 
     <button
+      v-if="isConverting"
+      type="button"
+      class="cancel-btn action-btn"
+      :disabled="isCancelling"
+      @click="$emit('cancel')"
+    >
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path d="M18 6 6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+      </svg>
+      <span class="btn-text">
+        {{ isCancelling ? $t('converter.actions.cancelling') : $t('converter.actions.cancel') }}
+      </span>
+    </button>
+
+    <button
       v-if="showRetry"
       type="button"
       class="retry-btn action-btn"
@@ -43,11 +58,15 @@ defineProps({
     type: Boolean,
     default: false
   },
+  isCancelling: {
+    type: Boolean,
+    default: false
+  },
   showRetry: {
     type: Boolean,
     default: false
   }
 })
 
-defineEmits(['convert', 'retry'])
+defineEmits(['convert', 'retry', 'cancel'])
 </script>

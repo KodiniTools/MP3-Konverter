@@ -59,6 +59,8 @@
     "actions": {
       "convert": "Konvertieren",
       "converting": "Konvertiere...",
+      "cancel": "Abbrechen",
+      "cancelling": "Wird abgebrochen...",
       "retry": "Erneut versuchen",
       "download": "Herunterladen"
     },

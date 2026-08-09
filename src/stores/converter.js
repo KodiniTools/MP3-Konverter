@@ -18,6 +18,8 @@ export const useConverterStore = defineStore('converter', () => {
   const statusType = ref('info')
   const showRetry = ref(false)
   const filesCompleted = ref(0)
+  // True, sobald der Nutzer auf Abbrechen geklickt hat (bis der Lauf endet)
+  const isCancelling = ref(false)
 
   // Konvertierte Ergebnisse, die der Nutzer per Speichern-Dialog sichern kann
   // Aufbau je Eintrag: { name, blob, size, saved }
@@ -37,6 +39,9 @@ export const useConverterStore = defineStore('converter', () => {
 
   // Audio Context für Erfolgston
   let audioContext = null
+
+  // Steuert den Abbruch des laufenden Konvertierungslaufs
+  let abortController = null
 
   // Erfolgston abspielen
   function playSuccessSound() {
@@ -186,17 +191,24 @@ export const useConverterStore = defineStore('converter', () => {
     }
 
     isConverting.value = true
+    isCancelling.value = false
     showRetry.value = false
     filesCompleted.value = 0
     showProgress.value = true
     progress.value = 0
     // Ergebnisse eines vorherigen Laufs verwerfen
     convertedFiles.value = []
+    // Frischen Abbruch-Controller für diesen Lauf
+    abortController = new AbortController()
+    const signal = abortController.signal
+
+    const totalFiles = files.value.length
 
     try {
-      const totalFiles = files.value.length
-
       for (let i = 0; i < totalFiles; i++) {
+        // Vor jeder Datei prüfen, ob abgebrochen wurde
+        if (signal.aborted) break
+
         const file = files.value[i]
 
         // Update progress for current file
@@ -207,7 +219,7 @@ export const useConverterStore = defineStore('converter', () => {
 
         // Shimmer-Animation während Backend-Verarbeitung
         isProcessingFile.value = true
-        await convertFile(file)
+        await convertFile(file, signal)
         isProcessingFile.value = false
 
         filesCompleted.value++
@@ -216,35 +228,70 @@ export const useConverterStore = defineStore('converter', () => {
         progress.value = Math.round(((i + 1) / totalFiles) * 100)
       }
 
-      updateStatus(
-        `${totalFiles} Datei(en) konvertiert – jetzt speichern`,
-        'success'
-      )
-      progress.value = 100
+      if (signal.aborted) {
+        // Sauberer Abbruch: hochgeladene Dateien bleiben erhalten
+        handleCancelled()
+      } else {
+        updateStatus(
+          `${totalFiles} Datei(en) konvertiert – jetzt speichern`,
+          'success'
+        )
+        progress.value = 100
 
-      // Erfolgston abspielen
-      playSuccessSound()
+        // Erfolgston abspielen
+        playSuccessSound()
 
-      // Browser-Benachrichtigung
-      showNotification(
-        'Konvertierung abgeschlossen!',
-        `${totalFiles} Datei(en) erfolgreich konvertiert.`
-      )
+        // Browser-Benachrichtigung
+        showNotification(
+          'Konvertierung abgeschlossen!',
+          `${totalFiles} Datei(en) erfolgreich konvertiert.`
+        )
 
-      // Kein Auto-Download mehr: Der Nutzer speichert die Dateien selbst
-      // über den Speichern-Dialog (Umbenennen + Speicherort).
+        // Kein Auto-Download mehr: Der Nutzer speichert die Dateien selbst
+        // über den Speichern-Dialog (Umbenennen + Speicherort).
+      }
 
     } catch (error) {
-      console.error('❌ Konvertierungsfehler:', error)
-      updateStatus(`Konvertierungsfehler: ${error.message}`, 'error')
-      showRetry.value = true
       isProcessingFile.value = false
+      // Abbruch (AbortError) ist kein Fehler, sondern gewollt
+      if (signal.aborted || (error && error.name === 'AbortError')) {
+        handleCancelled()
+      } else {
+        console.error('❌ Konvertierungsfehler:', error)
+        updateStatus(`Konvertierungsfehler: ${error.message}`, 'error')
+        showRetry.value = true
+      }
     } finally {
       isConverting.value = false
+      isCancelling.value = false
+      abortController = null
     }
   }
 
-  async function convertFile(file) {
+  // Gemeinsame Status-Behandlung nach einem Abbruch.
+  // WICHTIG: Die hochgeladene Datei-Liste (files) wird NICHT verändert.
+  function handleCancelled() {
+    isProcessingFile.value = false
+    showProgress.value = false
+    progress.value = 0
+    const done = filesCompleted.value
+    updateStatus(
+      done > 0
+        ? `Abgebrochen – ${done} Datei(en) bereits fertig, ${files.value.length} in der Liste`
+        : 'Konvertierung abgebrochen',
+      'info'
+    )
+  }
+
+  // Laufende Konvertierung sauber abbrechen (Nutzer-Aktion).
+  function cancelConversion() {
+    if (!isConverting.value) return
+    isCancelling.value = true
+    updateStatus('Abbrechen …', 'info')
+    if (abortController) abortController.abort()
+  }
+
+  async function convertFile(file, signal) {
     try {
       console.log(`🎬 Konvertiere ${file.name} über Backend...`)
 
@@ -263,7 +310,8 @@ export const useConverterStore = defineStore('converter', () => {
       // Sende zum Backend
       const response = await fetch(`${API_BASE}/convert`, {
         method: 'POST',
-        body: formData
+        body: formData,
+        signal
       })
 
       if (!response.ok) {
@@ -284,7 +332,7 @@ export const useConverterStore = defineStore('converter', () => {
       // Konvertierte Datei vom Backend holen und als Ergebnis ablegen.
       // Gespeichert wird erst später über den Speichern-Dialog des Nutzers.
       console.log(`📥 Hole Ergebnis: ${downloadFilename}`)
-      const blob = await fetchConvertedBlob(result.url)
+      const blob = await fetchConvertedBlob(result.url, signal)
       convertedFiles.value.push({
         name: downloadFilename,
         blob,
@@ -295,17 +343,19 @@ export const useConverterStore = defineStore('converter', () => {
       console.log(`✅ ${downloadFilename} erfolgreich konvertiert`)
 
     } catch (error) {
+      // Sauberen Abbruch unverändert durchreichen (kein Fehler-Status)
+      if (error && error.name === 'AbortError') throw error
       console.error(`❌ Fehler bei ${file.name}:`, error)
       throw new Error(`Konvertierung von ${file.name} fehlgeschlagen: ${error.message}`)
     }
   }
 
   // Lädt das konvertierte Blob vom Backend (ohne es zu speichern)
-  async function fetchConvertedBlob(url) {
+  async function fetchConvertedBlob(url, signal) {
     // URL kommt als "/files/..." vom Backend, muss zu "/mp3konverter/files/..." werden
     const fullUrl = url.startsWith('/mp3konverter/') ? url : `/mp3konverter${url}`
 
-    const response = await fetch(fullUrl)
+    const response = await fetch(fullUrl, { signal })
     if (!response.ok) throw new Error(`Abruf fehlgeschlagen: ${response.status}`)
 
     return await response.blob()
@@ -424,6 +474,7 @@ export const useConverterStore = defineStore('converter', () => {
     statusType,
     showRetry,
     filesCompleted,
+    isCancelling,
     convertedFiles,
     currentTrackIndex,
     isPlaying,
@@ -433,6 +484,7 @@ export const useConverterStore = defineStore('converter', () => {
     addFiles,
     removeFile,
     startConversion,
+    cancelConversion,
     retryConversion,
     saveConvertedFile,
     removeConvertedFile,

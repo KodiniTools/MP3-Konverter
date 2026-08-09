@@ -32,7 +32,9 @@
             <ActionButtons
               :disabled="!canConvert"
               :is-converting="isConverting"
+              :is-cancelling="isCancelling"
               @convert="startConversion"
+              @cancel="cancelConversion"
               @retry="retryConversion"
               :show-retry="showRetry"
             />
@@ -109,6 +111,7 @@ const files = computed(() => converterStore.files)
 const convertedFiles = computed(() => converterStore.convertedFiles)
 const conversionSettings = computed(() => converterStore.settings)
 const isConverting = computed(() => converterStore.isConverting)
+const isCancelling = computed(() => converterStore.isCancelling)
 const isProcessingFile = computed(() => converterStore.isProcessingFile)
 const progress = computed(() => converterStore.progress)
 const showProgress = computed(() => converterStore.showProgress)
@@ -198,6 +201,10 @@ function removeConvertedFile(index) {
 
 async function startConversion() {
   await converterStore.startConversion()
+}
+
+function cancelConversion() {
+  converterStore.cancelConversion()
 }
 
 function retryConversion() {

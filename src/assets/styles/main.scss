@@ -501,6 +501,33 @@
   background: color-mix(in srgb, var(--warning-color) 85%, black);
 }
 
+.cancel-btn {
+  width: 100%;
+  margin-top: 0.5rem;
+  background: transparent;
+  color: var(--error-color);
+  border: 1px solid color-mix(in srgb, var(--error-color) 45%, transparent);
+  box-shadow: none;
+  border-radius: 10px;
+  padding: 0.55rem 1.25rem;
+  font-size: 0.875rem;
+}
+
+.cancel-btn::before {
+  display: none;
+}
+
+.cancel-btn:hover {
+  background: color-mix(in srgb, var(--error-color) 12%, transparent);
+  border-color: var(--error-color);
+  color: var(--error-color);
+}
+
+.cancel-btn:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
 @keyframes spin {
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
