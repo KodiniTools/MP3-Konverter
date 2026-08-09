@@ -20,6 +20,7 @@
       "heading": "Dateien hochladen",
       "instruction": "Audiodateien hierher ziehen oder klicken zum Auswählen",
       "button": "Dateien auswählen",
+      "pasteHint": "oder mit Strg+V aus der Zwischenablage einfügen",
       "ariaLabel": "Audiodateien auswählen"
     },
     "fileList": {

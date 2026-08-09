@@ -26,6 +26,7 @@
         </div>
         <p class="drop-title">{{ $t('converter.upload.instruction') }}</p>
         <span class="drop-hint">{{ $t('converter.upload.button') }}</span>
+        <span class="drop-paste-hint">{{ $t('converter.upload.pasteHint') }}</span>
 
         <input
           ref="fileInput"

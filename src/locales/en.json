@@ -20,6 +20,7 @@
       "heading": "Upload Files",
       "instruction": "Drag & drop audio files here, or click to select",
       "button": "Select Files",
+      "pasteHint": "or paste from clipboard with Ctrl+V",
       "ariaLabel": "Select audio files"
     },
     "fileList": {
