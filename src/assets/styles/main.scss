@@ -379,9 +379,9 @@
 }
 
 .drop-paste-hint {
-  color: var(--text-secondary);
+  color: var(--text-primary);
   font-size: 0.75rem;
-  opacity: 0.75;
+  opacity: 0.85;
   margin: 0;
 }
 
@@ -501,30 +501,39 @@
   background: color-mix(in srgb, var(--warning-color) 85%, black);
 }
 
-.cancel-btn {
+/* Abbrechen-Button: solides, aus der Fehlerfarbe abgeleitetes Rot mit
+   weißem Text – kontraststark in Hell- UND Dunkelmodus. Die doppelte
+   Klasse (.cancel-btn.action-btn) und die dark-Selektoren schlagen die
+   generische Regel [data-theme="dark"] .action-btn { color:#091428 }. */
+.cancel-btn.action-btn {
   width: 100%;
   margin-top: 0.5rem;
-  background: transparent;
-  color: var(--error-color);
-  border: 1px solid color-mix(in srgb, var(--error-color) 45%, transparent);
-  box-shadow: none;
+  background: color-mix(in srgb, var(--error-color) 78%, #000);
+  border: 1px solid transparent;
   border-radius: 10px;
   padding: 0.55rem 1.25rem;
   font-size: 0.875rem;
+  box-shadow: 0 1px 3px color-mix(in srgb, var(--error-color) 35%, transparent);
+}
+
+.cancel-btn.action-btn,
+[data-theme="dark"] .cancel-btn.action-btn {
+  color: #ffffff;
 }
 
 .cancel-btn::before {
   display: none;
 }
 
-.cancel-btn:hover {
-  background: color-mix(in srgb, var(--error-color) 12%, transparent);
-  border-color: var(--error-color);
-  color: var(--error-color);
+.cancel-btn.action-btn:hover,
+[data-theme="dark"] .cancel-btn.action-btn:hover {
+  background: color-mix(in srgb, var(--error-color) 66%, #000);
+  color: #ffffff;
+  box-shadow: 0 4px 12px color-mix(in srgb, var(--error-color) 40%, transparent);
 }
 
-.cancel-btn:disabled {
-  opacity: 0.6;
+.cancel-btn.action-btn:disabled {
+  opacity: 0.65;
   cursor: default;
 }
 
