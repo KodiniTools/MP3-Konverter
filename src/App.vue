@@ -42,7 +42,13 @@
               :progress="progress"
               :is-processing="isProcessingFile"
             />
-            
+
+            <ConvertedFiles
+              v-if="convertedFiles.length > 0"
+              :files="convertedFiles"
+              @save="saveConvertedFile"
+            />
+
             <StatusMessage
               :message="statusMessage"
               :type="statusType"
@@ -84,6 +90,7 @@ import FileList from './components/converter/FileList.vue'
 import ConversionOptions from './components/converter/ConversionOptions.vue'
 import ActionButtons from './components/converter/ActionButtons.vue'
 import ProgressSection from './components/converter/ProgressSection.vue'
+import ConvertedFiles from './components/converter/ConvertedFiles.vue'
 import StatusMessage from './components/converter/StatusMessage.vue'
 import PlayerStickyBar from './components/converter/PlayerStickyBar.vue'
 import FeaturesSection from './components/sections/FeaturesSection.vue'
@@ -98,6 +105,7 @@ const localeStore = useLocaleStore()
 
 // Reactive state
 const files = computed(() => converterStore.files)
+const convertedFiles = computed(() => converterStore.convertedFiles)
 const conversionSettings = computed(() => converterStore.settings)
 const isConverting = computed(() => converterStore.isConverting)
 const isProcessingFile = computed(() => converterStore.isProcessingFile)
@@ -177,6 +185,10 @@ function handlePaste(event) {
 
 function removeFile(index) {
   converterStore.removeFile(index)
+}
+
+function saveConvertedFile(index) {
+  converterStore.saveConvertedFile(index)
 }
 
 async function startConversion() {

@@ -31,6 +31,14 @@
       "playing": "Playing",
       "paused": "Paused"
     },
+    "results": {
+      "heading": "Converted Files",
+      "hint": "Click “Save” to choose the file name and location yourself.",
+      "save": "Save",
+      "saveAgain": "Save again",
+      "saved": "Saved",
+      "saveFile": "Save {name}"
+    },
     "player": {
       "ariaLabel": "Audio player",
       "play": "Play",

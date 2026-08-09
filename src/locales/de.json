@@ -31,6 +31,14 @@
       "playing": "Läuft",
       "paused": "Pausiert"
     },
+    "results": {
+      "heading": "Konvertierte Dateien",
+      "hint": "Klicke auf „Speichern“, um Dateiname und Speicherort selbst zu wählen.",
+      "save": "Speichern",
+      "saveAgain": "Erneut speichern",
+      "saved": "Gespeichert",
+      "saveFile": "{name} speichern"
+    },
     "player": {
       "ariaLabel": "Audio-Player",
       "play": "Abspielen",

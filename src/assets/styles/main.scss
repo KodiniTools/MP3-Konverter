@@ -655,6 +655,67 @@
   vertical-align: middle;
 }
 
+/* ===== KONVERTIERTE DATEIEN (SPEICHERN) ===== */
+.converted-list-section {
+  margin-top: 1rem;
+}
+
+.converted-hint {
+  margin: 0 0 0.75rem 0;
+  font-size: 0.8125rem;
+  color: var(--text-secondary);
+}
+
+.converted-item {
+  border-color: color-mix(in srgb, var(--success-color) 30%, var(--border));
+  background: color-mix(in srgb, var(--success-color) 6%, var(--background-secondary));
+}
+
+.converted-item.is-saved {
+  opacity: 0.85;
+}
+
+.saved-badge {
+  display: inline-block;
+  margin-left: 0.5rem;
+  padding: 0.05rem 0.45rem;
+  font-size: 0.625rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--success-color) 18%, transparent);
+  color: var(--success-color);
+  vertical-align: middle;
+}
+
+.save-file-btn {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.45rem 0.8rem;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  border-radius: 7px;
+  border: 1px solid color-mix(in srgb, var(--primary-solid) 35%, transparent);
+  background: color-mix(in srgb, var(--primary-solid) 12%, transparent);
+  color: var(--primary-solid);
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.save-file-btn:hover {
+  background: var(--primary-solid);
+  color: #fff;
+  border-color: var(--primary-solid);
+}
+
+.save-file-btn:focus-visible {
+  outline: 2px solid var(--primary-solid);
+  outline-offset: 2px;
+}
+
 /* ===== STICKY PLAYER BAR ===== */
 body.player-active {
   padding-bottom: 88px;
