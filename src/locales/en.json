@@ -82,7 +82,17 @@
       "ffmpegLoaded": "FFmpeg loaded successfully - Ready to convert",
       "ffmpegLoadError": "Error loading FFmpeg: {message}",
       "ffmpegInit": "FFmpeg initialized",
-      "readyForNext": "Ready for the next conversion."
+      "readyForNext": "Ready for the next conversion.",
+      "ready": "Ready – select audio files",
+      "filesCount": "{count} file(s) selected",
+      "convertedSaveNow": "{count} file(s) converted – save now",
+      "cancelling": "Cancelling …",
+      "cancelled": "Conversion cancelled",
+      "cancelledPartial": "Cancelled – {done} file(s) done, {total} in the list",
+      "saved": "Saved: {name}",
+      "downloaded": "Downloaded: {name}",
+      "notifyDoneTitle": "Conversion complete!",
+      "notifyDoneBody": "{count} file(s) converted successfully."
     }
   },
   "features": {

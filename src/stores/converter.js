@@ -1,5 +1,11 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
+import i18n from '../i18n'
+
+// Übersetzt eine Statusmeldung in der aktuell gewählten Sprache (DE/EN)
+function t(key, params) {
+  return i18n.global.t(key, params)
+}
 
 export const useConverterStore = defineStore('converter', () => {
   // State
@@ -14,7 +20,7 @@ export const useConverterStore = defineStore('converter', () => {
   const isProcessingFile = ref(false) // Für Shimmer-Animation während einzelner Datei
   const progress = ref(0)
   const showProgress = ref(false)
-  const statusMessage = ref('Bereit - Wählen Sie Audiodateien aus')
+  const statusMessage = ref(t('converter.status.ready'))
   const statusType = ref('info')
   const showRetry = ref(false)
   const filesCompleted = ref(0)
@@ -111,12 +117,12 @@ export const useConverterStore = defineStore('converter', () => {
     )
 
     if (audioFiles.length === 0) {
-      updateStatus('Keine gültigen Audio-Dateien ausgewählt', 'warning')
+      updateStatus(t('converter.status.invalidFiles'), 'warning')
       return
     }
 
     files.value = [...files.value, ...audioFiles]
-    updateStatus(`${files.value.length} Datei(en) ausgewählt`, 'info')
+    updateStatus(t('converter.status.filesCount', { count: files.value.length }), 'info')
     console.log(`✅ ${audioFiles.length} Audio-Dateien hinzugefügt`)
   }
 
@@ -135,9 +141,9 @@ export const useConverterStore = defineStore('converter', () => {
     }
 
     if (files.value.length === 0) {
-      updateStatus('Keine Dateien ausgewählt', 'info')
+      updateStatus(t('converter.status.noFiles'), 'info')
     } else {
-      updateStatus(`${files.value.length} Datei(en) ausgewählt`, 'info')
+      updateStatus(t('converter.status.filesCount', { count: files.value.length }), 'info')
     }
   }
 
@@ -189,7 +195,7 @@ export const useConverterStore = defineStore('converter', () => {
 
   async function startConversion() {
     if (files.value.length === 0) {
-      updateStatus('Keine Dateien zur Konvertierung ausgewählt', 'warning')
+      updateStatus(t('converter.status.noFilesToConvert'), 'warning')
       return
     }
 
@@ -218,7 +224,7 @@ export const useConverterStore = defineStore('converter', () => {
         const baseProgress = (i / totalFiles) * 100
         progress.value = Math.round(baseProgress)
 
-        updateStatus(`Konvertiere: ${file.name}`, 'info')
+        updateStatus(t('converter.status.convertingFileProgress', { fileName: file.name }), 'info')
 
         // Shimmer-Animation während Backend-Verarbeitung
         isProcessingFile.value = true
@@ -236,7 +242,7 @@ export const useConverterStore = defineStore('converter', () => {
         handleCancelled()
       } else {
         updateStatus(
-          `${totalFiles} Datei(en) konvertiert – jetzt speichern`,
+          t('converter.status.convertedSaveNow', { count: totalFiles }),
           'success'
         )
         progress.value = 100
@@ -246,8 +252,8 @@ export const useConverterStore = defineStore('converter', () => {
 
         // Browser-Benachrichtigung
         showNotification(
-          'Konvertierung abgeschlossen!',
-          `${totalFiles} Datei(en) erfolgreich konvertiert.`
+          t('converter.status.notifyDoneTitle'),
+          t('converter.status.notifyDoneBody', { count: totalFiles })
         )
 
         // Kein Auto-Download mehr: Der Nutzer speichert die Dateien selbst
@@ -261,7 +267,7 @@ export const useConverterStore = defineStore('converter', () => {
         handleCancelled()
       } else {
         console.error('❌ Konvertierungsfehler:', error)
-        updateStatus(`Konvertierungsfehler: ${error.message}`, 'error')
+        updateStatus(t('converter.status.conversionError', { message: error.message }), 'error')
         showRetry.value = true
       }
     } finally {
@@ -279,18 +285,16 @@ export const useConverterStore = defineStore('converter', () => {
     progress.value = 0
     const done = filesCompleted.value
     const message = done > 0
-      ? `Abgebrochen – ${done} Datei(en) bereits fertig, ${files.value.length} in der Liste`
-      : 'Konvertierung abgebrochen'
+      ? t('converter.status.cancelledPartial', { done, total: files.value.length })
+      : t('converter.status.cancelled')
     updateStatus(message, 'info')
-    // Abbruch-Hinweis nach einigen Sekunden automatisch ausblenden
-    scheduleStatusClear(message)
   }
 
   // Laufende Konvertierung sauber abbrechen (Nutzer-Aktion).
   function cancelConversion() {
     if (!isConverting.value) return
     isCancelling.value = true
-    updateStatus('Abbrechen …', 'info')
+    updateStatus(t('converter.status.cancelling'), 'info')
     if (abortController) abortController.abort()
   }
 
@@ -403,7 +407,7 @@ export const useConverterStore = defineStore('converter', () => {
         await writable.close()
 
         item.saved = true
-        updateStatus(`Gespeichert: ${handle.name || item.name}`, 'success')
+        updateStatus(t('converter.status.saved', { name: handle.name || item.name }), 'success')
         return
       } catch (error) {
         // Nutzer hat den Dialog abgebrochen -> kein Fehler, nichts tun
@@ -416,7 +420,7 @@ export const useConverterStore = defineStore('converter', () => {
     // Fallback: klassischer Download in den Standard-Download-Ordner
     fallbackDownload(item.blob, item.name)
     item.saved = true
-    updateStatus(`Heruntergeladen: ${item.name}`, 'success')
+    updateStatus(t('converter.status.downloaded', { name: item.name }), 'success')
   }
 
   function fallbackDownload(blob, filename) {
@@ -448,7 +452,7 @@ export const useConverterStore = defineStore('converter', () => {
     stopPlayback()
     showProgress.value = false
     progress.value = 0
-    updateStatus('Bereit für neue Konvertierung', 'info')
+    updateStatus(t('converter.status.readyForNext'), 'info')
   }
 
   function retryConversion() {
@@ -456,26 +460,25 @@ export const useConverterStore = defineStore('converter', () => {
     startConversion()
   }
 
+  // Statusmeldung setzen. Jede Meldung wird nach max. 5 Sekunden automatisch
+  // ausgeblendet; eine neue Meldung setzt den Timer zurück.
   function updateStatus(message, type = 'info') {
-    // Jede neue Statusmeldung hebt ein geplantes Ausblenden auf
     if (statusClearTimer) {
       clearTimeout(statusClearTimer)
       statusClearTimer = null
     }
     statusMessage.value = message
     statusType.value = type
-  }
 
-  // Statusmeldung nach kurzer Zeit ausblenden – aber nur, wenn sie
-  // in der Zwischenzeit nicht durch eine neue Meldung ersetzt wurde.
-  function scheduleStatusClear(expectedMessage, delay = 4000) {
-    if (statusClearTimer) clearTimeout(statusClearTimer)
-    statusClearTimer = setTimeout(() => {
-      if (statusMessage.value === expectedMessage) {
-        statusMessage.value = ''
-      }
-      statusClearTimer = null
-    }, delay)
+    if (message) {
+      statusClearTimer = setTimeout(() => {
+        // Nur ausblenden, wenn die Meldung nicht zwischenzeitlich ersetzt wurde
+        if (statusMessage.value === message) {
+          statusMessage.value = ''
+        }
+        statusClearTimer = null
+      }, 5000)
+    }
   }
 
   function getOutputFormat() {
