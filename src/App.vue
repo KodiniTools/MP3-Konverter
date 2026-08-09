@@ -122,6 +122,59 @@ function handleFilesSelected(newFiles) {
   converterStore.addFiles(newFiles)
 }
 
+// Audiodateien aus der Zwischenablage (Strg+V / Cmd+V) einfügen
+function handlePaste(event) {
+  // Nicht eingreifen, wenn der Nutzer gerade in ein Eingabefeld schreibt
+  if (event.target.tagName === 'INPUT' || event.target.tagName === 'TEXTAREA') {
+    return
+  }
+
+  const clipboardData = event.clipboardData || window.clipboardData
+  if (!clipboardData) return
+
+  const pastedFiles = []
+
+  // Bevorzugt die items-API nutzen (liefert auch Blobs ohne Dateinamen)
+  if (clipboardData.items && clipboardData.items.length > 0) {
+    for (const item of clipboardData.items) {
+      if (item.kind !== 'file') continue
+      const file = item.getAsFile()
+      if (file) pastedFiles.push(file)
+    }
+  }
+
+  // Fallback: direkte files-Liste
+  if (pastedFiles.length === 0 && clipboardData.files && clipboardData.files.length > 0) {
+    for (const file of clipboardData.files) {
+      pastedFiles.push(file)
+    }
+  }
+
+  // Nur Audio-Dateien berücksichtigen
+  const audioFiles = pastedFiles.filter(file =>
+    file.type.startsWith('audio/') ||
+    /\.(mp3|wav|ogg|m4a|flac|aac|wma)$/i.test(file.name || '')
+  )
+
+  if (audioFiles.length === 0) return
+
+  // Verhindert, dass der Audio-Blob z. B. in ein Textfeld eingefügt wird
+  event.preventDefault()
+
+  // Aus der Zwischenablage kopierte Blobs haben oft keinen (sinnvollen) Namen
+  const normalizedFiles = audioFiles.map((file, index) => {
+    if (file.name && /\.[^/.]+$/.test(file.name)) {
+      return file
+    }
+    const ext = (file.type.split('/')[1] || 'audio').replace('x-', '')
+    const suffix = audioFiles.length > 1 ? `-${index + 1}` : ''
+    const name = `zwischenablage${suffix}.${ext}`
+    return new File([file], name, { type: file.type })
+  })
+
+  converterStore.addFiles(normalizedFiles)
+}
+
 function removeFile(index) {
   converterStore.removeFile(index)
 }
@@ -170,10 +223,12 @@ function handleKeydown(event) {
 
 onMounted(() => {
   document.addEventListener('keydown', handleKeydown)
+  document.addEventListener('paste', handlePaste)
 })
 
 onUnmounted(() => {
   document.removeEventListener('keydown', handleKeydown)
+  document.removeEventListener('paste', handlePaste)
 })
 
 // Initialize - Backend version needs no initialization

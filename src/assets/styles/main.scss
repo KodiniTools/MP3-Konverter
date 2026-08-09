@@ -378,6 +378,13 @@
   margin: 0;
 }
 
+.drop-paste-hint {
+  color: var(--text-secondary);
+  font-size: 0.75rem;
+  opacity: 0.75;
+  margin: 0;
+}
+
 .file-input {
   position: absolute;
   width: 1px;
