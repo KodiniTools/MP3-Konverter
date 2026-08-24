@@ -47,6 +47,9 @@
       "previous": "Vorheriger Titel",
       "next": "Nächster Titel",
       "seek": "Position ändern",
+      "volume": "Lautstärke",
+      "mute": "Stummschalten",
+      "unmute": "Stummschaltung aufheben",
       "close": "Player schließen"
     },
     "options": {
