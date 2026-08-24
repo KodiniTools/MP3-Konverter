@@ -47,6 +47,9 @@
       "previous": "Previous track",
       "next": "Next track",
       "seek": "Seek",
+      "volume": "Volume",
+      "mute": "Mute",
+      "unmute": "Unmute",
       "close": "Close player"
     },
     "options": {

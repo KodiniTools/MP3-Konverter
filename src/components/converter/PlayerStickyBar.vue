@@ -92,6 +92,44 @@
           <span class="player-time">{{ formatTime(duration) }}</span>
         </div>
 
+        <!-- Lautstärke / Stummschalten -->
+        <div class="player-volume">
+          <button
+            type="button"
+            class="player-btn player-btn--volume"
+            @click="toggleMute"
+            :aria-label="isMuted || volume === 0 ? $t('converter.player.unmute') : $t('converter.player.mute')"
+            :aria-pressed="isMuted"
+          >
+            <!-- Stumm -->
+            <svg v-if="isMuted || volume === 0" width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <path d="M11 5.14v13.72a1 1 0 0 1-1.6.8L5.67 17H3a1 1 0 0 1-1-1V8a1 1 0 0 1 1-1h2.67l3.73-2.66a1 1 0 0 1 1.6.8z"/>
+              <path d="M15.54 8.46a1 1 0 0 1 1.41 0L18.5 10l1.55-1.54a1 1 0 1 1 1.41 1.41L19.91 11.4l1.55 1.55a1 1 0 0 1-1.41 1.41L18.5 12.82l-1.55 1.54a1 1 0 0 1-1.41-1.41l1.54-1.55-1.54-1.55a1 1 0 0 1 0-1.41z"/>
+            </svg>
+            <!-- Leise (niedrige Lautstärke) -->
+            <svg v-else-if="volume < 0.5" width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <path d="M11 5.14v13.72a1 1 0 0 1-1.6.8L5.67 17H3a1 1 0 0 1-1-1V8a1 1 0 0 1 1-1h2.67l3.73-2.66a1 1 0 0 1 1.6.8z"/>
+              <path d="M15.54 8.46a5 5 0 0 1 0 7.07 1 1 0 0 1-1.41-1.41 3 3 0 0 0 0-4.24 1 1 0 0 1 1.41-1.42z"/>
+            </svg>
+            <!-- Laut -->
+            <svg v-else width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <path d="M11 5.14v13.72a1 1 0 0 1-1.6.8L5.67 17H3a1 1 0 0 1-1-1V8a1 1 0 0 1 1-1h2.67l3.73-2.66a1 1 0 0 1 1.6.8z"/>
+              <path d="M15.54 8.46a5 5 0 0 1 0 7.07 1 1 0 0 1-1.41-1.41 3 3 0 0 0 0-4.24 1 1 0 0 1 1.41-1.42zM18.36 5.64a9 9 0 0 1 0 12.72 1 1 0 0 1-1.41-1.41 7 7 0 0 0 0-9.9 1 1 0 0 1 1.41-1.41z"/>
+            </svg>
+          </button>
+          <input
+            type="range"
+            class="player-volume-slider"
+            min="0"
+            max="1"
+            step="0.01"
+            :value="isMuted ? 0 : volume"
+            @input="onVolumeInput"
+            :aria-label="$t('converter.player.volume')"
+            :aria-valuetext="Math.round((isMuted ? 0 : volume) * 100) + '%'"
+          >
+        </div>
+
         <!-- Schließen -->
         <button
           type="button"
@@ -115,6 +153,20 @@ const converterStore = useConverterStore()
 const audioEl = ref(null)
 const currentTime = ref(0)
 const duration = ref(0)
+
+// Lautstärke / Stummschaltung (bleibt über Track-Wechsel hinweg erhalten)
+const VOLUME_STORAGE_KEY = 'mp3-converter-player-volume'
+
+function loadStoredVolume() {
+  if (typeof localStorage === 'undefined') return 1
+  const stored = parseFloat(localStorage.getItem(VOLUME_STORAGE_KEY))
+  return Number.isFinite(stored) ? Math.min(1, Math.max(0, stored)) : 1
+}
+
+const volume = ref(loadStoredVolume())
+const isMuted = ref(false)
+// Lautstärke, die vor dem Stummschalten aktiv war (zum Wiederherstellen)
+let volumeBeforeMute = volume.value || 1
 
 // aktuelle Object-URL, damit wir sie beim Wechsel wieder freigeben können
 let objectUrl = null
@@ -146,6 +198,7 @@ async function loadTrack(file) {
   objectUrl = URL.createObjectURL(file)
   el.src = objectUrl
   el.load()
+  applyVolume()
 
   if (isPlaying.value) {
     el.play().catch(() => {
@@ -189,6 +242,46 @@ function stopPlayback() {
   const el = audioEl.value
   if (el) el.pause()
   converterStore.stopPlayback()
+}
+
+// ===== Lautstärke =====
+// Aktuelle Lautstärke/Stummschaltung auf das <audio>-Element übertragen
+function applyVolume() {
+  const el = audioEl.value
+  if (!el) return
+  el.muted = isMuted.value
+  el.volume = volume.value
+}
+
+function persistVolume() {
+  if (typeof localStorage !== 'undefined') {
+    localStorage.setItem(VOLUME_STORAGE_KEY, String(volume.value))
+  }
+}
+
+function onVolumeInput(event) {
+  const value = parseFloat(event.target.value)
+  if (Number.isNaN(value)) return
+  volume.value = Math.min(1, Math.max(0, value))
+  // Am Slider ziehen hebt die Stummschaltung auf
+  isMuted.value = volume.value === 0
+  if (volume.value > 0) volumeBeforeMute = volume.value
+  applyVolume()
+  persistVolume()
+}
+
+function toggleMute() {
+  if (isMuted.value || volume.value === 0) {
+    // Stummschaltung aufheben -> vorherige Lautstärke wiederherstellen
+    isMuted.value = false
+    volume.value = volumeBeforeMute > 0 ? volumeBeforeMute : 1
+    persistVolume()
+  } else {
+    // Stummschalten -> aktuelle Lautstärke merken
+    volumeBeforeMute = volume.value
+    isMuted.value = true
+  }
+  applyVolume()
 }
 
 function onSeek(event) {
