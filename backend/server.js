@@ -647,8 +647,11 @@ app.put('/api/playlists/:id/tracks/reorder', requireAuth, (req, res) => {
 
 // ---- TRACKS (Alle verfügbaren Audio-Dateien) ----
 
-// ÖFFENTLICH - Alle Tracks auflisten (ohne Auth)
-app.get('/api/tracks', (req, res) => {
+// Alle Tracks auflisten - NUR MIT AUTH. War öffentlich: damit konnte jeder die
+// Dateinamen aller Konvertierungen im FILES_DIR lesen und sie über /files/<name>
+// herunterladen - auch die fremder Nutzer. Die Musikplayer-Oberfläche nutzt ein
+// eigenes Backend (modernermusikplayer-backend) und ist davon nicht betroffen.
+app.get('/api/tracks', requireAuth, (req, res) => {
   try {
     const files = fs.readdirSync(FILES_DIR)
     const audioExts = ['.mp3', '.wav', '.flac', '.aac', '.ogg', '.m4a', '.wma']
