@@ -16,12 +16,37 @@ require(process.env.SERVER_PATH || path.join(__dirname, '..', 'server.js'))
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms))
 
+/**
+ * Eine echte, winzige WAV-Datei (PCM 16 bit, mono, Stille).
+ * Ein Dummy-Buffer reicht nicht: Das echte ffmpeg lehnt ihn mit
+ * "Invalid data found when processing input" ab.
+ */
+function wavBuffer(seconds = 0.2, sampleRate = 8000) {
+  const numSamples = Math.floor(seconds * sampleRate)
+  const dataSize = numSamples * 2
+  const buf = Buffer.alloc(44 + dataSize)
+  buf.write('RIFF', 0)
+  buf.writeUInt32LE(36 + dataSize, 4)
+  buf.write('WAVE', 8)
+  buf.write('fmt ', 12)
+  buf.writeUInt32LE(16, 16) // Groesse des fmt-Chunks
+  buf.writeUInt16LE(1, 20) // PCM
+  buf.writeUInt16LE(1, 22) // mono
+  buf.writeUInt32LE(sampleRate, 24)
+  buf.writeUInt32LE(sampleRate * 2, 28) // Byte-Rate
+  buf.writeUInt16LE(2, 32) // Block-Align
+  buf.writeUInt16LE(16, 34) // Bits pro Sample
+  buf.write('data', 36)
+  buf.writeUInt32LE(dataSize, 40)
+  return buf
+}
+
 ;(async () => {
   await sleep(500)
 
   // 1) Konvertieren -> Antwort enthält deleteToken, Datei liegt im FILES_DIR
   const fd = new FormData()
-  fd.append('file', new Blob([Buffer.alloc(2048)], { type: 'audio/wav' }), 'ROCK 1.wav')
+  fd.append('file', new Blob([wavBuffer()], { type: 'audio/wav' }), 'ROCK 1.wav')
   fd.append('format', 'mp3')
   fd.append('bitrate', '192k')
   const conv = await (await fetch(BASE + '/api/convert', { method: 'POST', body: fd })).json()
