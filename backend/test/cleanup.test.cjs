@@ -1,8 +1,7 @@
-// Integrationstest für DELETE /api/converted/:filename
+// Integrationstest für das eigenständige MP3-Konverter-Backend.
 //
 // Start (Aufrufbeispiel siehe backend/README.md):
-//   NODE_PATH=<pfad>/node_modules PORT=9105 FILES_DIR=<tmp> \
-//   SERVER_PATH=<pfad>/server.js node backend/test/cleanup.test.cjs
+//   PORT=9105 FILES_DIR=$(mktemp -d) node backend/test/cleanup.test.cjs
 //
 // Ohne installiertes ffmpeg kann backend/test/ffmpeg-stub.sh als Ersatz in den
 // PATH gelegt werden (kopiert die Eingabe auf die Ausgabe).
@@ -13,7 +12,7 @@ const assert = require('assert')
 const FILES_DIR = process.env.FILES_DIR
 const BASE = 'http://127.0.0.1:' + process.env.PORT
 
-require(process.env.SERVER_PATH)
+require(process.env.SERVER_PATH || path.join(__dirname, '..', 'server.js'))
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms))
 
@@ -32,61 +31,99 @@ const sleep = (ms) => new Promise((r) => setTimeout(r, ms))
   assert.ok(fs.existsSync(path.join(FILES_DIR, file)), 'Datei erzeugt')
   console.log('[1] convert ok ->', file, '| token', conv.deleteToken)
 
-  // 2) DELETE ohne Token -> 403, Datei bleibt
-  let r = await fetch(`${BASE}/api/converted/${encodeURIComponent(file)}`, { method: 'DELETE' })
+  // 2) Ergebnis ist über /files abrufbar (so holt das Frontend das Blob)
+  let r = await fetch(`${BASE}/files/${encodeURIComponent(file)}`)
+  assert.strictEqual(r.status, 200, '/files liefert die Datei')
+  const bytes = Buffer.from(await r.arrayBuffer())
+  assert.strictEqual(bytes.length, conv.size, 'Groesse stimmt mit der Convert-Antwort ueberein')
+  console.log('[2] /files/<name> -> 200,', bytes.length, 'Bytes')
+
+  // 3) Ungültige Parameter werden abgewiesen
+  const badFd = new FormData()
+  badFd.append('file', new Blob([Buffer.alloc(64)]), 'x.wav')
+  badFd.append('format', 'exe')
+  r = await fetch(BASE + '/api/convert', { method: 'POST', body: badFd })
+  assert.strictEqual(r.status, 400, 'unerlaubtes Format -> 400')
+  console.log('[3] unerlaubtes Format -> 400')
+
+  // 4) DELETE ohne Token -> 403, Datei bleibt
+  r = await fetch(`${BASE}/api/converted/${encodeURIComponent(file)}`, { method: 'DELETE' })
   assert.strictEqual(r.status, 403, 'ohne Token 403')
   assert.ok(fs.existsSync(path.join(FILES_DIR, file)), 'Datei unangetastet')
-  console.log('[2] ohne Token -> 403')
+  console.log('[4] ohne Token -> 403')
 
-  // 3) DELETE mit falschem Token -> 403, Datei bleibt
-  r = await fetch(`${BASE}/api/converted/${encodeURIComponent(file)}?token=falsch`, { method: 'DELETE' })
+  // 5) DELETE mit falschem Token -> 403, Datei bleibt
+  r = await fetch(`${BASE}/api/converted/${encodeURIComponent(file)}?token=falsch`, {
+    method: 'DELETE',
+  })
   assert.strictEqual(r.status, 403, 'falsches Token 403')
   assert.ok(fs.existsSync(path.join(FILES_DIR, file)), 'Datei unangetastet')
-  console.log('[3] falsches Token -> 403')
+  console.log('[5] falsches Token -> 403')
 
-  // 4) Fremde Datei im FILES_DIR (z. B. Musikplayer-Bibliothek) ist nicht löschbar
+  // 6) Fremde Datei im FILES_DIR ist nicht löschbar
   const foreign = path.join(FILES_DIR, 'fremde-datei.mp3')
   fs.writeFileSync(foreign, 'x')
-  r = await fetch(`${BASE}/api/converted/fremde-datei.mp3?token=${conv.deleteToken}`, { method: 'DELETE' })
+  r = await fetch(`${BASE}/api/converted/fremde-datei.mp3?token=${conv.deleteToken}`, {
+    method: 'DELETE',
+  })
   assert.strictEqual(r.status, 404, 'unregistrierte Datei 404')
   assert.ok(fs.existsSync(foreign), 'fremde Datei unangetastet')
-  console.log('[4] fremde Datei -> 404, bleibt erhalten')
+  console.log('[6] fremde Datei -> 404, bleibt erhalten')
 
-  // 5) Path-Traversal läuft ins Leere
-  const outside = path.join(FILES_DIR, '..', 'nicht-löschen.txt')
+  // 7) Path-Traversal läuft ins Leere
+  const outside = path.join(FILES_DIR, '..', 'nicht-loeschen.txt')
   fs.writeFileSync(outside, 'x')
-  r = await fetch(`${BASE}/api/converted/${encodeURIComponent('../nicht-löschen.txt')}?token=${conv.deleteToken}`, { method: 'DELETE' })
+  r = await fetch(
+    `${BASE}/api/converted/${encodeURIComponent('../nicht-loeschen.txt')}?token=${conv.deleteToken}`,
+    { method: 'DELETE' }
+  )
   assert.strictEqual(r.status, 404, 'traversal 404')
   assert.ok(fs.existsSync(outside), 'Datei ausserhalb unangetastet')
-  console.log('[5] Path-Traversal -> 404, Datei ausserhalb bleibt')
+  console.log('[7] Path-Traversal -> 404, Datei ausserhalb bleibt')
 
-  // 6) DELETE mit korrektem Token -> 200 und Datei ist weg
-  r = await fetch(`${BASE}/api/converted/${encodeURIComponent(file)}?token=${encodeURIComponent(conv.deleteToken)}`, { method: 'DELETE' })
+  // 8) DELETE mit korrektem Token -> 200, Datei weg und nicht mehr abrufbar
+  r = await fetch(
+    `${BASE}/api/converted/${encodeURIComponent(file)}?token=${encodeURIComponent(conv.deleteToken)}`,
+    { method: 'DELETE' }
+  )
   assert.strictEqual(r.status, 200, 'korrektes Token 200')
-  assert.ok(!fs.existsSync(path.join(FILES_DIR, file)), 'Datei gelöscht')
-  console.log('[6] korrektes Token -> 200, Datei gelöscht')
+  assert.ok(!fs.existsSync(path.join(FILES_DIR, file)), 'Datei geloescht')
+  r = await fetch(`${BASE}/files/${encodeURIComponent(file)}`)
+  assert.strictEqual(r.status, 404, '/files liefert sie nicht mehr')
+  console.log('[8] korrektes Token -> 200, Datei geloescht und nicht mehr abrufbar')
 
-  // 7) Zweiter DELETE -> 404 (idempotent aus Client-Sicht)
-  r = await fetch(`${BASE}/api/converted/${encodeURIComponent(file)}?token=${encodeURIComponent(conv.deleteToken)}`, { method: 'DELETE' })
+  // 9) Zweiter DELETE -> 404 (aus Client-Sicht idempotent)
+  r = await fetch(
+    `${BASE}/api/converted/${encodeURIComponent(file)}?token=${encodeURIComponent(conv.deleteToken)}`,
+    { method: 'DELETE' }
+  )
   assert.strictEqual(r.status, 404, 'zweiter Delete 404')
-  console.log('[7] zweiter DELETE -> 404')
+  console.log('[9] zweiter DELETE -> 404')
 
-  // 8) Bestehende Endpoints unverändert erreichbar
+  // 10) Health
   const health = await (await fetch(BASE + '/health')).json()
   assert.strictEqual(health.ok, true, 'health ok')
-  r = await fetch(BASE + '/api/files/clear', { method: 'DELETE' })
-  assert.strictEqual(r.status, 401, '/api/files/clear weiterhin auth-geschuetzt')
-  console.log('[8] health ok, /api/files/clear weiterhin 401')
+  assert.strictEqual(health.service, 'mp3konverter', 'health nennt den Dienst')
+  console.log('[10] health ok')
 
-  // 9) Die Dateiliste darf nicht mehr ohne Auth lesbar sein.
-  // Vorher lieferte sie die Dateinamen aller Konvertierungen im FILES_DIR.
-  const outName = 'nicht-listen-' + Date.now() + '.mp3'
-  fs.writeFileSync(path.join(FILES_DIR, outName), 'x')
-  r = await fetch(BASE + '/api/tracks')
-  assert.strictEqual(r.status, 401, '/api/tracks ohne Auth -> 401')
-  const body = await r.text()
-  assert.ok(!body.includes(outName), 'kein Dateiname in der Antwort')
-  console.log('[9] /api/tracks ohne Auth -> 401, keine Dateinamen preisgegeben')
+  // 11) Die Endpunkte des gemeinsamen Backends existieren hier nicht mehr.
+  // /api/tracks gab früher die Dateinamen aller Konvertierungen preis.
+  const entfernt = [
+    ['GET', '/api/tracks'],
+    ['DELETE', '/api/files/clear'],
+    ['POST', '/api/login'],
+    ['GET', '/api/playlists'],
+    ['GET', '/api/player/state'],
+    ['POST', '/api/upload'],
+    ['GET', '/api/job/abc'],
+  ]
+  for (const [method, route] of entfernt) {
+    const resp = await fetch(BASE + route, { method })
+    assert.strictEqual(resp.status, 404, `${method} ${route} -> 404`)
+    const body = await resp.text()
+    assert.ok(!body.includes('fremde-datei'), `${route} gibt keine Dateinamen preis`)
+  }
+  console.log('[11] entfernte Endpunkte ->', entfernt.length + 'x 404')
 
   console.log('\nAlle Backend-Checks bestanden.')
   process.exit(0)

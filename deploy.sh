@@ -31,6 +31,13 @@ SRC_DIR="${SRC_DIR:-/opt/mp3-konverter}"
 DEPLOY_DIR="${DEPLOY_DIR:-/var/www/kodinitools.com/mp3konverter}"
 OWNER="${OWNER:-www-data:www-data}"
 
+# Eigenständiges Backend (siehe backend/README.md).
+# DEPLOY_BACKEND: auto = nur deployen, wenn BACKEND_DIR schon existiert, die
+# Migration also erfolgt ist. 1 = immer, 0 = nie.
+BACKEND_DIR="${BACKEND_DIR:-/var/www/kodinitools.com/mp3konverter-backend}"
+BACKEND_APP="${BACKEND_APP:-mp3konverter-server}"
+DEPLOY_BACKEND="${DEPLOY_BACKEND:-auto}"
+
 # Pfade, die beim Deploy NICHT gelöscht/überschrieben werden (relativ zu DEPLOY_DIR).
 # "files" wird in der Nginx-Config an das Backend (:9009) geproxied und ist im
 # Webroot normalerweise leer – bleibt defensiv erhalten, falls doch etwas darin liegt.
@@ -113,6 +120,52 @@ if [ -n "$OWNER" ]; then
   log "Setze Besitzer auf $OWNER"
   chown -R "$OWNER" "$DEPLOY_DIR"
 fi
+
+# ---------- Backend ----------
+# Deployt das eigenständige Backend aus backend/. Solange der MP3 Konverter noch
+# am gemeinsamen _backend_common hängt, existiert BACKEND_DIR nicht und dieser
+# Schritt wird übersprungen – das Skript fasst fremden Code nie an.
+deploy_backend() {
+  log "Deploye Backend nach $BACKEND_DIR"
+  mkdir -p "$BACKEND_DIR"
+
+  # node_modules und der Laufzeit-Ordner files/ bleiben unangetastet.
+  rsync -a --delete \
+    --exclude '/node_modules' \
+    --exclude '/files' \
+    "$SRC_DIR/backend/" "$BACKEND_DIR/"
+
+  log "Installiere Backend-Abhängigkeiten (npm ci --omit=dev)..."
+  if ! npm --prefix "$BACKEND_DIR" ci --omit=dev; then
+    warn "npm ci fehlgeschlagen, versuche npm install..."
+    npm --prefix "$BACKEND_DIR" install --omit=dev
+  fi
+
+  if command -v pm2 >/dev/null 2>&1 && pm2 describe "$BACKEND_APP" >/dev/null 2>&1; then
+    log "Starte pm2-App '$BACKEND_APP' neu"
+    pm2 restart "$BACKEND_APP" --update-env
+    ok "Backend neu gestartet."
+  else
+    warn "pm2-App '$BACKEND_APP' nicht gefunden – Backend wurde NICHT neu gestartet."
+    warn "Dateien liegen in $BACKEND_DIR, Start siehe backend/README.md."
+  fi
+}
+
+case "$DEPLOY_BACKEND" in
+  1)
+    deploy_backend
+    ;;
+  auto)
+    if [ -d "$BACKEND_DIR" ]; then
+      deploy_backend
+    else
+      log "Backend übersprungen ($BACKEND_DIR existiert nicht, DEPLOY_BACKEND=auto)."
+    fi
+    ;;
+  *)
+    log "Backend übersprungen (DEPLOY_BACKEND=$DEPLOY_BACKEND)."
+    ;;
+esac
 
 ok "Deployment abgeschlossen: $BRANCH @ $COMMIT"
 log "URL: https://kodinitools.com/mp3konverter/"

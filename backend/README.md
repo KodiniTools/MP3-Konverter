@@ -1,152 +1,167 @@
-# Backend: Cleanup konvertierter Dateien
+# MP3 Konverter — eigenständiges Backend
 
-`server.js` ist eine **Kopie** von `/var/www/kodinitools.com/_backend_common/server.js`
-(Stand: Änderung „Cleanup nach dem Speichern"). Der Dienst wird von mehreren Tools
-geteilt, die Datei liegt hier nur, damit die Änderung reviewbar und testbar ist.
+`server.js` ist das Backend des MP3 Konverters. Es löst die Nutzung der geteilten
+Datei `/var/www/kodinitools.com/_backend_common/server.js` ab und liegt jetzt im
+Repository — damit wird es versioniert, getestet und von `deploy.sh` mitdeployt.
 
-> **Achtung Drift:** Vor dem Deploy prüfen, ob die Version auf dem Server
-> zwischenzeitlich geändert wurde (`diff`), und ggf. nur den Cleanup-Teil übernehmen.
+## Warum eigenständig
 
-`backend/package.json` setzt lediglich `"type": "commonjs"`, weil das Frontend-Projekt
-im Repo-Root `"type": "module"` verwendet und die CJS-Datei sonst nicht lädt. Auf dem
-Server ist diese Datei nicht nötig.
+`_backend_common/server.js` wurde von `mp3konverter-server` **und**
+`audiokonverter-server` geladen. Das hatte in der Praxis diese Folgen:
 
-## Warum ein neuer Endpoint
+- Eine Änderung für den MP3 Konverter (TTL-Sweeper für Konvertierungs-Ergebnisse)
+  wäre beim nächsten Neustart ungewollt im Audiokonverter gelandet und musste
+  dort per `CONVERT_TTL_MS=0` entschärft werden.
+- Der MP3 Konverter erbte Endpunkte, die er nie brauchte — darunter
+  `GET /api/tracks` ohne Auth, das Dateiname, Größe und URL **jeder** Datei im
+  `FILES_DIR` auslieferte. Zusammen mit der statischen Auslieferung von `/files/`
+  waren damit die Konvertierungen fremder Nutzer auflistbar und herunterladbar.
+- Die Datei lag in keinem Repository: kein Review, kein Test, Deploy nur per
+  Hand mit vorherigem `diff`.
 
-Das Frontend soll seine Ausgabedatei nach dem Speichern serverseitig löschen.
-Die vorhandenen Lösch-Endpoints taugen dafür nicht:
+## Was drin ist — und was bewusst fehlt
 
-| Endpoint | Problem |
+| Endpunkt | Zweck |
 | --- | --- |
-| `DELETE /api/tracks/:filename` | `requireAuth` — der MP3-Konverter läuft ohne Login |
-| `DELETE /api/files/clear` | `requireAuth` **und** löscht das gesamte `FILES_DIR`, also auch parallel laufende Konvertierungen anderer Nutzer |
+| `GET /health` | Statusprobe für nginx und Monitoring |
+| `GET /files/<name>` | Ergebnis abholen (statisch, kein Verzeichnis-Listing) |
+| `POST /api/convert` | Datei konvertieren, liefert `url`, `filename`, `size`, `deleteToken` |
+| `DELETE /api/converted/<name>?token=…` | Ergebnis wieder löschen |
 
-## Die Änderung
+Entfernt, weil die Oberfläche sie nie aufgerufen hat: Login/Auth, Playlists,
+Player-State, `/api/tracks`, `/api/upload`, `/api/files/*`, der Async-Job-Modus
+(`?async=true` inkl. `GET /api/job/:id`) und der Konvertier-Zweig über `file_url`.
+Der Integrationstest prüft, dass diese Routen nicht mehr existieren.
 
-1. **Registry:** `convertedOutputs` (`Map: filename -> { token, createdAt }`) hält die
-   von diesem Prozess erzeugten Convert-Ausgaben.
-2. **`POST /api/convert`** liefert zusätzlich `deleteToken` (16 Zeichen, `nanoid`) und
-   registriert die Ausgabedatei. Der Async-Job (`?async=true`) reicht das Token ebenfalls durch.
-3. **`DELETE /api/converted/:filename?token=…`** (neu, ohne Auth) löscht genau diese eine
-   Datei — nur mit gültigem Token.
-   * `path.basename()` schließt Path-Traversal aus.
-   * Nicht registrierte Dateien (z. B. die Musikplayer-Bibliothek im selben `FILES_DIR`)
-     → `404`, es wird nichts gelöscht.
-   * Falsches/fehlendes Token → `403`.
-   * Das Token wird nur mit der Convert-Antwort ausgeliefert, ein Client kann also
-     ausschließlich seine eigenen Ergebnisse löschen.
-4. **TTL-Sweeper:** Alle 5 Minuten werden registrierte Ausgaben älter als
-   `CONVERT_TTL_MS` (Default 60 min) entfernt — Schutz gegen Karteileichen, wenn der
-   Nutzer den Tab schließt. Der Sweeper fasst **ausschließlich** registrierte Dateien an,
-   fremde Dateien im `FILES_DIR` bleiben unberührt. `CONVERT_TTL_MS=0` deaktiviert ihn.
+Die Konvertierung selbst ist unverändert: dieselben ffmpeg-Argumente je Format,
+dieselbe Namensbildung (`<basis>-<nanoid6>.<ext>`), dasselbe Upload-Limit.
 
-Bestehende Endpoints bleiben unverändert — mit einer Ausnahme, siehe unten.
+### Cleanup-Konzept
 
-## `/api/tracks` ist jetzt auth-pflichtig
+Jede Ausgabe wird in einer Map registriert und bekommt ein Delete-Token, das nur
+mit der Convert-Antwort ausgeliefert wird. Ein Client kann damit ausschließlich
+seine eigenen Ergebnisse löschen. Ein TTL-Sweeper räumt nicht abgeholte
+Ergebnisse nach `CONVERT_TTL_MS` (Default 60 min) ab und fasst dabei
+ausschließlich selbst registrierte Dateien an.
 
-`GET /api/tracks` hatte kein `requireAuth` und lieferte Dateiname, Größe und URL
-**jeder** Audiodatei im `FILES_DIR`. Über die statische Auslieferung
-(`app.use('/files', express.static(FILES_DIR))`) waren diese Dateien dann auch
-abrufbar — also die Konvertierungen fremder Nutzer. Von außen bestätigt:
+## Konfiguration
+
+| Variable | Default | Bedeutung |
+| --- | --- | --- |
+| `PORT` | `9009` | nginx proxied `/mp3konverter/` hierher |
+| `FILES_DIR` | `<dieser Ordner>/files` | Ablage der Ergebnisse |
+| `CONVERT_TTL_MS` | `3600000` | Aufbewahrung; `0` schaltet den Sweeper ab |
+| `FFMPEG_TIMEOUT_MS` | `120000` | Abbruch langer Konvertierungen |
+| `MAX_UPLOAD_BYTES` | `314572800` | 300 MB |
+
+## Migration (einmalig)
+
+Der Port bleibt **9009**, die nginx-Konfiguration muss also nicht angefasst
+werden. Am besten in einer ruhigen Minute: Mit dem Wechsel des `FILES_DIR` sind
+Ergebnisse, die noch im alten Ordner liegen, nicht mehr über
+`/mp3konverter/files/…` erreichbar.
 
 ```bash
-curl -s https://kodinitools.com/mp3konverter/api/tracks
-# lieferte {"ok":true,"tracks":[…],"count":N}
+# 1) Repo-Stand holen
+cd /opt/mp3-konverter
+git fetch origin main && git reset --hard origin/main
+
+# 2) Backend an seinen neuen Ort bringen
+BACKEND_DIR=/var/www/kodinitools.com/mp3konverter-backend
+mkdir -p "$BACKEND_DIR"
+rsync -a --exclude '/node_modules' --exclude '/files' /opt/mp3-konverter/backend/ "$BACKEND_DIR/"
+npm --prefix "$BACKEND_DIR" ci --omit=dev
+
+# 3) Eventuelle Restdateien übernehmen (der Ordner gehört allein dem Konverter)
+mkdir -p /var/www/kodinitools.com/mp3konverter/files
+cp -n /var/www/kodinitools.com/_backend_common/files/* \
+      /var/www/kodinitools.com/mp3konverter/files/ 2>/dev/null || true
+
+# 4) pm2 auf das neue Backend umstellen
+pm2 delete mp3konverter-server
+cd "$BACKEND_DIR"
+PORT=9009 FILES_DIR=/var/www/kodinitools.com/mp3konverter/files \
+  pm2 start server.js --name mp3konverter-server --update-env
+pm2 save
 ```
 
-Die Route bekommt deshalb `requireAuth`, wie ihre Schwester
-`DELETE /api/tracks/:filename` sie längst hat. Ohne gesetztes `ADMIN_PASSWORD`
-ist sie damit gar nicht mehr nutzbar — für den Konverter ist sie ohnehin totes
-Gewicht, seine Oberfläche ruft sie nicht auf.
-
-> **Vor dem Deploy prüfen:** `_backend_common/server.js` wird auch von
-> `audiokonverter-server` geladen. Nutzt dessen Frontend die Route, bricht sie dort.
->
-> ```bash
-> grep -rl "api/tracks" /var/www/kodinitools.com/*/assets/ 2>/dev/null
-> ```
->
-> Keine Treffer → gefahrlos. Treffer → erst dort klären.
-
-## Deploy
-
-Der Konverter läuft als pm2-App `mp3konverter-server` auf **Port 9009**. Vom
-Server-Checkout aus:
+Verifizieren:
 
 ```bash
-cp /var/www/kodinitools.com/_backend_common/server.js \
-   /var/www/kodinitools.com/_backend_common/server.js.bak-$(date +%F)
-diff /var/www/kodinitools.com/_backend_common/server.js /opt/mp3-konverter/backend/server.js
-cp /opt/mp3-konverter/backend/server.js /var/www/kodinitools.com/_backend_common/server.js
-pm2 restart mp3konverter-server
+curl -s http://127.0.0.1:9009/health
+# {"ok":true,"port":9009,"filesDir":"…/mp3konverter/files","service":"mp3konverter"}
+
+curl -s -o /dev/null -w '%{http_code}\n' https://kodinitools.com/mp3konverter/api/tracks
+# 404 – der Endpunkt existiert hier nicht mehr
 ```
 
-`FILES_DIR` ist derzeit **nicht** gesetzt, die Ausgaben landen also im Default
-`/var/www/kodinitools.com/_backend_common/files` — demselben Ordner, den andere
-Dienste aus `_backend_common` benutzen. Genau deshalb löscht der Endpoint nur
-registrierte Dateien. Optional trennen und Aufbewahrungszeit ändern:
+Danach im Browser einmal konvertieren und speichern: Balken und Liste müssen
+verschwinden, im Log steht `[convert cleanup] <datei>`.
+
+### Rollback
 
 ```bash
-CONVERT_TTL_MS=1800000 PORT=9009 FILES_DIR=/var/www/kodinitools.com/mp3konverter/files node server.js
+pm2 delete mp3konverter-server
+cd /var/www/kodinitools.com/_backend_common
+PORT=9009 pm2 start server.js --name mp3konverter-server --update-env
+pm2 save
 ```
 
-**Nach dem Deploy prüfen**, dass nginx `DELETE` an `/mp3konverter/api/` durchreicht
-(manche Configs erlauben nur `GET`/`POST`):
+## Deploy danach
+
+`deploy.sh` übernimmt das Backend automatisch, sobald `BACKEND_DIR` existiert
+(`DEPLOY_BACKEND=auto`): rsync ohne `node_modules` und `files/`, `npm ci --omit=dev`,
+`pm2 restart`. Vor der Migration wird der Schritt übersprungen — das Skript fasst
+fremden Code nie an. Steuerbar über `DEPLOY_BACKEND` (`auto`/`1`/`0`),
+`BACKEND_DIR` und `BACKEND_APP`.
 
 ```bash
-curl -i -X DELETE "https://kodinitools.com/mp3konverter/api/converted/gibtsnicht.mp3?token=x"
-# erwartet: HTTP 404 mit {"ok":false,"error":"file_not_found"}
-# HTTP 405 vom nginx => limit_except / proxy-Regel anpassen
+cd /opt/mp3-konverter && bash deploy.sh
 ```
 
 ## Test
 
-`test/cleanup.test.cjs` startet den Server gegen ein temporäres `FILES_DIR` und prüft
-Happy Path, Token-Prüfung, Path-Traversal, fremde Dateien und die unveränderten
-Endpoints. Ohne installiertes `ffmpeg` kann `test/ffmpeg-stub.sh` als Ersatz dienen
-(kopiert die Eingabe auf die Ausgabe).
+`test/cleanup.test.cjs` startet den Server gegen ein temporäres `FILES_DIR` und
+prüft Convert, Abruf über `/files`, Parametervalidierung, Token-Prüfung,
+Path-Traversal, fremde Dateien und dass die entfernten Endpunkte 404 liefern.
 
 ```bash
-# auf dem Server (dort liegen express/multer/nanoid bereits)
-TMP=$(mktemp -d)
-NODE_PATH=/var/www/kodinitools.com/_backend_common/node_modules \
-PORT=9105 FILES_DIR="$TMP" \
-SERVER_PATH=/var/www/kodinitools.com/_backend_common/server.js \
-node backend/test/cleanup.test.cjs
+npm --prefix backend ci
+PORT=9105 FILES_DIR=$(mktemp -d) node backend/test/cleanup.test.cjs
 ```
 
-Ein anderer Port als der Produktivport (9009) ist Pflicht — der Test startet einen
-eigenen Serverprozess.
+Ein anderer Port als der Produktivport (9009) ist Pflicht — der Test startet
+einen eigenen Serverprozess. Ohne installiertes `ffmpeg` kann
+`test/ffmpeg-stub.sh` als Ersatz in den `PATH` gelegt werden (kopiert die
+Eingabe auf die Ausgabe).
 
 ## Abhängigkeiten
 
-`server.js` ist CommonJS und lädt alle Module per `require()`. Für **nanoid** heißt
-das: Version 3 ist Pflicht (dual CJS/ESM). Ab Version 4 ist nanoid ESM-only; Node
-lädt es dann nur über das experimentelle „ESM in require()" und meldet beim Start:
-
-```
-ExperimentalWarning: CommonJS module .../server.js is loading ES Module
-.../node_modules/nanoid/index.js using require().
-```
-
-Das funktioniert heute, ist aber kein garantiertes Verhalten — ein Node-Update kann
-den Start kippen. Deshalb festnageln:
-
-```bash
-cd /var/www/kodinitools.com/_backend_common
-npm i "nanoid@^3.3.8" --save
-pm2 restart mp3konverter-server
-```
+`server.js` ist CommonJS und lädt alles per `require()`. Für **nanoid** heißt das:
+Version 3 ist Pflicht (dual CJS/ESM). Ab Version 4 ist nanoid ESM-only; Node lädt
+es dann nur über das experimentelle „ESM in require()" und warnt beim Start —
+ein Node-Update kann den Start dann kippen. `package.json` pinnt deshalb
+`^3.3.19`; ältere 3.x-Versionen als 3.3.8 enthalten zudem die Endlosschleife aus
+GHSA-mwcw-c2x4-8c55.
 
 Gegenprobe — muss auf `index.cjs` zeigen, nicht auf `index.js`:
 
 ```bash
 node -p "require.resolve('nanoid')"
-# /var/www/kodinitools.com/_backend_common/node_modules/nanoid/index.cjs
 ```
 
-`^3.3.8` statt nur `@3`, weil ältere 3.x-Versionen die Endlosschleife aus
-GHSA-mwcw-c2x4-8c55 (nicht-ganzzahlige Größe) enthalten. Die benutzte API
-(`nanoid(size)`) ist in 3.x und 5.x identisch, ebenso der Alphabet-Zeichensatz
-`A–Za–z0–9_-` — an Dateinamen und Tokens ändert sich nichts. Nach dem Neustart darf
-die Warnung im Error-Log nicht mehr auftauchen.
+`mime-types` wird nicht mehr gebraucht (hing nur an `/api/upload`).
+
+## Der Audiokonverter
+
+`audiokonverter-server` läuft weiterhin aus `_backend_common` und hat dort
+weiterhin das offene `GET /api/tracks`. Der Auth-Fix dafür liegt in der
+Repo-History:
+
+```bash
+git show 7ce7f97:backend/server.js > /tmp/_backend_common.server.js
+diff /var/www/kodinitools.com/_backend_common/server.js /tmp/_backend_common.server.js
+```
+
+Der saubere Weg ist, den Audiokonverter analog auf ein eigenes Backend
+umzustellen; danach kann `_backend_common` verschwinden.
