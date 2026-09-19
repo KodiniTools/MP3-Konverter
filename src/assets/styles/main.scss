@@ -707,24 +707,6 @@
   background: color-mix(in srgb, var(--success-color) 6%, var(--background-secondary));
 }
 
-.converted-item.is-saved {
-  opacity: 0.85;
-}
-
-.saved-badge {
-  display: inline-block;
-  margin-left: 0.5rem;
-  padding: 0.05rem 0.45rem;
-  font-size: 0.625rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  border-radius: 999px;
-  background: color-mix(in srgb, var(--success-color) 18%, transparent);
-  color: var(--success-color);
-  vertical-align: middle;
-}
-
 .save-file-btn {
   flex-shrink: 0;
   display: inline-flex;

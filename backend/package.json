@@ -1,0 +1,6 @@
+{
+  "name": "mp3konverter-backend-common",
+  "private": true,
+  "type": "commonjs",
+  "description": "Kopie von _backend_common/server.js. Eigene type-Deklaration, weil das Frontend-Projekt ESM nutzt (siehe backend/README.md)."
+}
