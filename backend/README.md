@@ -112,6 +112,13 @@ npm i "nanoid@^3.3.8" --save
 pm2 restart mp3konverter-server
 ```
 
+Gegenprobe — muss auf `index.cjs` zeigen, nicht auf `index.js`:
+
+```bash
+node -p "require.resolve('nanoid')"
+# /var/www/kodinitools.com/_backend_common/node_modules/nanoid/index.cjs
+```
+
 `^3.3.8` statt nur `@3`, weil ältere 3.x-Versionen die Endlosschleife aus
 GHSA-mwcw-c2x4-8c55 (nicht-ganzzahlige Größe) enthalten. Die benutzte API
 (`nanoid(size)`) ist in 3.x und 5.x identisch, ebenso der Alphabet-Zeichensatz
