@@ -70,7 +70,10 @@ git fetch origin main && git reset --hard origin/main
 BACKEND_DIR=/var/www/kodinitools.com/mp3konverter-backend
 mkdir -p "$BACKEND_DIR"
 rsync -a --exclude '/node_modules' --exclude '/files' /opt/mp3-konverter/backend/ "$BACKEND_DIR/"
-npm --prefix "$BACKEND_DIR" ci --omit=dev
+# install statt ci: ci setzt ein package-lock.json voraus, das im Repo nicht
+# zuverlässig ankommt. Ohne node_modules startet der Dienst nicht.
+npm --prefix "$BACKEND_DIR" install --omit=dev
+test -d "$BACKEND_DIR/node_modules" || { echo "FEHLER: Abhängigkeiten fehlen"; exit 1; }
 
 # 3) Eventuelle Restdateien übernehmen (der Ordner gehört allein dem Konverter)
 mkdir -p /var/www/kodinitools.com/mp3konverter/files
@@ -126,7 +129,7 @@ prüft Convert, Abruf über `/files`, Parametervalidierung, Token-Prüfung,
 Path-Traversal, fremde Dateien und dass die entfernten Endpunkte 404 liefern.
 
 ```bash
-npm --prefix backend ci
+npm --prefix backend install
 PORT=9105 FILES_DIR=$(mktemp -d) node backend/test/cleanup.test.cjs
 ```
 

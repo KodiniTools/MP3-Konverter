@@ -36,6 +36,7 @@ OWNER="${OWNER:-www-data:www-data}"
 # Migration also erfolgt ist. 1 = immer, 0 = nie.
 BACKEND_DIR="${BACKEND_DIR:-/var/www/kodinitools.com/mp3konverter-backend}"
 BACKEND_APP="${BACKEND_APP:-mp3konverter-server}"
+BACKEND_PORT="${BACKEND_PORT:-9009}"
 DEPLOY_BACKEND="${DEPLOY_BACKEND:-auto}"
 
 # Pfade, die beim Deploy NICHT gelöscht/überschrieben werden (relativ zu DEPLOY_DIR).
@@ -135,16 +136,39 @@ deploy_backend() {
     --exclude '/files' \
     "$SRC_DIR/backend/" "$BACKEND_DIR/"
 
-  log "Installiere Backend-Abhängigkeiten (npm ci --omit=dev)..."
-  if ! npm --prefix "$BACKEND_DIR" ci --omit=dev; then
-    warn "npm ci fehlgeschlagen, versuche npm install..."
+  # npm ci nur mit Lockfile – sonst bricht es ab und laesst den Ordner ohne
+  # node_modules zurueck, womit der Dienst beim Neustart sofort stirbt.
+  if [ -f "$BACKEND_DIR/package-lock.json" ]; then
+    log "Installiere Backend-Abhängigkeiten (npm ci --omit=dev)..."
+    npm --prefix "$BACKEND_DIR" ci --omit=dev ||
+      npm --prefix "$BACKEND_DIR" install --omit=dev
+  else
+    log "Kein package-lock.json – installiere mit npm install --omit=dev..."
     npm --prefix "$BACKEND_DIR" install --omit=dev
+  fi
+
+  if [ ! -d "$BACKEND_DIR/node_modules" ]; then
+    err "Backend-Abhängigkeiten fehlen in $BACKEND_DIR – kein Neustart."
+    err "Der laufende Prozess bleibt unangetastet."
+    exit 1
   fi
 
   if command -v pm2 >/dev/null 2>&1 && pm2 describe "$BACKEND_APP" >/dev/null 2>&1; then
     log "Starte pm2-App '$BACKEND_APP' neu"
     pm2 restart "$BACKEND_APP" --update-env
-    ok "Backend neu gestartet."
+
+    # Ein gestarteter Prozess ist noch kein laufender Dienst: fehlende Module
+    # oder ein belegter Port fallen erst hier auf.
+    log "Prüfe /health auf 127.0.0.1:$BACKEND_PORT ..."
+    for i in 1 2 3 4 5; do
+      sleep 1
+      if curl -sf "http://127.0.0.1:$BACKEND_PORT/health" >/dev/null; then
+        ok "Backend antwortet."
+        return 0
+      fi
+    done
+    err "Backend antwortet nicht auf /health. Logs: pm2 logs $BACKEND_APP --lines 30"
+    exit 1
   else
     warn "pm2-App '$BACKEND_APP' nicht gefunden – Backend wurde NICHT neu gestartet."
     warn "Dateien liegen in $BACKEND_DIR, Start siehe backend/README.md."
