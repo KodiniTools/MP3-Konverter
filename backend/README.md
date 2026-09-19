@@ -40,7 +40,33 @@ Die vorhandenen Lösch-Endpoints taugen dafür nicht:
    Nutzer den Tab schließt. Der Sweeper fasst **ausschließlich** registrierte Dateien an,
    fremde Dateien im `FILES_DIR` bleiben unberührt. `CONVERT_TTL_MS=0` deaktiviert ihn.
 
-Bestehende Endpoints bleiben unverändert.
+Bestehende Endpoints bleiben unverändert — mit einer Ausnahme, siehe unten.
+
+## `/api/tracks` ist jetzt auth-pflichtig
+
+`GET /api/tracks` hatte kein `requireAuth` und lieferte Dateiname, Größe und URL
+**jeder** Audiodatei im `FILES_DIR`. Über die statische Auslieferung
+(`app.use('/files', express.static(FILES_DIR))`) waren diese Dateien dann auch
+abrufbar — also die Konvertierungen fremder Nutzer. Von außen bestätigt:
+
+```bash
+curl -s https://kodinitools.com/mp3konverter/api/tracks
+# lieferte {"ok":true,"tracks":[…],"count":N}
+```
+
+Die Route bekommt deshalb `requireAuth`, wie ihre Schwester
+`DELETE /api/tracks/:filename` sie längst hat. Ohne gesetztes `ADMIN_PASSWORD`
+ist sie damit gar nicht mehr nutzbar — für den Konverter ist sie ohnehin totes
+Gewicht, seine Oberfläche ruft sie nicht auf.
+
+> **Vor dem Deploy prüfen:** `_backend_common/server.js` wird auch von
+> `audiokonverter-server` geladen. Nutzt dessen Frontend die Route, bricht sie dort.
+>
+> ```bash
+> grep -rl "api/tracks" /var/www/kodinitools.com/*/assets/ 2>/dev/null
+> ```
+>
+> Keine Treffer → gefahrlos. Treffer → erst dort klären.
 
 ## Deploy
 

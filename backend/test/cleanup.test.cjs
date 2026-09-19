@@ -74,11 +74,19 @@ const sleep = (ms) => new Promise((r) => setTimeout(r, ms))
   // 8) Bestehende Endpoints unverändert erreichbar
   const health = await (await fetch(BASE + '/health')).json()
   assert.strictEqual(health.ok, true, 'health ok')
-  const tracks = await (await fetch(BASE + '/api/tracks')).json()
-  assert.strictEqual(tracks.ok, true, 'tracks ok')
   r = await fetch(BASE + '/api/files/clear', { method: 'DELETE' })
   assert.strictEqual(r.status, 401, '/api/files/clear weiterhin auth-geschuetzt')
-  console.log('[8] health/tracks ok, /api/files/clear weiterhin 401')
+  console.log('[8] health ok, /api/files/clear weiterhin 401')
+
+  // 9) Die Dateiliste darf nicht mehr ohne Auth lesbar sein.
+  // Vorher lieferte sie die Dateinamen aller Konvertierungen im FILES_DIR.
+  const outName = 'nicht-listen-' + Date.now() + '.mp3'
+  fs.writeFileSync(path.join(FILES_DIR, outName), 'x')
+  r = await fetch(BASE + '/api/tracks')
+  assert.strictEqual(r.status, 401, '/api/tracks ohne Auth -> 401')
+  const body = await r.text()
+  assert.ok(!body.includes(outName), 'kein Dateiname in der Antwort')
+  console.log('[9] /api/tracks ohne Auth -> 401, keine Dateinamen preisgegeben')
 
   console.log('\nAlle Backend-Checks bestanden.')
   process.exit(0)
