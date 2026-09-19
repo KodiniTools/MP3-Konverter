@@ -27,3 +27,6 @@ dist-ssr
 .env
 .env.local
 .env.*.local
+
+# Laufzeit-Ordner des Backends (konvertierte Dateien)
+backend/files/
