@@ -44,15 +44,24 @@ Bestehende Endpoints bleiben unverändert.
 
 ## Deploy
 
+Der Konverter läuft als pm2-App `mp3konverter-server` auf **Port 9009**. Vom
+Server-Checkout aus:
+
 ```bash
-scp backend/server.js root@145.223.81.100:/var/www/kodinitools.com/_backend_common/server.js
-ssh root@145.223.81.100 "pm2 restart mp3konverter"   # bzw. den Prozess auf Port 9005 neu starten
+cp /var/www/kodinitools.com/_backend_common/server.js \
+   /var/www/kodinitools.com/_backend_common/server.js.bak-$(date +%F)
+diff /var/www/kodinitools.com/_backend_common/server.js /opt/mp3-konverter/backend/server.js
+cp /opt/mp3-konverter/backend/server.js /var/www/kodinitools.com/_backend_common/server.js
+pm2 restart mp3konverter-server
 ```
 
-Optional andere Aufbewahrungszeit:
+`FILES_DIR` ist derzeit **nicht** gesetzt, die Ausgaben landen also im Default
+`/var/www/kodinitools.com/_backend_common/files` — demselben Ordner, den andere
+Dienste aus `_backend_common` benutzen. Genau deshalb löscht der Endpoint nur
+registrierte Dateien. Optional trennen und Aufbewahrungszeit ändern:
 
 ```bash
-CONVERT_TTL_MS=1800000 PORT=9005 FILES_DIR=/var/www/kodinitools.com/mp3konverter/files node server.js
+CONVERT_TTL_MS=1800000 PORT=9009 FILES_DIR=/var/www/kodinitools.com/mp3konverter/files node server.js
 ```
 
 **Nach dem Deploy prüfen**, dass nginx `DELETE` an `/mp3konverter/api/` durchreicht
@@ -80,5 +89,31 @@ SERVER_PATH=/var/www/kodinitools.com/_backend_common/server.js \
 node backend/test/cleanup.test.cjs
 ```
 
-Ein anderer Port als der Produktivport (9005) ist Pflicht — der Test startet einen
+Ein anderer Port als der Produktivport (9009) ist Pflicht — der Test startet einen
 eigenen Serverprozess.
+
+## Abhängigkeiten
+
+`server.js` ist CommonJS und lädt alle Module per `require()`. Für **nanoid** heißt
+das: Version 3 ist Pflicht (dual CJS/ESM). Ab Version 4 ist nanoid ESM-only; Node
+lädt es dann nur über das experimentelle „ESM in require()" und meldet beim Start:
+
+```
+ExperimentalWarning: CommonJS module .../server.js is loading ES Module
+.../node_modules/nanoid/index.js using require().
+```
+
+Das funktioniert heute, ist aber kein garantiertes Verhalten — ein Node-Update kann
+den Start kippen. Deshalb festnageln:
+
+```bash
+cd /var/www/kodinitools.com/_backend_common
+npm i "nanoid@^3.3.8" --save
+pm2 restart mp3konverter-server
+```
+
+`^3.3.8` statt nur `@3`, weil ältere 3.x-Versionen die Endlosschleife aus
+GHSA-mwcw-c2x4-8c55 (nicht-ganzzahlige Größe) enthalten. Die benutzte API
+(`nanoid(size)`) ist in 3.x und 5.x identisch, ebenso der Alphabet-Zeichensatz
+`A–Za–z0–9_-` — an Dateinamen und Tokens ändert sich nichts. Nach dem Neustart darf
+die Warnung im Error-Log nicht mehr auftauchen.
