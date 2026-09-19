@@ -68,9 +68,6 @@
     <!-- Other Tools Section -->
     <OtherToolsSection />
 
-    <!-- Donate Section -->
-    <DonateSection />
-
     <!-- FAQ Section -->
     <FAQSection />
 
@@ -99,7 +96,6 @@ import StatusMessage from './components/converter/StatusMessage.vue'
 import PlayerStickyBar from './components/converter/PlayerStickyBar.vue'
 import FeaturesSection from './components/sections/FeaturesSection.vue'
 import OtherToolsSection from './components/sections/OtherToolsSection.vue'
-import DonateSection from './components/sections/DonateSection.vue'
 import FAQSection from './components/sections/FAQSection.vue'
 
 // Composables
