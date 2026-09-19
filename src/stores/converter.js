@@ -27,8 +27,10 @@ export const useConverterStore = defineStore('converter', () => {
   // True, sobald der Nutzer auf Abbrechen geklickt hat (bis der Lauf endet)
   const isCancelling = ref(false)
 
-  // Konvertierte Ergebnisse, die der Nutzer per Speichern-Dialog sichern kann
-  // Aufbau je Eintrag: { name, blob, size, saved }
+  // Konvertierte Ergebnisse, die der Nutzer per Speichern-Dialog sichern kann.
+  // Aufbau je Eintrag: { name, blob, size, serverFile, deleteToken }
+  // serverFile/deleteToken stammen aus der Backend-Antwort und erlauben es,
+  // die Datei nach dem Speichern serverseitig wieder zu löschen.
   const convertedFiles = ref([])
 
   // ===== Playlist / Player State =====
@@ -205,8 +207,10 @@ export const useConverterStore = defineStore('converter', () => {
     filesCompleted.value = 0
     showProgress.value = true
     progress.value = 0
-    // Ergebnisse eines vorherigen Laufs verwerfen
-    convertedFiles.value = []
+    // Ergebnisse eines vorherigen Laufs verwerfen (inkl. Server-Cleanup).
+    // Bewusst ohne await: Die Liste ist sofort leer, das Löschen läuft
+    // im Hintergrund und darf den Start der Konvertierung nicht verzögern.
+    discardAllConvertedFiles()
     // Frischen Abbruch-Controller für diesen Lauf
     abortController = new AbortController()
     const signal = abortController.signal
@@ -344,7 +348,8 @@ export const useConverterStore = defineStore('converter', () => {
         name: downloadFilename,
         blob,
         size: blob.size,
-        saved: false
+        serverFile: result.filename || null,
+        deleteToken: result.deleteToken || null
       })
 
       console.log(`✅ ${downloadFilename} erfolgreich konvertiert`)
@@ -384,6 +389,8 @@ export const useConverterStore = defineStore('converter', () => {
   // Ein konvertiertes Ergebnis speichern.
   // Moderne Browser (Chromium): Dialog mit Umbenennen + Speicherort-Auswahl.
   // Andere Browser (Firefox/Safari): klassischer Download als Fallback.
+  // Nach erfolgreichem Speichern wird der Eintrag aus der Liste entfernt und
+  // die zugehörige Datei auf dem Server gelöscht.
   async function saveConvertedFile(index) {
     const item = convertedFiles.value[index]
     if (!item) return
@@ -406,8 +413,8 @@ export const useConverterStore = defineStore('converter', () => {
         await writable.write(item.blob)
         await writable.close()
 
-        item.saved = true
         updateStatus(t('converter.status.saved', { name: handle.name || item.name }), 'success')
+        await discardConvertedFile(item)
         return
       } catch (error) {
         // Nutzer hat den Dialog abgebrochen -> kein Fehler, nichts tun
@@ -419,8 +426,8 @@ export const useConverterStore = defineStore('converter', () => {
 
     // Fallback: klassischer Download in den Standard-Download-Ordner
     fallbackDownload(item.blob, item.name)
-    item.saved = true
     updateStatus(t('converter.status.downloaded', { name: item.name }), 'success')
+    await discardConvertedFile(item)
   }
 
   function fallbackDownload(blob, filename) {
@@ -434,21 +441,72 @@ export const useConverterStore = defineStore('converter', () => {
     setTimeout(() => URL.revokeObjectURL(downloadUrl), 100)
   }
 
-  // Ein einzelnes konvertiertes Ergebnis verwerfen (z. B. falsche Bitrate).
+  // Löscht ein konvertiertes Ergebnis auf dem Server ("best effort").
+  // Fehler werden nur geloggt: Das Ergebnis liegt bereits als Blob im Browser,
+  // ein fehlgeschlagener Cleanup darf den Nutzerfluss nicht stören.
+  // keepalive = true wird beim Verlassen der Seite benötigt, damit der
+  // Request den Seitenwechsel überlebt.
+  async function deleteServerFile(item, { keepalive = false } = {}) {
+    if (!item || !item.serverFile || !item.deleteToken) return
+
+    const url = `${API_BASE}/converted/${encodeURIComponent(item.serverFile)}`
+      + `?token=${encodeURIComponent(item.deleteToken)}`
+
+    // Verhindert doppelte Löschversuche für denselben Eintrag
+    item.serverFile = null
+    item.deleteToken = null
+
+    try {
+      await fetch(url, { method: 'DELETE', keepalive })
+    } catch (error) {
+      console.warn('Server-Cleanup fehlgeschlagen:', error)
+    }
+  }
+
+  // Fortschrittsbalken ausblenden, sobald kein Ergebnis mehr offen ist.
+  function hideProgressIfDone() {
+    if (isConverting.value) return
+    if (convertedFiles.value.length > 0) return
+    showProgress.value = false
+    progress.value = 0
+  }
+
+  // Einen Eintrag aus der Ergebnisliste nehmen und serverseitig löschen.
   // Die hochgeladene Quell-Datei in der Playliste bleibt unberührt.
+  async function discardConvertedFile(item) {
+    const index = convertedFiles.value.indexOf(item)
+    if (index === -1) return
+    convertedFiles.value.splice(index, 1)
+    hideProgressIfDone()
+    await deleteServerFile(item)
+  }
+
+  // Alle Ergebnisse verwerfen und serverseitig löschen.
+  async function discardAllConvertedFiles(options) {
+    const items = convertedFiles.value.splice(0, convertedFiles.value.length)
+    hideProgressIfDone()
+    await Promise.allSettled(items.map((item) => deleteServerFile(item, options)))
+  }
+
+  // Ein einzelnes konvertiertes Ergebnis per UI verwerfen (z. B. falsche Bitrate).
   function removeConvertedFile(index) {
     if (index < 0 || index >= convertedFiles.value.length) return
-    convertedFiles.value.splice(index, 1)
+    discardConvertedFile(convertedFiles.value[index])
   }
 
   // Ergebnisliste leeren (z. B. für einen neuen Durchlauf)
   function clearConvertedFiles() {
-    convertedFiles.value = []
+    discardAllConvertedFiles()
+  }
+
+  // Beim Verlassen der Seite verbliebene Serverdateien aufräumen.
+  function cleanupOnUnload() {
+    discardAllConvertedFiles({ keepalive: true })
   }
 
   function resetAfterConversion() {
     files.value = []
-    convertedFiles.value = []
+    discardAllConvertedFiles()
     stopPlayback()
     showProgress.value = false
     progress.value = 0
@@ -512,6 +570,7 @@ export const useConverterStore = defineStore('converter', () => {
     saveConvertedFile,
     removeConvertedFile,
     clearConvertedFiles,
+    cleanupOnUnload,
     getOutputFormat,
     playTrack,
     togglePlay,

@@ -11,16 +11,10 @@
         v-for="(file, index) in files"
         :key="`${file.name}-${index}`"
         class="file-item converted-item"
-        :class="{ 'is-saved': file.saved }"
         role="listitem"
       >
         <div class="file-info">
-          <span class="file-name">
-            {{ file.name }}
-            <span v-if="file.saved" class="saved-badge">
-              {{ $t('converter.results.saved') }}
-            </span>
-          </span>
+          <span class="file-name">{{ file.name }}</span>
           <span class="file-size">{{ formatFileSize(file.size) }}</span>
         </div>
 
@@ -34,7 +28,7 @@
             <path d="M12 3v12M12 15l-4-4M12 15l4-4" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/>
             <path d="M4 17v1.5A2.5 2.5 0 0 0 6.5 21h11a2.5 2.5 0 0 0 2.5-2.5V17" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/>
           </svg>
-          <span>{{ file.saved ? $t('converter.results.saveAgain') : $t('converter.results.save') }}</span>
+          <span>{{ $t('converter.results.save') }}</span>
         </button>
 
         <button

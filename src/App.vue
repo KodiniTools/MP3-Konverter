@@ -242,14 +242,22 @@ function handleKeydown(event) {
   }
 }
 
+// Beim Verlassen der Seite noch offene Ergebnisse serverseitig aufräumen.
+// 'pagehide' deckt auch mobile Browser ab, in denen 'beforeunload' nicht feuert.
+function handlePageHide() {
+  converterStore.cleanupOnUnload()
+}
+
 onMounted(() => {
   document.addEventListener('keydown', handleKeydown)
   document.addEventListener('paste', handlePaste)
+  window.addEventListener('pagehide', handlePageHide)
 })
 
 onUnmounted(() => {
   document.removeEventListener('keydown', handleKeydown)
   document.removeEventListener('paste', handlePaste)
+  window.removeEventListener('pagehide', handlePageHide)
 })
 
 // Initialize - Backend version needs no initialization

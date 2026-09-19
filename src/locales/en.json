@@ -35,8 +35,6 @@
       "heading": "Converted Files",
       "hint": "Click “Save” to choose the file name and location yourself.",
       "save": "Save",
-      "saveAgain": "Save again",
-      "saved": "Saved",
       "saveFile": "Save {name}",
       "removeFile": "Discard converted file {name}"
     },
