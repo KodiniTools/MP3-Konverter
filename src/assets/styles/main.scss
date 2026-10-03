@@ -1636,19 +1636,21 @@ nav .submenu,
 /* Skip Link */
 .skip-link {
   position: absolute;
-  top: -40px;
+  top: 6px;
   left: 6px;
+  /* Außerhalb des Viewports, bis der Link Fokus bekommt (kein 1-px-Rand mehr oben) */
+  transform: translateY(calc(-100% - 12px));
   background: var(--primary-color);
   color: var(--on-primary);
   padding: 8px;
   text-decoration: none;
   border-radius: var(--radius);
   z-index: 9999;
-  transition: top 0.15s;
+  transition: transform 0.15s;
 }
 
 .skip-link:focus {
-  top: 6px;
+  transform: none;
 }
 
 /* ===== CUSTOM SCROLLBAR ===== */
