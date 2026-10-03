@@ -10,7 +10,7 @@ Eine moderne Vue 3-Anwendung für Browser-basierte MP3-Konvertierung mit FFmpeg.
 ✅ **Vite** - Blitzschnelles Development & Build  
 ✅ **FFmpeg.wasm** - Browser-basierte Audio-Konvertierung  
 ✅ **Dark/Light Theme** - Automatische Persistierung  
-✅ **Kontrast-Themes** - `contrast-light`/`contrast-dark` (Text ≥ 7:1), Umschalter in der App, folgt `prefers-contrast: more`  
+✅ **Kontrast-Themes** - `contrast-light`/`contrast-dark` (Text ≥ 7:1) greifen automatisch bei `prefers-contrast: more`  
 ✅ **Responsive Design** - Mobile-first Ansatz  
 ✅ **Drag & Drop** - Intuitive Dateiauswahl  
 ✅ **Accessibility** - ARIA-Labels und Keyboard-Navigation  
@@ -161,7 +161,7 @@ async function initializeFFmpeg() {
 ### Layout-Komponenten
 
 #### AppHeader.vue
-- Theme Toggle (Light/Dark) über die globale Navigation; Kontrast-Umschalter in der App (`ContrastToggle.vue`)
+- Theme Toggle (Light/Dark) über die globale Navigation; Kontrast-Themes folgen der Systemeinstellung
 - Language Toggle (DE/EN)
 - Responsive Navigation
 

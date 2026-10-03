@@ -4,9 +4,7 @@
     "langCode": "DE",
     "skipToMain": "Zum Hauptinhalt springen",
     "toggleTheme": "Theme wechseln",
-    "toggleLanguage": "Sprache wechseln",
-    "highContrast": "Hoher Kontrast",
-    "toggleContrast": "Hohen Kontrast ein- oder ausschalten"
+    "toggleLanguage": "Sprache wechseln"
   },
   "hero": {
     "title": "MP3-Konvertierung in Sekunden",
