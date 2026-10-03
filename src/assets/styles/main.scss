@@ -87,8 +87,8 @@
 
 /* ===== KONTRAST-THEMES =====
    Dieselben Markenfarben, jedes Textpaar >= 7:1 (WCAG AAA), alle Rahmen >= 3:1.
-   Werte und Nachweise: Design-System (tokens.json). Aktivierung: data-theme="contrast-light" | "contrast-dark"
-   auf <html>; der Store (src/stores/theme.js) setzt sie aus localStorage.theme + mp3-converter-contrast zusammen. */
+   Werte und Nachweise: Design-System (tokens.json). Der Store (src/stores/theme.js) aktiviert sie automatisch,
+   wenn das Betriebssystem mehr Kontrast verlangt (prefers-contrast: more); es gibt keinen Schalter in der App. */
 [data-theme="contrast-light"] {
   --primary-color: #003971;
   --primary-hover: #001d3d;
@@ -264,47 +264,6 @@ h4 {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-}
-
-/* Kontrast-Umschalter (ContrastToggle.vue) */
-.a11y-bar {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0.75rem 2rem 0;
-  display: flex;
-  justify-content: flex-end;
-}
-
-.contrast-toggle {
-  background: transparent;
-  border: 1px solid var(--border-strong);
-  border-radius: var(--radius);
-  padding: 8px 16px;
-  min-height: 40px;
-  cursor: pointer;
-  transition: var(--transition);
-  color: var(--text-primary);
-  font-size: 0.9rem;
-  font-weight: 600;
-  font-family: inherit;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.contrast-toggle:hover {
-  background: var(--surface-tint);
-}
-
-.contrast-toggle.is-active {
-  background: var(--primary-color);
-  border-color: var(--primary-color);
-  color: var(--on-primary);
-}
-
-.contrast-toggle.is-active:hover {
-  background: var(--primary-hover);
-  border-color: var(--primary-hover);
 }
 
 /* ===== MAIN CONTENT ===== */
@@ -1469,10 +1428,6 @@ body.player-active {
     padding: 1rem;
   }
 
-  .a11y-bar {
-    padding: 0.5rem 1rem 0;
-  }
-
   .drop-area {
     padding: 1.25rem 1rem;
   }
@@ -1635,7 +1590,6 @@ body.player-active {
 @media print {
   .website-header,
   .cookie-banner,
-  .a11y-bar,
   .player-sticky-bar {
     display: none !important;
   }

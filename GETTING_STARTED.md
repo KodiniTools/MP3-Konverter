@@ -43,7 +43,7 @@ Fehlt ein Schnitt, fällt der Browser für dieses Gewicht auf die Systemschrift 
 
 ### Theme ändern
 - Klicke auf 🌙/☀️ Button im Header (Hell/Dunkel, `localStorage.theme`)
-- „Hoher Kontrast“ oben rechts schaltet die Kontrast-Themes `contrast-light`/`contrast-dark` (`localStorage.mp3-converter-contrast`); ohne Wahl gilt `prefers-contrast: more`
+- Die Kontrast-Themes `contrast-light`/`contrast-dark` greifen automatisch, wenn das Betriebssystem mehr Kontrast verlangt (`prefers-contrast: more`); es gibt keinen Schalter in der App
 - Oder ändere Standard in `src/stores/theme.js`
 
 ### Sprache ändern

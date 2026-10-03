@@ -7,8 +7,10 @@ import { computed, ref, watch } from 'vue'
  * Zwei Dimensionen, ein Attribut:
  * - Schema `light` | `dark` – liegt in `localStorage.theme`. Diesen Schlüssel teilen sich die globale
  *   Navigation (nav.html) und alle KodiniTools-Seiten; er darf nur `light`/`dark` enthalten.
- * - Kontrast an/aus – liegt in `localStorage[CONTRAST_STORAGE_KEY]`, nur für diese App. Andere Seiten
- *   kennen die Kontrast-Themes nicht und würden mit `data-theme="contrast-dark"` ungestylt dastehen.
+ * - Kontrast an/aus – folgt der Systemeinstellung `prefers-contrast: more` (live, ohne Schalter in der App).
+ *   Eine explizite Wahl über `setContrast`/`toggleContrast`/`setTheme` landet in
+ *   `localStorage[CONTRAST_STORAGE_KEY]`, nur für diese App: andere KodiniTools-Seiten kennen die
+ *   Kontrast-Themes nicht und würden mit `data-theme="contrast-dark"` ungestylt dastehen.
  *
  * Zusammengesetzt ergibt das `data-theme` auf `<html>`: `light`, `dark`, `contrast-light`, `contrast-dark`
  * (alle vier stylt main.scss).
@@ -56,8 +58,8 @@ function writeStorage(key, value) {
   }
 }
 
-function mediaMatches(query) {
-  return typeof window !== 'undefined' && typeof window.matchMedia === 'function' && window.matchMedia(query).matches
+function mediaQuery(query) {
+  return typeof window !== 'undefined' && typeof window.matchMedia === 'function' ? window.matchMedia(query) : null
 }
 
 export const useThemeStore = defineStore('theme', () => {
@@ -65,9 +67,10 @@ export const useThemeStore = defineStore('theme', () => {
   const storedScheme = parseTheme(readStorage(SCHEME_STORAGE_KEY))
   const scheme = ref(storedScheme ? storedScheme.scheme : 'light')
 
-  // Kontrast: eigene Entscheidung des Nutzers, sonst die Systemeinstellung (prefers-contrast: more)
+  // Kontrast: explizit gespeicherte Wahl, sonst die Systemeinstellung (prefers-contrast: more)
+  const contrastQuery = mediaQuery('(prefers-contrast: more)')
   const storedContrast = readStorage(CONTRAST_STORAGE_KEY)
-  const highContrast = ref(storedContrast === null ? mediaMatches('(prefers-contrast: more)') : storedContrast === '1')
+  const highContrast = ref(storedContrast === null ? Boolean(contrastQuery?.matches) : storedContrast === '1')
 
   const theme = computed(() => composeTheme(scheme.value, highContrast.value))
 
@@ -80,8 +83,22 @@ export const useThemeStore = defineStore('theme', () => {
 
   watch(theme, applyTheme, { immediate: true })
   watch(scheme, (value) => writeStorage(SCHEME_STORAGE_KEY, value), { immediate: true })
-  // Kontrast nur persistieren, wenn der Nutzer ihn aktiv ändert; bis dahin entscheidet die Systemeinstellung
-  watch(highContrast, (value) => writeStorage(CONTRAST_STORAGE_KEY, value ? '1' : '0'))
+
+  // Kontrast nur persistieren, wenn er explizit gesetzt wird; bis dahin entscheidet die Systemeinstellung
+  function persistContrast(value) {
+    highContrast.value = value
+    writeStorage(CONTRAST_STORAGE_KEY, value ? '1' : '0')
+  }
+
+  // Systemeinstellung live übernehmen, solange keine explizite Wahl gespeichert ist
+  function handleContrastPreference(event) {
+    if (readStorage(CONTRAST_STORAGE_KEY) === null) {
+      highContrast.value = Boolean(event.matches)
+    }
+  }
+  if (contrastQuery && typeof contrastQuery.addEventListener === 'function') {
+    contrastQuery.addEventListener('change', handleContrastPreference)
+  }
 
   /**
    * Externe Änderung an `<html data-theme>` übernehmen. nav.html setzt dort 'light' | 'dark' ohne
@@ -128,25 +145,28 @@ export const useThemeStore = defineStore('theme', () => {
     scheme.value = scheme.value === 'light' ? 'dark' : 'light'
   }
 
-  /** Akzeptiert alle vier data-theme-Werte; unbekannte werden ignoriert. */
+  /** Akzeptiert alle vier data-theme-Werte; unbekannte werden ignoriert. Ein Kontrastwert wird gespeichert. */
   function setTheme(value) {
     const parsed = parseTheme(value)
     if (!parsed) return
     scheme.value = parsed.scheme
-    highContrast.value = parsed.highContrast
+    persistContrast(parsed.highContrast)
   }
 
   function toggleContrast() {
-    highContrast.value = !highContrast.value
+    persistContrast(!highContrast.value)
   }
 
   function setContrast(enabled) {
-    highContrast.value = Boolean(enabled)
+    persistContrast(Boolean(enabled))
   }
 
   function cleanup() {
     if (typeof window !== 'undefined') {
       window.removeEventListener('theme-changed', handleThemeChanged)
+    }
+    if (contrastQuery && typeof contrastQuery.removeEventListener === 'function') {
+      contrastQuery.removeEventListener('change', handleContrastPreference)
     }
     if (observer) {
       observer.disconnect()

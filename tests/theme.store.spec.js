@@ -9,15 +9,17 @@ function flush() {
   return new Promise((resolve) => setTimeout(resolve, 0))
 }
 
-/** Simuliert die Systemeinstellung prefers-contrast: more (jsdom hat kein matchMedia). */
+/** Simuliert die Systemeinstellung prefers-contrast: more (jsdom hat kein matchMedia); gibt den change-Handler zurück. */
+const mediaListeners = {}
 function mockPrefersContrast(matches) {
   window.matchMedia = vi.fn((query) => ({
     matches: query === '(prefers-contrast: more)' && matches,
     media: query,
-    addEventListener: () => {},
-    removeEventListener: () => {}
+    addEventListener: (type, handler) => { mediaListeners[query] = handler },
+    removeEventListener: (type, handler) => { if (mediaListeners[query] === handler) delete mediaListeners[query] }
   }))
 }
+const fireContrastChange = (matches) => mediaListeners['(prefers-contrast: more)']?.({ matches })
 
 describe('Theme-Store mit Kontrast-Themes', () => {
   let store
@@ -67,6 +69,36 @@ describe('Theme-Store mit Kontrast-Themes', () => {
     store = useThemeStore()
     expect(store.theme).toBe('contrast-light')
     expect(localStorage.getItem('mp3-converter-contrast')).toBeNull()
+  })
+
+  it('übernimmt eine geänderte Systemeinstellung live, solange nichts gespeichert ist', async () => {
+    mockPrefersContrast(false)
+    store = useThemeStore()
+    expect(store.theme).toBe('light')
+
+    fireContrastChange(true)
+    await flush()
+    expect(store.theme).toBe('contrast-light')
+    expect(html()).toBe('contrast-light')
+    expect(localStorage.getItem('mp3-converter-contrast')).toBeNull()
+
+    fireContrastChange(false)
+    await flush()
+    expect(store.theme).toBe('light')
+
+    // Nach cleanup hört der Store nicht mehr zu
+    store.cleanup()
+    expect(mediaListeners['(prefers-contrast: more)']).toBeUndefined()
+  })
+
+  it('lässt eine gespeicherte Wahl von der Systemeinstellung unberührt', async () => {
+    mockPrefersContrast(false)
+    store = useThemeStore()
+    store.setContrast(false)
+    await flush()
+    fireContrastChange(true)
+    await flush()
+    expect(store.theme).toBe('light')
   })
 
   it('ignoriert prefers-contrast, wenn der Nutzer den Kontrast schon abgewählt hat', () => {
