@@ -6,6 +6,11 @@
     <!-- Animated Background -->
     <div class="bg-animated"></div>
 
+    <!-- Kontrast-Umschalter (Original- vs. Kontrast-Theme) -->
+    <div class="a11y-bar">
+      <ContrastToggle />
+    </div>
+
     <!-- Hero Section -->
     <HeroSection />
 
@@ -86,6 +91,7 @@ import { useLocaleStore } from './stores/locale'
 
 // Components
 import HeroSection from './components/layout/HeroSection.vue'
+import ContrastToggle from './components/layout/ContrastToggle.vue'
 import FileUpload from './components/converter/FileUpload.vue'
 import FileList from './components/converter/FileList.vue'
 import ConversionOptions from './components/converter/ConversionOptions.vue'
