@@ -3,9 +3,6 @@
     <!-- Skip Link -->
     <a href="#main-content" class="skip-link">{{ $t('common.skipToMain') }}</a>
 
-    <!-- Animated Background -->
-    <div class="bg-animated"></div>
-
     <!-- Kontrast-Umschalter (Original- vs. Kontrast-Theme) -->
     <div class="a11y-bar">
       <ContrastToggle />
