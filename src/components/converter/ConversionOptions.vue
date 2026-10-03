@@ -42,17 +42,21 @@
       </div>
     </form>
     
-    <div class="conversion-info" role="status" aria-live="polite">
-      <span class="info-label">{{ $t('converter.options.outputFormatLabel') }}</span>
-      <span class="info-value">{{ outputFormat.format }}</span>
-      <span class="info-separator" aria-hidden="true">|</span>
-      <span class="info-label">{{ $t('converter.options.outputCodecLabel') }}</span>
-      <span class="info-value">{{ outputFormat.codec }}</span>
+    <div class="options-footer">
+      <span class="format-chip" role="status" aria-live="polite">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M9 18V5l12-2v13" /><circle cx="6" cy="18" r="3" /><circle cx="18" cy="16" r="3" />
+        </svg>
+        {{ $t('converter.options.outputChip', { format: outputFormat.format, bitrate: formatBitrate(bitrate) }) }}
+      </span>
+      <span class="keyboard-hint">{{ $t('converter.options.keyboardHint') }}</span>
     </div>
   </section>
 </template>
 
 <script setup>
+import { formatBitrate } from '../../utils/format'
+
 defineProps({
   codec: {
     type: String,

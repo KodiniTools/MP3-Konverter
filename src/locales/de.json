@@ -23,7 +23,8 @@
       "instruction": "Audiodateien hierher ziehen oder klicken zum Auswählen",
       "button": "Dateien auswählen",
       "pasteHint": "oder mit Strg+V aus der Zwischenablage einfügen",
-      "ariaLabel": "Audiodateien auswählen"
+      "ariaLabel": "Audiodateien auswählen",
+      "formats": "WAV, FLAC, OGG, M4A, AAC · bis 100 MB"
     },
     "fileList": {
       "heading": "Playliste",
@@ -57,7 +58,9 @@
       "codecLabel": "Audio-Codec:",
       "bitrateLabel": "Bitrate:",
       "outputFormatLabel": "Ausgabeformat:",
-      "outputCodecLabel": "Codec:"
+      "outputCodecLabel": "Codec:",
+      "outputChip": "Ausgabe: {format} · {bitrate}",
+      "keyboardHint": "Enter startet die Konvertierung · Escape leert die Liste"
     },
     "actions": {
       "convert": "Konvertieren",

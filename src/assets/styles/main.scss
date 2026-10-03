@@ -8,6 +8,11 @@
  * - Radius-Skala: --radius (Steuerelemente), --radius-lg (Karten), --radius-pill
  * - Sekundärtext und Statusfarben in den Werten des hellen Kontrast-Themes (>= 7:1)
  * - Übergänge 150 ms, Einblenden 200 ms; keine Lichtstreifen, kein Hover-Lift
+ *
+ * Phase 2 („Typografie und Struktur“):
+ * - Supreme in 400/500/700, Type-Scale als Tokens (--font-size-*, --line-height-*, --letter-spacing-*)
+ * - Hero kompakt mit Trust-Zeile, Upload-Zone mit Formatliste und Button, Format-Chip mit Tastaturhinweis
+ * - Status inline mit Icon, Feature-Karten mit Icon, Tool-Karten als Link mit Pfeil, FAQ als details/summary
  */
 
 /* ===== TOKENS ===== */
@@ -41,6 +46,21 @@
   /* Typography */
   --font-main: 'Supreme', -apple-system, BlinkMacSystemFont, sans-serif;
   --font-heading: 'Supreme', sans-serif;
+
+  /* Type-Scale (16 px Basis) */
+  --font-size-display: clamp(2.25rem, 4vw, 3.25rem);
+  --font-size-h2: 2rem;
+  --font-size-h3: 1.125rem;
+  --font-size-lead: 1.125rem;
+  --font-size-body: 1rem;
+  --font-size-sm: 0.9375rem;
+  --font-size-caption: 0.8125rem;
+  --font-size-xs: 0.75rem;
+  --line-height-tight: 1.1;
+  --line-height-snug: 1.25;
+  --line-height-body: 1.55;
+  --letter-spacing-tight: -0.02em;
+  --letter-spacing-caps: 0.07em;
 }
 
 [data-theme="dark"] {
@@ -112,7 +132,10 @@
   --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.4), 0 20px 40px -16px rgba(0, 0, 0, 0.7);
 }
 
-/* ===== CUSTOM FONT ===== */
+/* ===== CUSTOM FONT =====
+   Supreme (Indian Type Foundry, Fontshare) in drei Schnitten. Die Dateien liegen nicht im Repository,
+   sondern unter /fonts/ auf dem Server (siehe GETTING_STARTED.md); fehlt ein Schnitt, fällt der Browser
+   für dieses Gewicht auf die Systemschrift zurück. */
 @font-face {
   font-family: 'Supreme';
   src: url('/fonts/Supreme-Regular.woff2') format('woff2');
@@ -121,12 +144,29 @@
   font-display: swap;
 }
 
+@font-face {
+  font-family: 'Supreme';
+  src: url('/fonts/Supreme-Medium.woff2') format('woff2');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Supreme';
+  src: url('/fonts/Supreme-Bold.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
 /* ===== BASE ===== */
 body {
   font-family: var(--font-main);
+  font-size: var(--font-size-body);
   background: var(--background);
   color: var(--text-primary);
-  line-height: 1.6;
+  line-height: var(--line-height-body);
   overflow-x: hidden;
 }
 
@@ -134,7 +174,30 @@ h1,
 h2,
 h3,
 h4 {
-  line-height: 1.2;
+  line-height: var(--line-height-snug);
+}
+
+/* Sekundärer Button (Umriss): Drop-Area, weitere Nebenaktionen */
+.btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  min-height: 40px;
+  padding: 0.5rem 1rem;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius);
+  background: transparent;
+  color: var(--text-primary);
+  font-family: inherit;
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.btn-secondary:hover {
+  background: var(--surface-tint);
 }
 
 /* ===== UTILITY CLASSES ===== */
@@ -260,7 +323,7 @@ h4 {
 .drop-area {
   border: 2px dashed var(--border-strong);
   border-radius: var(--radius);
-  padding: 2rem 1.5rem;
+  padding: 1.5rem 1.5rem 1.25rem;
   text-align: center;
   background: var(--surface-tint);
   transition: var(--transition);
@@ -287,7 +350,7 @@ h4 {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.375rem;
 }
 
 .upload-icon-wrap {
@@ -312,21 +375,20 @@ h4 {
 
 .drop-title {
   color: var(--text-primary);
-  font-size: 0.9375rem;
+  font-size: var(--font-size-sm);
   font-weight: 500;
   margin: 0;
 }
 
-.drop-hint {
+.drop-formats,
+.drop-paste-hint {
   color: var(--text-secondary);
-  font-size: 0.8125rem;
+  font-size: var(--font-size-caption);
   margin: 0;
 }
 
-.drop-paste-hint {
-  color: var(--text-secondary);
-  font-size: 0.75rem;
-  margin: 0;
+.drop-btn {
+  margin-top: 0.5rem;
 }
 
 .file-input {
@@ -439,10 +501,10 @@ h4 {
 }
 
 .section-heading {
-  font-size: 0.75rem;
+  font-size: var(--font-size-xs);
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.08em;
+  letter-spacing: var(--letter-spacing-caps);
   color: var(--text-secondary);
   margin: 0 0 0.75rem 0;
 }
@@ -572,7 +634,7 @@ h4 {
 
 .converted-hint {
   margin: 0 0 0.75rem 0;
-  font-size: 0.8125rem;
+  font-size: var(--font-size-caption);
   color: var(--text-secondary);
 }
 
@@ -890,9 +952,9 @@ body.player-active {
 .option-label {
   font-weight: 600;
   color: var(--text-secondary);
-  font-size: 0.75rem;
+  font-size: var(--font-size-xs);
   text-transform: uppercase;
-  letter-spacing: 0.07em;
+  letter-spacing: var(--letter-spacing-caps);
 }
 
 .option-select {
@@ -923,32 +985,39 @@ body.player-active {
   box-shadow: 0 0 0 3px color-mix(in srgb, var(--border-focus) 18%, transparent);
 }
 
-.conversion-info {
-  background: var(--surface-tint);
-  border-radius: var(--radius);
-  padding: 0.625rem 0.875rem;
+.options-footer {
   display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
   flex-wrap: wrap;
+}
+
+.format-chip {
+  display: inline-flex;
   align-items: center;
   gap: 0.375rem;
-  font-size: 0.8125rem;
+  min-height: 32px;
+  padding: 0 0.75rem;
+  border-radius: var(--radius-pill);
+  background: var(--surface-tint);
   border: 1px solid var(--border);
-}
-
-.info-label {
-  font-weight: 600;
-  color: var(--text-secondary);
-}
-
-.info-value {
   color: var(--text-primary);
-  font-weight: 500;
+  font-size: var(--font-size-caption);
+  font-weight: 600;
+  white-space: nowrap;
 }
 
-.info-separator {
+.format-chip svg {
+  width: 16px;
+  height: 16px;
+  color: var(--primary-color);
+  flex-shrink: 0;
+}
+
+.keyboard-hint {
+  font-size: var(--font-size-caption);
   color: var(--text-secondary);
-  margin: 0 0.125rem;
-  opacity: 0.5;
 }
 
 /* ===== ACTION SECTION ===== */
@@ -1020,19 +1089,26 @@ body.player-active {
   white-space: nowrap;
 }
 
-/* ===== STATUS SECTION ===== */
-.status-section {
-  text-align: center;
-}
-
+/* ===== STATUS (inline, mit Icon) ===== */
 .status {
-  padding: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  padding: 0.75rem 0.875rem;
   border-radius: var(--radius);
+  font-size: var(--font-size-sm);
   font-weight: 500;
+  text-align: left;
   background: var(--surface-tint);
   color: var(--text-primary);
   border: 1px solid var(--border);
   transition: var(--transition);
+}
+
+.status-icon {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
 }
 
 .status--info {
@@ -1061,7 +1137,7 @@ body.player-active {
 
 /* ===== HERO ===== */
 .hero {
-  padding: 2rem 2rem 1.5rem;
+  padding: 2.5rem 2rem 1rem;
   text-align: center;
 }
 
@@ -1072,59 +1148,53 @@ body.player-active {
 
 .hero h1 {
   font-family: var(--font-heading);
-  font-size: clamp(2.25rem, 4vw, 3.25rem);
+  font-size: var(--font-size-display);
   font-weight: 700;
-  line-height: 1.1;
-  letter-spacing: -0.02em;
-  margin: 0 0 1rem;
+  line-height: var(--line-height-tight);
+  letter-spacing: var(--letter-spacing-tight);
+  max-width: 48rem;
+  margin: 0 auto 0.75rem;
   color: var(--text-primary);
   animation: fadeIn 0.2s ease;
 }
 
 .hero p {
-  font-size: 1.2rem;
+  font-size: var(--font-size-lead);
   color: var(--text-secondary);
-  margin: 0 0 1rem;
+  max-width: 36rem;
+  margin: 0 auto;
   animation: fadeIn 0.2s ease;
 }
 
+/* Trust-Zeile: Icons in der Primärfarbe, kein Pillen-Rahmen */
 .trust-badges {
   display: flex;
   justify-content: center;
-  gap: 0.75rem;
-  margin: 1rem 0 0;
+  gap: 0.5rem 1.75rem;
+  margin: 1.25rem 0 0;
   flex-wrap: wrap;
 }
 
 .trust-badge {
-  display: flex;
+  display: inline-flex;
   align-items: center;
   gap: 0.5rem;
   color: var(--text-secondary);
-  font-size: 0.9rem;
-  font-weight: 500;
-  padding: 0.5rem 1rem;
-  background: var(--surface);
-  border-radius: var(--radius-pill);
-  border: 1px solid var(--border);
-  transition: var(--transition);
+  font-size: 0.875rem;
+  font-weight: 600;
 }
 
 .trust-badge svg {
-  width: 16px;
-  height: 16px;
+  width: 18px;
+  height: 18px;
   flex-shrink: 0;
   color: var(--primary-color);
-}
-
-.trust-badge:hover {
-  border-color: var(--border-strong);
 }
 
 /* ===== KONVERTER-KARTE ===== */
 .converter-section {
   max-width: 760px;
-  margin: 1.25rem auto 2rem;
+  margin: 1rem auto 2rem;
   padding: 0 1.5rem;
 }
 
@@ -1149,11 +1219,11 @@ body.player-active {
 
 .section-title {
   font-family: var(--font-heading);
-  font-size: 2.5rem;
+  font-size: var(--font-size-h2);
   font-weight: 700;
-  line-height: 1.1;
-  letter-spacing: -0.02em;
-  text-align: center;
+  line-height: var(--line-height-tight);
+  letter-spacing: var(--letter-spacing-tight);
+  text-align: left;
   margin: 0 0 1.5rem;
   color: var(--text-primary);
 }
@@ -1161,24 +1231,47 @@ body.player-active {
 .features-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 1rem;
+  gap: 0.75rem;
 }
 
 .feature-card {
   padding: 1.25rem;
-  text-align: center;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.feature-icon,
+.tool-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius);
+  background: var(--surface-tint);
+  color: var(--primary-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.feature-icon svg,
+.tool-icon svg {
+  width: 22px;
+  height: 22px;
 }
 
 .feature-card h3 {
   font-family: var(--font-heading);
-  font-size: 1.3rem;
-  line-height: 1.2;
-  margin: 0 0 0.5rem;
+  font-size: var(--font-size-h3);
+  line-height: var(--line-height-snug);
+  margin: 0;
   color: var(--text-primary);
 }
 
 .feature-card p {
   color: var(--text-secondary);
+  font-size: var(--font-size-sm);
   margin: 0;
 }
 
@@ -1212,62 +1305,72 @@ body.player-active {
 }
 
 .tool-card {
-  padding: 1.25rem;
-  text-align: center;
+  padding: 1.25rem 1.5rem;
+  text-align: left;
   text-decoration: none;
   color: inherit;
   display: flex;
-  flex-direction: column;
   align-items: center;
+  gap: 1rem;
+}
+
+.tool-body {
+  flex: 1;
+  min-width: 0;
 }
 
 .tool-card h3 {
   font-family: var(--font-heading);
-  font-size: 1.3rem;
-  line-height: 1.2;
-  margin: 0 0 0.5rem;
+  font-size: var(--font-size-body);
+  line-height: var(--line-height-snug);
+  margin: 0 0 0.125rem;
   color: var(--text-primary);
 }
 
 .tool-card p {
   color: var(--text-secondary);
+  font-size: 0.875rem;
   margin: 0;
-  flex-grow: 1;
+}
+
+.tool-arrow {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  color: var(--text-secondary);
+  transition: var(--transition);
+}
+
+.tool-card:hover .tool-arrow {
+  color: var(--primary-color);
 }
 
 /* ===== FAQ ===== */
 .faq-section {
-  padding: 4rem 2rem;
+  padding: 2.5rem 2rem 3rem;
   background: var(--background);
 }
 
 .faq-container {
-  max-width: 800px;
+  max-width: 760px;
   margin: 0 auto;
 }
 
+/* Ein Eintrag ist ein <details>; die Frage ist das <summary> */
 .faq-item {
-  margin-bottom: 1rem;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
-  overflow: hidden;
-  transition: var(--transition);
+  border-top: 1px solid var(--border);
 }
 
-.faq-item:hover {
-  border-color: var(--border-strong);
+.faq-item:last-child {
+  border-bottom: 1px solid var(--border);
 }
 
 .faq-question {
-  background: transparent;
-  border: none;
-  width: 100%;
-  padding: 1.5rem;
-  text-align: left;
-  font-family: inherit;
-  font-size: 1rem;
+  list-style: none;
+  padding: 1rem 0.25rem;
+  font-size: 1.0625rem;
   font-weight: 600;
+  line-height: var(--line-height-snug);
   cursor: pointer;
   color: var(--text-primary);
   transition: var(--transition);
@@ -1277,24 +1380,23 @@ body.player-active {
   gap: 1rem;
 }
 
+.faq-question::-webkit-details-marker {
+  display: none;
+}
+
 .faq-question:hover {
-  background: var(--surface-tint);
+  color: var(--primary-color);
 }
 
 .faq-answer {
-  padding: 0 1.5rem 1.5rem;
+  padding: 0 0.25rem 1.25rem;
+  max-width: 42rem;
   color: var(--text-secondary);
-  display: none;
-  line-height: 1.6;
+  animation: fadeIn 0.2s ease;
 }
 
 .faq-answer p {
   margin: 0;
-}
-
-.faq-item.active .faq-answer {
-  display: block;
-  animation: fadeIn 0.2s ease;
 }
 
 .faq-toggle {
@@ -1311,7 +1413,7 @@ body.player-active {
   height: 20px;
 }
 
-.faq-item.active .faq-toggle {
+.faq-item[open] .faq-toggle {
   transform: rotate(180deg);
 }
 
@@ -1335,11 +1437,6 @@ body.player-active {
     padding: 1.5rem;
   }
 
-  .section-title {
-    font-size: 2rem;
-    margin-bottom: 2rem;
-  }
-
   .features {
     padding: 3rem 1.5rem;
   }
@@ -1354,7 +1451,7 @@ body.player-active {
   }
 
   .faq-section {
-    padding: 3rem 1.5rem;
+    padding: 2rem 1.5rem 2.5rem;
   }
 
   .converter-section {
@@ -1426,7 +1523,11 @@ body.player-active {
   }
 
   .hero p {
-    font-size: 1rem;
+    font-size: var(--font-size-body);
+  }
+
+  .keyboard-hint {
+    display: none;
   }
 
   .features {
@@ -1437,20 +1538,9 @@ body.player-active {
     grid-template-columns: 1fr;
   }
 
-  .feature-card {
-    padding: 1.5rem;
-  }
-
-  .feature-card h3 {
-    font-size: 1.15rem;
-  }
 
   .other-tools-section {
     padding: 2rem 1rem;
-  }
-
-  .tool-card {
-    padding: 1.5rem;
   }
 
   .faq-section {
@@ -1458,13 +1548,8 @@ body.player-active {
   }
 
   .faq-question {
-    padding: 1.25rem;
-    font-size: 0.95rem;
-  }
-
-  .faq-answer {
-    padding: 0 1.25rem 1.25rem;
-    font-size: 0.95rem;
+    padding: 1rem 0.25rem;
+    font-size: var(--font-size-body);
   }
 
   .converter-section {
@@ -1477,12 +1562,7 @@ body.player-active {
   }
 
   .trust-badges {
-    gap: 0.5rem;
-  }
-
-  .trust-badge {
-    font-size: 0.85rem;
-    padding: 0.4rem 0.8rem;
+    gap: 0.5rem 1.25rem;
   }
 }
 
@@ -1492,14 +1572,8 @@ body.player-active {
     font-size: 1.75rem;
   }
 
-  .hero p {
-    font-size: 0.9rem;
-    margin-bottom: 1.5rem;
-  }
-
   .section-title {
     font-size: 1.5rem;
-    margin-bottom: 1.5rem;
   }
 
   .feature-card, .tool-card {
@@ -1518,14 +1592,8 @@ body.player-active {
     padding: 1rem;
   }
 
-  .faq-question {
-    padding: 1rem;
-    font-size: 0.9rem;
-  }
-
   .faq-answer {
-    padding: 0 1rem 1rem;
-    font-size: 0.9rem;
+    font-size: var(--font-size-sm);
   }
 }
 

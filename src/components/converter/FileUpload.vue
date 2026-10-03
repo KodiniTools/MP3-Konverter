@@ -8,10 +8,7 @@
       ref="dropArea"
       class="drop-area"
       :class="{ 'drag-over': isDragging }"
-      role="button"
-      tabindex="0"
       @click="openFileDialog"
-      @keydown.enter.space.prevent="openFileDialog"
       @dragenter.prevent="handleDragEnter"
       @dragleave.prevent="handleDragLeave"
       @dragover.prevent="handleDragOver"
@@ -25,8 +22,12 @@
           </svg>
         </div>
         <p class="drop-title">{{ $t('converter.upload.instruction') }}</p>
-        <span class="drop-hint">{{ $t('converter.upload.button') }}</span>
+        <span class="drop-formats">{{ $t('converter.upload.formats') }}</span>
         <span class="drop-paste-hint">{{ $t('converter.upload.pasteHint') }}</span>
+        <!-- Der Button ist das Tastatur-Ziel; die Fläche reagiert zusätzlich auf Klick und Drop -->
+        <button type="button" class="btn-secondary drop-btn" @click.stop="openFileDialog">
+          {{ $t('converter.upload.button') }}
+        </button>
 
         <input
           ref="fileInput"
@@ -34,6 +35,7 @@
           class="file-input"
           multiple
           accept="audio/*"
+          tabindex="-1"
           @change="handleFileSelect"
           :aria-label="$t('converter.upload.ariaLabel')"
         >
