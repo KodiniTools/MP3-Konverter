@@ -31,6 +31,16 @@ npm run dev
 
 ## 🎨 Schnelle Anpassungen
 
+### Schrift Supreme
+
+Die App nutzt Supreme (Indian Type Foundry, kostenlos über Fontshare) in 400, 500 und 700. Die Dateien liegen nicht im Repository, sondern zentral unter `/fonts/` auf dem Server:
+
+- `/fonts/Supreme-Regular.woff2`
+- `/fonts/Supreme-Medium.woff2`
+- `/fonts/Supreme-Bold.woff2`
+
+Fehlt ein Schnitt, fällt der Browser für dieses Gewicht auf die Systemschrift zurück. Download und Lizenz (Fontshare Free Font License): https://www.fontshare.com/fonts/supreme
+
 ### Theme ändern
 - Klicke auf 🌙/☀️ Button im Header (Hell/Dunkel, `localStorage.theme`)
 - „Hoher Kontrast“ oben rechts schaltet die Kontrast-Themes `contrast-light`/`contrast-dark` (`localStorage.mp3-converter-contrast`); ohne Wahl gilt `prefers-contrast: more`
