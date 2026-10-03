@@ -32,7 +32,8 @@ npm run dev
 ## 🎨 Schnelle Anpassungen
 
 ### Theme ändern
-- Klicke auf 🌙/☀️ Button im Header
+- Klicke auf 🌙/☀️ Button im Header (Hell/Dunkel, `localStorage.theme`)
+- „Hoher Kontrast“ oben rechts schaltet die Kontrast-Themes `contrast-light`/`contrast-dark` (`localStorage.mp3-converter-contrast`); ohne Wahl gilt `prefers-contrast: more`
 - Oder ändere Standard in `src/stores/theme.js`
 
 ### Sprache ändern
