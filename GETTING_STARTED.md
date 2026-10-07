@@ -33,33 +33,25 @@ npm run dev
 
 ### Schrift Supreme
 
-Die App nutzt Supreme (Indian Type Foundry, kostenlos über Fontshare) in 400, 500 und 700. Die Dateien liegen nicht im Repository, sondern zentral unter `/fonts/` auf dem Server:
+Die App nutzt Supreme (Indian Type Foundry, kostenlos über Fontshare, ITF Free Font License) in 400, 500 und 700. Die Dateien liegen wie im Collage Maker im Repository unter `src/assets/fonts/` und werden von Vite mitgebündelt; der Server braucht keinen eigenen `/fonts/`-Ordner mehr.
 
-- `/fonts/Supreme-Regular.woff2`
-- `/fonts/Supreme-Medium.woff2`
-- `/fonts/Supreme-Bold.woff2`
+### Design-System
 
-Fehlt ein Schnitt, fällt der Browser für dieses Gewicht auf die Systemschrift zurück. Download und Lizenz (Fontshare Free Font License): https://www.fontshare.com/fonts/supreme
+Die Oberfläche läuft auf den gemeinsamen KodiniTools-Tokens v2 (`--ds-*`), übernommen aus dem Collage Maker. Einstieg: `src/design-system/README.md`.
 
 ### Theme ändern
-- Klicke auf 🌙/☀️ Button im Header (Hell/Dunkel, `localStorage.theme`)
+- Klicke auf 🌙/☀️ in der globalen Navigation (Hell/Dunkel, `localStorage.theme`); Standard ist Hell
 - Die Kontrast-Themes `contrast-light`/`contrast-dark` greifen automatisch, wenn das Betriebssystem mehr Kontrast verlangt (`prefers-contrast: more`); es gibt keinen Schalter in der App
-- Oder ändere Standard in `src/stores/theme.js`
+- Theme-Logik: `src/stores/theme.js`, Vorab-Theme vor dem ersten Paint: Inline-Skript in `index.html`
 
 ### Sprache ändern
-- Klicke auf DE/EN Button im Header
-- Übersetzungen in `src/locales/*.json`
+- Klicke auf DE/EN in der globalen Navigation
+- Übersetzungen der App in `src/locales/*.json`, der Navigation in `src/stores/ssiNavTranslations.js`
 
 ### Farben anpassen
-- Öffne `src/assets/styles/main.scss`
-- Ändere CSS-Variablen in `:root`
-
-```scss
-:root {
-  --primary-color: #2563eb; // Deine Farbe
-  --success-color: #16a34a; // Deine Farbe
-}
-```
+- Farben, Radien, Schriftgrade und Abstände kommen aus `src/design-system/tokens-v2.css`
+- Diese Datei ist eine Kopie der gemeinsamen KodiniTools-Tokens: Werte im Playlist Generator ändern und hierher übernehmen, damit alle Apps gleich bleiben
+- In `src/assets/styles/main.scss` keine festen Farbwerte verwenden, nur `var(--ds-*)` (prüft `tests/designTokens.spec.js`)
 
 ---
 
