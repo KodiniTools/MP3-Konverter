@@ -58,7 +58,8 @@
       "outputFormatLabel": "Ausgabeformat:",
       "outputCodecLabel": "Codec:",
       "outputChip": "Ausgabe: {format} · {bitrate}",
-      "keyboardHint": "Enter startet die Konvertierung · Escape leert die Liste"
+      "keyboardHintConvert": "konvertieren",
+      "keyboardHintClear": "Liste leeren"
     },
     "actions": {
       "convert": "Konvertieren",

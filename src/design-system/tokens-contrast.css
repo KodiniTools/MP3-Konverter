@@ -1,0 +1,69 @@
+/* ==========================================================================
+   MP3 Konverter · Kontrast-Erweiterung zu Tokens v2
+   --------------------------------------------------------------------------
+   Die Basis (tokens-v2.css) ist eine unveränderte Kopie der gemeinsamen
+   KodiniTools-Tokens (Playlist Generator → Collage Maker). Diese Datei ist
+   eine MP3-Konverter-Ergänzung: zwei Themes für Menschen, die mehr Kontrast
+   brauchen. Der Theme-Store (src/stores/theme.js) setzt sie automatisch,
+   wenn das Betriebssystem mehr Kontrast verlangt (prefers-contrast: more).
+
+   Ziele: jeder Text-Token auf Fläche 0–2 mindestens 7:1 (WCAG AAA), Rahmen
+   und Akzent mindestens 3:1 zur Fläche, Text auf Akzent mindestens 7:1.
+   Geprüft in tests/design-system/tokens-v2.spec.js.
+
+   Der Fokus-Ring nutzt in beiden Kontrast-Themes die Textfarbe statt Gold.
+   Composite-Tokens mit var() stehen in jedem Block erneut, weil var() auf
+   dem deklarierenden Element aufgelöst wird.
+   ========================================================================== */
+
+/* === Hell · Kontrast: vollständiger Satz, weil :root dunkel ist ===
+   Zweiter Selektor: setzt eine fremde Seite body.light-theme, gewinnt
+   trotzdem der Kontrastwert (höhere Spezifität als .light-theme). */
+:root[data-theme='contrast-light'],
+:root[data-theme='contrast-light'] .light-theme {
+  --ds-surface-0: #f6f5f1;
+  --ds-surface-1: #ffffff;
+  --ds-surface-2: #f0eee8;
+  --ds-surface-3: #e8e5dd;
+  --ds-border: #8a8170;
+  --ds-border-strong: #6f6757;
+
+  --ds-text: #14213a;
+  --ds-text-2: #2f3a4f;
+  --ds-text-3: #3d475b;
+
+  --ds-accent: #6b4910;
+  --ds-accent-hover: #573b0d;
+  --ds-accent-soft: rgba(107, 73, 16, 0.14);
+  --ds-on-accent: #ffffff;
+  --ds-link: #0b4a8c;
+
+  --ds-success: #0e5a30;
+  --ds-warning: #6b450c;
+  --ds-danger: #922626;
+  --ds-info: #0b4a8c;
+
+  --ds-focus-ring: 0 0 0 2px var(--ds-surface-0), 0 0 0 4px var(--ds-text);
+  --ds-shadow-overlay: 0 8px 24px rgba(20, 33, 58, 0.12);
+}
+
+/* === Dunkel · Kontrast: überschreibt nur, was sich gegenüber :root ändert === */
+:root[data-theme='contrast-dark'] {
+  --ds-border: #62799c;
+  --ds-border-strong: #7890b2;
+
+  --ds-text-2: #cdd5e0;
+  --ds-text-3: #bcc6d3;
+
+  --ds-accent: #e0b06a;
+  --ds-accent-hover: #ecc488;
+  --ds-accent-soft: rgba(224, 176, 106, 0.16);
+  --ds-link: #a3cdf9;
+
+  --ds-success: #8ee3ae;
+  --ds-warning: #f2c867;
+  --ds-danger: #f8a5a5;
+  --ds-info: #a3cdf9;
+
+  --ds-focus-ring: 0 0 0 2px var(--ds-surface-0), 0 0 0 4px var(--ds-text);
+}

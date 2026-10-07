@@ -8,7 +8,24 @@
   <meta name="robots" content="index, follow">
   <meta name="author" content="Kodini">
   <meta name="application-name" content="MP3 Konverter">
-  <meta name="theme-color" content="#1a1a1a">
+  <meta name="theme-color" content="#f6f5f1" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#0a1324" media="(prefers-color-scheme: dark)">
+  <!-- Theme vor dem ersten Paint setzen (Tokens: Dunkel auf :root, Hell über data-theme), damit Nutzer
+       des hellen Themes keinen dunklen Flash sehen. Standard ist Hell; mehr Kontrast im System
+       (prefers-contrast: more) wählt die Kontrast-Variante. Der Theme-Store übernimmt danach. -->
+  <script>
+    try {
+      var storedTheme = localStorage.getItem('theme')
+      var scheme = storedTheme === 'dark' ? 'dark' : 'light'
+      var storedContrast = localStorage.getItem('mp3-converter-contrast')
+      var highContrast = storedContrast === null
+        ? !!(window.matchMedia && window.matchMedia('(prefers-contrast: more)').matches)
+        : storedContrast === '1'
+      document.documentElement.setAttribute('data-theme', highContrast ? 'contrast-' + scheme : scheme)
+    } catch (e) {
+      document.documentElement.setAttribute('data-theme', 'light')
+    }
+  </script>
 
   <!-- Favicon (zentral aus /var/www/kodinitools.com/public bereitgestellt) -->
   <link rel="icon" type="image/x-icon" href="/public/favicon.ico">

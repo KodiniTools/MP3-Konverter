@@ -9,7 +9,8 @@ Eine moderne Vue 3-Anwendung für Browser-basierte MP3-Konvertierung mit FFmpeg.
 ✅ **Vue I18n** - Mehrsprachigkeit (DE/EN)  
 ✅ **Vite** - Blitzschnelles Development & Build  
 ✅ **FFmpeg.wasm** - Browser-basierte Audio-Konvertierung  
-✅ **Dark/Light Theme** - Automatische Persistierung  
+✅ **Design-System** - KodiniTools-Tokens v2 (`--ds-*`) wie Collage Maker und Playlist Generator  
+✅ **Dark/Light Theme** - Standard Hell, automatische Persistierung  
 ✅ **Kontrast-Themes** - `contrast-light`/`contrast-dark` (Text ≥ 7:1) greifen automatisch bei `prefers-contrast: more`  
 ✅ **Responsive Design** - Mobile-first Ansatz  
 ✅ **Drag & Drop** - Intuitive Dateiauswahl  
@@ -49,9 +50,11 @@ mp3-konverter-vue/
 ├── src/
 │   ├── main.js                  # Vue App Entry
 │   ├── App.vue                  # Haupt-Komponente
+│   ├── design-system/           # Tokens v2 (Kopie aus dem Collage Maker) + Kontrast-Erweiterung
 │   ├── assets/
+│   │   ├── fonts/               # Supreme 400/500/700 (woff2)
 │   │   └── styles/
-│   │       └── main.scss        # Globale Styles
+│   │       └── main.scss        # Globale Styles auf --ds-* Tokens
 │   ├── components/
 │   │   ├── layout/
 │   │   │   ├── AppHeader.vue    # Header mit Theme/Language Toggle
@@ -69,7 +72,9 @@ mp3-konverter-vue/
 │   │       └── FAQSection.vue         # FAQ Accordion
 │   ├── stores/
 │   │   ├── converter.js         # Konverter State & Logic
-│   │   └── theme.js             # Theme Management
+│   │   ├── theme.js             # Theme Management
+│   │   ├── locale.js            # Sprache + Abgleich mit der globalen Navigation
+│   │   └── ssiNavTranslations.js # Texte der globalen Navigation (wie Collage Maker)
 │   └── locales/
 │       ├── de.json               # Deutsche Übersetzungen
 │       └── en.json               # Englische Übersetzungen
@@ -203,7 +208,7 @@ async function initializeFFmpeg() {
 
 #### FeaturesSection.vue
 - 6 Feature Cards
-- Glassmorphism Design
+- Flache Karten auf den Design-Tokens
 - Responsive Grid
 
 #### OtherToolsSection.vue
@@ -216,14 +221,14 @@ async function initializeFFmpeg() {
 
 ## 🎨 Styling
 
-Das gesamte CSS wurde in `main.scss` konvertiert und verwendet:
+Die Styles liegen in `src/assets/styles/main.scss` und nutzen ausschließlich die KodiniTools-Tokens v2
+aus `src/design-system/` (übernommen aus dem Collage Maker):
 
-- **CSS Variables** für Theme-Switching
-- **Glassmorphism** & **Neumorphism** Effects
-- **Responsive Design** (Mobile-First)
-- **Dark Mode** Support
-- **Accessibility** Features
-- **Animations** & **Transitions**
+- **Flache Flächen**: Seite, Karte, Eingabe, Hover in vier Stufen; ein Rahmen, drei Radien
+- **Ein Akzent**: Gold nur für die Primäraktion, Fokus und aktive Zustände
+- **Hell, Dunkel und zwei Kontrast-Themes** über `html[data-theme]`
+- **SSI-Partials** werden per CSS an die Tokens angeglichen (wie im Collage Maker)
+- **Accessibility**: Fokus-Ring, reduzierte Bewegung, Kontrast-Themes (Text ≥ 7:1)
 
 ## 🌐 Internationalisierung (i18n)
 

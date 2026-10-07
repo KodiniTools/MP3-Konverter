@@ -14,10 +14,9 @@
           aria-valuemax="100"
           :aria-label="$t('converter.progress.ariaLabel')"
           :style="{ width: progress + '%' }"
-        >
-          <span class="progress-text">{{ progress }}%</span>
-        </div>
+        ></div>
       </div>
+      <span class="progress-text" aria-hidden="true">{{ progress }}%</span>
     </div>
 
   </section>

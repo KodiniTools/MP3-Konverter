@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { createPinia, setActivePinia } from 'pinia'
-import { composeTheme, parseTheme, useThemeStore } from '../src/stores/theme'
+import { NAV_THEME_ICONS, composeTheme, parseTheme, useThemeStore } from '../src/stores/theme'
 
 const html = () => document.documentElement.getAttribute('data-theme')
 
@@ -27,6 +27,9 @@ describe('Theme-Store mit Kontrast-Themes', () => {
   beforeEach(() => {
     localStorage.clear()
     document.documentElement.removeAttribute('data-theme')
+    document.documentElement.className = ''
+    document.body.className = ''
+    document.body.innerHTML = ''
     setActivePinia(createPinia())
   })
 
@@ -204,5 +207,70 @@ describe('parseTheme / composeTheme', () => {
     expect(parseTheme(null)).toBeNull()
     expect(composeTheme('dark', true)).toBe('contrast-dark')
     expect(composeTheme('light', false)).toBe('light')
+  })
+})
+
+describe('Theme-Store: Abgleich wie im Collage Maker (html.dark, body.light-theme, Nav-Icon)', () => {
+  let store
+
+  beforeEach(() => {
+    localStorage.clear()
+    document.documentElement.removeAttribute('data-theme')
+    document.documentElement.className = ''
+    document.body.className = ''
+    document.body.innerHTML = '<span class="global-nav-theme-icon"></span><span class="global-nav-theme-icon" id="globalNavThemeIcon"></span>'
+    setActivePinia(createPinia())
+  })
+
+  afterEach(() => {
+    store?.cleanup()
+    delete window.matchMedia
+  })
+
+  const icons = () => [...document.querySelectorAll('.global-nav-theme-icon')].map((el) => el.textContent)
+
+  it('hell: body.light-theme, kein html.dark, Mond in allen Nav-Icons', () => {
+    store = useThemeStore()
+    expect(document.body.classList.contains('light-theme')).toBe(true)
+    expect(document.documentElement.classList.contains('dark')).toBe(false)
+    expect(icons()).toEqual([NAV_THEME_ICONS.light, NAV_THEME_ICONS.light])
+  })
+
+  it('dunkel: html.dark, kein body.light-theme, Sonne', async () => {
+    store = useThemeStore()
+    store.toggleTheme()
+    await flush()
+    expect(html()).toBe('dark')
+    expect(document.documentElement.classList.contains('dark')).toBe(true)
+    expect(document.body.classList.contains('light-theme')).toBe(false)
+    expect(icons()).toEqual([NAV_THEME_ICONS.dark, NAV_THEME_ICONS.dark])
+  })
+
+  it('Kontrast-Themes: kein body.light-theme (würde die Kontrastwerte überdecken), html.dark nur bei dunkel', async () => {
+    store = useThemeStore()
+    store.setTheme('contrast-light')
+    await flush()
+    expect(document.body.classList.contains('light-theme')).toBe(false)
+    expect(document.documentElement.classList.contains('dark')).toBe(false)
+    expect(icons()[0]).toBe(NAV_THEME_ICONS.light)
+
+    store.setTheme('contrast-dark')
+    await flush()
+    expect(document.documentElement.classList.contains('dark')).toBe(true)
+    expect(icons()[0]).toBe(NAV_THEME_ICONS.dark)
+  })
+
+  it('übernimmt einen Nav-Klick (data-theme direkt gesetzt) samt Klassen und Icon', async () => {
+    store = useThemeStore()
+    document.documentElement.setAttribute('data-theme', 'dark')
+    await flush()
+    expect(store.theme).toBe('dark')
+    expect(document.documentElement.classList.contains('dark')).toBe(true)
+    expect(document.body.classList.contains('light-theme')).toBe(false)
+    expect(icons()[1]).toBe(NAV_THEME_ICONS.dark)
+  })
+
+  it('nutzt Mond und Sonne als Icons', () => {
+    expect(NAV_THEME_ICONS).toEqual({ light: '\uD83C\uDF19', dark: '\u2600\uFE0F' })
   })
 })

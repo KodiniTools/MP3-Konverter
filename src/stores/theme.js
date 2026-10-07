@@ -12,14 +12,21 @@ import { computed, ref, watch } from 'vue'
  *   `localStorage[CONTRAST_STORAGE_KEY]`, nur für diese App: andere KodiniTools-Seiten kennen die
  *   Kontrast-Themes nicht und würden mit `data-theme="contrast-dark"` ungestylt dastehen.
  *
- * Zusammengesetzt ergibt das `data-theme` auf `<html>`: `light`, `dark`, `contrast-light`, `contrast-dark`
- * (alle vier stylt main.scss).
+ * Zusammengesetzt ergibt das `data-theme` auf `<html>`: `light`, `dark`, `contrast-light`, `contrast-dark`.
+ * Die Design-Tokens (src/design-system/tokens-v2.css, tokens-contrast.css) schalten über dieses Attribut.
+ *
+ * Abgleich wie im Collage Maker (src/stores/settings.ts): zusätzlich `html.dark` (Altbestand für externe
+ * Skripte), `body.light-theme` (Parität zum Playlist Generator, nur im Standard-Hell) und das Theme-Icon
+ * der globalen Navigation (Mond im hellen, Sonne im dunklen Schema).
  */
 
 /** Farbschemata, die nav.html kennt. */
 export const SCHEMES = ['light', 'dark']
 /** Alle gültigen data-theme-Werte. */
 export const THEMES = ['light', 'dark', 'contrast-light', 'contrast-dark']
+
+/** Icons des Theme-Umschalters der globalen Navigation: zeigen das Ziel des nächsten Klicks. */
+export const NAV_THEME_ICONS = Object.freeze({ light: '\uD83C\uDF19', dark: '\u2600\uFE0F' })
 
 const SCHEME_STORAGE_KEY = 'theme'
 const CONTRAST_STORAGE_KEY = 'mp3-converter-contrast'
@@ -76,9 +83,15 @@ export const useThemeStore = defineStore('theme', () => {
 
   function applyTheme() {
     if (typeof document === 'undefined') return
-    if (document.documentElement.getAttribute('data-theme') !== theme.value) {
-      document.documentElement.setAttribute('data-theme', theme.value)
+    const root = document.documentElement
+    if (root.getAttribute('data-theme') !== theme.value) {
+      root.setAttribute('data-theme', theme.value)
     }
+    root.classList.toggle('dark', scheme.value === 'dark')
+    document.body?.classList.toggle('light-theme', theme.value === 'light')
+    document.querySelectorAll('.global-nav-theme-icon').forEach((icon) => {
+      icon.textContent = NAV_THEME_ICONS[scheme.value]
+    })
   }
 
   watch(theme, applyTheme, { immediate: true })

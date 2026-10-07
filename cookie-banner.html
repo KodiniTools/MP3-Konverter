@@ -2,23 +2,24 @@
 <!-- Mit i18n Synchronisation -->
 
 <style>
-/* Farben: App-Tokens, wenn die Seite sie definiert, sonst Fallbacks der Navy/Gold-Palette */
+/* Farben: KodiniTools-Tokens v2 (--ds-*), wenn die Seite sie definiert, sonst Fallbacks mit denselben Werten */
 .cookie-banner,
 .cookie-modal-overlay {
-    --kt-surface: var(--surface, #ffffff);
-    --kt-tint: var(--surface-tint, #f5efdc);
-    --kt-text: var(--text-primary, #003971);
-    --kt-text-2: var(--text-secondary, #2d4459);
-    --kt-primary: var(--primary-color, #014f99);
-    --kt-primary-hover: var(--primary-hover, #003971);
-    --kt-on-primary: var(--on-primary, #f5f4d6);
-    --kt-border: var(--border, #e4dcc4);
-    --kt-border-strong: var(--border-strong, #8a7a55);
-    --kt-focus: var(--border-focus, #014f99);
-    --kt-shadow: var(--shadow-card, 0 1px 2px rgba(0, 57, 113, 0.06), 0 16px 32px -16px rgba(0, 57, 113, 0.22));
-    --kt-radius: var(--radius, 10px);
-    --kt-radius-lg: var(--radius-lg, 16px);
-    --kt-font: var(--font-main, 'Supreme', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif);
+    --kt-surface: var(--ds-surface-1, #ffffff);
+    --kt-tint: var(--ds-surface-2, #f0eee8);
+    --kt-text: var(--ds-text, #14213a);
+    --kt-text-2: var(--ds-text-2, #3f4a60);
+    --kt-primary: var(--ds-accent, #c9984d);
+    --kt-primary-hover: var(--ds-accent-hover, #b8842f);
+    --kt-on-primary: var(--ds-on-accent, #14213a);
+    --kt-link: var(--ds-link, #0f5aa8);
+    --kt-border: var(--ds-border, #e2dfd7);
+    --kt-border-strong: var(--ds-border-strong, #cbc6ba);
+    --kt-focus: var(--ds-accent, #c9984d);
+    --kt-shadow: var(--ds-shadow-overlay, 0 8px 24px rgba(20, 33, 58, 0.12));
+    --kt-radius: var(--ds-radius-md, 10px);
+    --kt-radius-lg: var(--ds-radius-lg, 16px);
+    --kt-font: var(--ds-font-sans, 'Supreme', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif);
     --kt-transition: color 0.15s ease, background-color 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease;
 }
 
@@ -26,17 +27,18 @@
 [data-theme="dark"] .cookie-modal-overlay,
 [data-theme="contrast-dark"] .cookie-banner,
 [data-theme="contrast-dark"] .cookie-modal-overlay {
-    --kt-surface: var(--surface, #142640);
-    --kt-tint: var(--surface-tint, #0e1c32);
-    --kt-text: var(--text-primary, #f9f2d5);
-    --kt-text-2: var(--text-secondary, #f8e1a9);
-    --kt-primary: var(--primary-color, #c9984d);
-    --kt-primary-hover: var(--primary-hover, #f8e1a9);
-    --kt-on-primary: var(--on-primary, #091428);
-    --kt-border: var(--border, #1e3a5a);
-    --kt-border-strong: var(--border-strong, #5a7a96);
-    --kt-focus: var(--border-focus, #c9984d);
-    --kt-shadow: var(--shadow-card, 0 1px 2px rgba(0, 0, 0, 0.4), 0 20px 40px -16px rgba(0, 0, 0, 0.7));
+    --kt-surface: var(--ds-surface-1, #111d33);
+    --kt-tint: var(--ds-surface-2, #182741);
+    --kt-text: var(--ds-text, #f2eee2);
+    --kt-text-2: var(--ds-text-2, #a7b3c4);
+    --kt-primary: var(--ds-accent, #d4a257);
+    --kt-primary-hover: var(--ds-accent-hover, #e0b06a);
+    --kt-on-primary: var(--ds-on-accent, #0a1324);
+    --kt-link: var(--ds-link, #6aaef5);
+    --kt-border: var(--ds-border, #223553);
+    --kt-border-strong: var(--ds-border-strong, #2f4668);
+    --kt-focus: var(--ds-accent, #d4a257);
+    --kt-shadow: var(--ds-shadow-overlay, 0 8px 24px rgba(0, 0, 0, 0.35));
 }
 
 /* Cookie Banner */
@@ -88,7 +90,7 @@
 .cookie-link {
   background: none;
   border: none;
-  color: var(--kt-primary);
+  color: var(--kt-link);
   cursor: pointer;
   font-family: inherit;
   font-size: 0.875rem;
@@ -99,7 +101,7 @@
 }
 
 .cookie-link:hover {
-  color: var(--kt-primary-hover);
+  color: var(--kt-primary);
 }
 
 .cookie-actions {

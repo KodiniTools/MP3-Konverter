@@ -10,34 +10,44 @@
           <label for="codecSelect" class="option-label">
             {{ $t('converter.options.codecLabel') }}
           </label>
-          <select 
-            id="codecSelect" 
-            class="option-select"
-            :value="codec"
-            @change="$emit('update:codec', $event.target.value)"
-            required
-          >
-            <option value="libmp3lame">MP3 (LAME)</option>
-            <option value="aac">AAC</option>
-          </select>
+          <span class="select-control">
+            <select
+              id="codecSelect"
+              class="option-select"
+              :value="codec"
+              @change="$emit('update:codec', $event.target.value)"
+              required
+            >
+              <option value="libmp3lame">MP3 (LAME)</option>
+              <option value="aac">AAC</option>
+            </select>
+            <svg class="select-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <polyline points="6 9 12 15 18 9" />
+            </svg>
+          </span>
         </div>
-        
+
         <div class="option-group">
           <label for="bitrateSelect" class="option-label">
             {{ $t('converter.options.bitrateLabel') }}
           </label>
-          <select 
-            id="bitrateSelect" 
-            class="option-select"
-            :value="bitrate"
-            @change="$emit('update:bitrate', $event.target.value)"
-            required
-          >
-            <option value="128k">128 kbps</option>
-            <option value="192k">192 kbps</option>
-            <option value="256k">256 kbps</option>
-            <option value="320k">320 kbps</option>
-          </select>
+          <span class="select-control">
+            <select
+              id="bitrateSelect"
+              class="option-select"
+              :value="bitrate"
+              @change="$emit('update:bitrate', $event.target.value)"
+              required
+            >
+              <option value="128k">128 kbps</option>
+              <option value="192k">192 kbps</option>
+              <option value="256k">256 kbps</option>
+              <option value="320k">320 kbps</option>
+            </select>
+            <svg class="select-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <polyline points="6 9 12 15 18 9" />
+            </svg>
+          </span>
         </div>
       </div>
     </form>
@@ -49,7 +59,10 @@
         </svg>
         {{ $t('converter.options.outputChip', { format: outputFormat.format, bitrate: formatBitrate(bitrate) }) }}
       </span>
-      <span class="keyboard-hint">{{ $t('converter.options.keyboardHint') }}</span>
+      <span class="keyboard-hint">
+        <span class="keyboard-hint-item"><kbd class="kbd">Enter</kbd>{{ $t('converter.options.keyboardHintConvert') }}</span>
+        <span class="keyboard-hint-item"><kbd class="kbd">Esc</kbd>{{ $t('converter.options.keyboardHintClear') }}</span>
+      </span>
     </div>
   </section>
 </template>

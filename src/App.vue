@@ -1,5 +1,5 @@
 <template>
-  <div id="app" :data-theme="theme">
+  <div class="app-shell">
     <!-- Skip Link -->
     <a href="#main-content" class="skip-link">{{ $t('common.skipToMain') }}</a>
 
@@ -97,8 +97,10 @@ import FAQSection from './components/sections/FAQSection.vue'
 
 // Composables
 const converterStore = useConverterStore()
-const themeStore = useThemeStore()
-const localeStore = useLocaleStore()
+// Stores früh initialisieren: Theme-Watcher, Partial-Abgleich und Listener der globalen Navigation
+// sind damit ab dem Start aktiv (wie im Collage Maker)
+useThemeStore()
+useLocaleStore()
 
 // Reactive state
 const files = computed(() => converterStore.files)
@@ -112,7 +114,6 @@ const showProgress = computed(() => converterStore.showProgress)
 const statusMessage = computed(() => converterStore.statusMessage)
 const statusType = computed(() => converterStore.statusType)
 const showRetry = computed(() => converterStore.showRetry)
-const theme = computed(() => themeStore.theme)
 
 const canConvert = computed(() => {
   return files.value.length > 0 && 
@@ -261,7 +262,3 @@ onUnmounted(() => {
 console.log('MP3 Konverter - Backend Mode')
 
 </script>
-
-<style lang="scss">
-// Global styles are imported in main.js
-</style>
