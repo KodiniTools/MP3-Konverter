@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 import { createPinia, setActivePinia } from 'pinia'
-import { LOCALES, useLocaleStore } from '../src/stores/locale'
+import { LOCALES, PAGE_META, SITE_URL, useLocaleStore } from '../src/stores/locale'
 import { SSI_NAV_TRANSLATIONS, syncNavLangButtons, translateSsiNav } from '../src/stores/ssiNavTranslations'
 import i18n from '../src/i18n'
 
@@ -80,6 +80,22 @@ describe('Locale-Store', () => {
     expect(i18n.global.locale.value).toBe('de')
     expect([...document.querySelectorAll('.global-nav-lang-btn.active')].map((b) => b.dataset.lang)).toEqual(['de', 'de'])
     expect(document.querySelector('[data-i18n="nav.playlistGenerator"]').textContent).toBe('Wiedergabeliste Generator')
+  })
+
+  it('?lang=en hat Vorrang und setzt Titel, Canonical und hreflang', () => {
+    localStorage.setItem('locale', 'de')
+    window.history.replaceState(null, '', '/mp3konverter/?lang=en')
+    try {
+      store = useLocaleStore()
+      expect(store.locale).toBe('en')
+      expect(localStorage.getItem('locale')).toBe('en')
+      expect(document.documentElement.lang).toBe('en')
+      expect(document.title).toBe(PAGE_META.en.title)
+      expect(document.querySelector('link[rel="canonical"]').getAttribute('href')).toBe(`${SITE_URL}?lang=en`)
+      expect(document.querySelectorAll('link[rel="alternate"][hreflang]')).toHaveLength(3)
+    } finally {
+      window.history.replaceState(null, '', '/')
+    }
   })
 
   it('ignoriert unbekannte gespeicherte Sprachen', () => {
