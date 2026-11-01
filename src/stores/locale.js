@@ -2,6 +2,23 @@ import { defineStore } from 'pinia'
 import { ref, watch } from 'vue'
 import i18n from '../i18n'
 import { syncNavLangButtons, translateSsiNav } from './ssiNavTranslations'
+import { applyLocaleHead, resolveInitialLocale } from '../utils/localeSeo'
+
+export const SITE_URL = 'https://kodinitools.com/mp3konverter/'
+
+/** Titel und Beschreibung je Sprache (Deutsch steht zusätzlich statisch in index.html). */
+export const PAGE_META = {
+  de: {
+    title: 'MP3 Konverter online – WAV, FLAC, M4A in MP3 umwandeln | KodiniTools',
+    description:
+      'Audiodateien kostenlos in MP3 umwandeln: WAV, FLAC, M4A, OGG und AAC bis 100 MB. Ohne Registrierung, Verarbeitung auf DSGVO-konformen Servern.'
+  },
+  en: {
+    title: 'Online MP3 Converter – Convert WAV, FLAC, M4A to MP3 | KodiniTools',
+    description:
+      'Convert audio files to MP3 for free: WAV, FLAC, M4A, OGG and AAC up to 100 MB. No sign-up, processed on GDPR-compliant servers.'
+  }
+}
 
 /** Sprachen der App und der globalen Navigation. */
 export const LOCALES = ['de', 'en']
@@ -31,14 +48,14 @@ function writeStorage(key, value) {
  * Sprachbuttons (für Navigationen ohne Event) und Elemente mit data-lang-de/-en.
  */
 export const useLocaleStore = defineStore('locale', () => {
-  const stored = readStorage('locale')
-  const locale = ref(LOCALES.includes(stored) ? stored : 'de')
+  // ?lang=de|en (hreflang-Ziel) hat Vorrang vor der gespeicherten Sprache, sonst Deutsch
+  const locale = ref(resolveInitialLocale(globalThis.location?.search ?? '', readStorage('locale')))
 
   watch(
     locale,
     (newLocale) => {
       writeStorage('locale', newLocale)
-      document.documentElement.setAttribute('lang', newLocale)
+      applyLocaleHead(SITE_URL, newLocale, PAGE_META[newLocale])
       i18n.global.locale.value = newLocale
 
       syncNavLangButtons(newLocale)
