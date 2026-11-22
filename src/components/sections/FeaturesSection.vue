@@ -1,7 +1,11 @@
 <template>
-  <section class="features">
+  <section id="features" class="features">
     <div class="features-container">
-      <h2 class="section-title">{{ $t('features.title') }}</h2>
+      <div class="section-header">
+        <span class="section-eyebrow">{{ $t('features.eyebrow') }}</span>
+        <h2 class="section-title">{{ $t('features.title') }}</h2>
+        <p class="section-subtitle">{{ $t('features.subtitle') }}</p>
+      </div>
 
       <div class="features-grid">
         <div

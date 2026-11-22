@@ -1,7 +1,11 @@
 <template>
-  <section class="faq-section">
+  <section id="faq" class="faq-section">
     <div class="faq-container">
-      <h2 class="section-title">{{ $t('faq.title') }}</h2>
+      <div class="section-header">
+        <span class="section-eyebrow">{{ $t('faq.eyebrow') }}</span>
+        <h2 class="section-title">{{ $t('faq.title') }}</h2>
+        <p class="section-subtitle">{{ $t('faq.subtitle') }}</p>
+      </div>
 
       <details
         v-for="(faq, index) in faqs"

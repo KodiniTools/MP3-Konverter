@@ -1,7 +1,7 @@
 # Design-System · Tokens v2
 
 Design-Tokens des MP3 Konverters. `tokens-v2.css` und `tokens-v2.json` sind unveränderte Kopien aus dem
-Collage Maker (`KodiniTools/Collage-Maker`, `src/design-system/`, Stand `9dc4eca`), der sie wiederum
+Collage Maker (`KodiniTools/Collage-Maker`, `src/design-system/`, Stand `8dcee0c`), der sie wiederum
 aus dem Playlist Generator übernimmt (`KodiniTools/Playlist-Generator`, Stand `89bb48e`). So teilen
 alle drei Apps auf kodinitools.com dieselbe Palette, dieselben Radien und dieselbe Motion. Werte werden
 im Playlist Generator gepflegt und von dort übernommen.

@@ -1,7 +1,11 @@
 <template>
   <section class="other-tools-section">
     <div class="other-tools-container">
-      <h2 class="section-title">{{ $t('tools.title') }}</h2>
+      <div class="section-header">
+        <span class="section-eyebrow">{{ $t('tools.eyebrow') }}</span>
+        <h2 class="section-title">{{ $t('tools.title') }}</h2>
+        <p class="section-subtitle">{{ $t('tools.subtitle') }}</p>
+      </div>
 
       <div class="tools-grid">
         <a

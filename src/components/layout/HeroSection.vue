@@ -1,8 +1,16 @@
 <template>
   <section class="hero">
     <div class="hero-container">
+      <div class="hero-eyebrow"><span class="hero-status-dot" aria-hidden="true"></span>{{ $t('hero.eyebrow') }}</div>
       <h1>{{ $t('hero.title') }}</h1>
       <p>{{ $t('hero.subtitle') }}</p>
+      <div class="hero-actions">
+        <a class="hero-cta" href="#main-content">
+          {{ $t('hero.cta') }}
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg>
+        </a>
+        <a class="hero-secondary" href="#features">{{ $t('hero.learnMore') }}</a>
+      </div>
 
       <div class="trust-badges">
         <div

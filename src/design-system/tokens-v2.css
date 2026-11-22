@@ -37,6 +37,7 @@
 
   /* Status */
   --ds-success: #5fcf8a;
+  --ds-on-success: #0a1324; /* Text auf gefüllten Erfolgs-Flächen */
   --ds-warning: #e3b341;
   --ds-danger: #ef6b6b;
   --ds-info: #6aaef5;
@@ -131,6 +132,7 @@
   --ds-link: #0f5aa8;
 
   --ds-success: #177a42;
+  --ds-on-success: #ffffff;
   --ds-warning: #9a6416;
   --ds-danger: #c93c3c;
   --ds-info: #0f5aa8;
@@ -159,6 +161,7 @@
   --ds-link: #0f5aa8;
 
   --ds-success: #177a42;
+  --ds-on-success: #ffffff;
   --ds-warning: #9a6416;
   --ds-danger: #c93c3c;
   --ds-info: #0f5aa8;
