@@ -87,6 +87,14 @@ describe('main.scss auf Tokens v2', () => {
 })
 
 describe('UI-Schrift Supreme (gebündelt wie im Collage Maker)', () => {
+  it('setzt als Schrift nur Supreme (--ds-font-sans) oder inherit, keine Monospace- oder Systemschrift', () => {
+    const outsideFontFace = stylesNoComments.replace(/@font-face\s*{[^}]*}/g, '')
+    const families = [...outsideFontFace.matchAll(/font-family:\s*([^;]+);/g)].map((m) => m[1].trim())
+    expect(families.length).toBeGreaterThan(0)
+    expect(families.filter((value) => !['var(--ds-font-sans)', 'inherit'].includes(value))).toEqual([])
+    expect(outsideFontFace).not.toMatch(/--ds-font-mono/)
+  })
+
   it.each([
     [400, 'Regular'],
     [500, 'Medium'],
