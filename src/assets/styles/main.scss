@@ -1767,18 +1767,25 @@ body.player-active {
 
 /* --- Upload (Visualizer: gestrichelte Fläche, Icon und Hover in Link-Farbe) - */
 .drop-area {
-  min-height: 180px;
+  min-height: 235px;
   display: flex;
   align-items: center;
   justify-content: center;
+  padding: clamp(24px, 4vw, 46px) var(--ds-space-5);
   border-width: 2px;
   border-radius: var(--ds-radius-lg);
   background: var(--ds-surface-2);
 }
 
-.drop-area:hover {
+.drop-area:hover,
+.drop-area:focus-within {
   border-color: var(--ds-link);
   background: var(--ds-surface-2);
+}
+
+.drop-content {
+  width: 100%;
+  max-width: 520px;
 }
 
 .drop-area.drag-over {
@@ -1788,6 +1795,9 @@ body.player-active {
 }
 
 .upload-icon-wrap {
+  width: var(--ds-space-16);
+  height: var(--ds-space-16);
+  border-radius: var(--ds-radius-lg);
   border: var(--ds-border-width) solid var(--ds-border);
   background: var(--ds-surface-1);
   color: var(--ds-link);
@@ -1800,8 +1810,18 @@ body.player-active {
 }
 
 .drop-title {
-  font-size: var(--ds-text-lg);
-  font-weight: var(--ds-weight-semibold);
+  font-size: clamp(17px, 2.2vw, 21px);
+  font-weight: var(--ds-weight-bold);
+  line-height: 1.35;
+}
+
+.drop-formats,
+.drop-paste-hint {
+  line-height: 1.5;
+}
+
+.drop-btn {
+  min-height: var(--ds-row-height);
 }
 
 /* --- Panels: Playliste, Einstellungen, Ergebnisse -------------------------
@@ -1901,8 +1921,16 @@ body.player-active {
 
 .file-name {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
+  row-gap: var(--ds-space-1);
   min-width: 0;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
+.file-item:focus-within {
+  border-color: var(--ds-border-strong);
 }
 
 .file-size {
@@ -1927,7 +1955,7 @@ body.player-active {
 }
 
 .option-select {
-  height: var(--ds-control-lg);
+  height: var(--ds-space-12);
   background: var(--ds-surface-0);
   border-color: var(--ds-border);
 }
@@ -1950,6 +1978,10 @@ body.player-active {
 }
 
 .format-chip {
+  height: auto;
+  min-height: 34px;
+  padding-block: 6px;
+  white-space: normal;
   border: var(--ds-border-width) solid var(--ds-border);
   background: var(--ds-surface-0);
   font-size: var(--ds-text-xs);
@@ -1960,6 +1992,15 @@ body.player-active {
 }
 
 /* --- Aktionen ------------------------------------------------------------- */
+.action-section {
+  gap: var(--ds-space-3);
+}
+
+.cancel-btn.action-btn,
+.retry-btn.action-btn {
+  height: var(--ds-row-height);
+}
+
 .convert-btn {
   height: var(--ds-space-12);
   font-size: var(--ds-text-lg);
@@ -2012,6 +2053,7 @@ body.player-active {
 }
 
 .save-file-btn {
+  height: var(--ds-control-lg);
   border-color: var(--ds-link);
   background: var(--ds-surface-1);
   color: var(--ds-link);
@@ -2166,7 +2208,17 @@ body.player-active {
   }
 
   .drop-area {
-    min-height: 150px;
+    min-height: 205px;
+  }
+
+  .upload-icon-wrap {
+    width: 56px;
+    height: 56px;
+  }
+
+  .options-footer {
+    flex-direction: column;
+    align-items: flex-start;
   }
 
   .file-list-section,
@@ -2194,7 +2246,7 @@ body.player-active {
   }
 
   .save-file-btn {
-    width: var(--ds-control-md);
+    width: var(--ds-control-lg);
     padding: 0;
   }
 
