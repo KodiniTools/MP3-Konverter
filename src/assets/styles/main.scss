@@ -1590,3 +1590,628 @@ body.player-active {
     break-inside: avoid;
   }
 }
+
+
+/* ==========================================================================
+   KodiniTools MP3 · Landingpage und Konverter im Visualizer-Design
+   --------------------------------------------------------------------------
+   Stufe 1: Hero, Workspace-Titel, Upload-Fläche.
+   Stufe 2: Einstellungen, Dateiliste, Fortschritt, Ergebnisse, Status und
+   die Inhaltsabschnitte der Landingpage.
+
+   Vorbild ist der KodiniTools Visualizer (src/styles/kodini-visualizer-phase*.css):
+   Panels mit Kopfzeile, Link-Farbe (Blau) für Struktur und Interaktion, Gold nur
+   für die Primäraktion, Fortschritt Blau → Gold. Übersetzt in die flachen Regeln
+   der Tokens v2 aus dem Collage Maker: keine Verläufe, kein color-mix, keine
+   eigenen Schatten, nur Token-Radien (geprüft in tests/designTokens.spec.js).
+
+   Rein optisch und additiv: keine Änderungen an Komponentenlogik, Stores,
+   FFmpeg oder Backend.
+   ========================================================================== */
+
+/* --- Hero ---------------------------------------------------------------- */
+.hero {
+  padding: clamp(56px, 9vw, 112px) var(--ds-gutter) var(--ds-space-12);
+}
+
+.hero-container {
+  max-width: 900px;
+}
+
+.hero-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ds-space-2);
+  margin-bottom: var(--ds-space-6);
+  padding: var(--ds-space-2) var(--ds-space-4);
+  border: var(--ds-border-width) solid var(--ds-border-strong);
+  border-radius: var(--ds-radius-full);
+  background: var(--ds-surface-1);
+  color: var(--ds-text-2);
+  font-size: var(--ds-text-xs);
+  font-weight: var(--ds-weight-bold);
+  letter-spacing: 0.12em;
+}
+
+.hero-status-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--ds-link);
+}
+
+.hero h1 {
+  max-width: 850px;
+  margin-bottom: var(--ds-space-6);
+  font-size: clamp(38px, 6vw, 72px);
+  line-height: 1.06;
+  letter-spacing: -0.045em;
+  text-wrap: balance;
+}
+
+.hero p {
+  max-width: 640px;
+  font-size: clamp(16px, 1.9vw, 20px);
+  line-height: 1.65;
+}
+
+.hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: var(--ds-space-3);
+  margin-top: var(--ds-space-8);
+}
+
+.hero-cta,
+.hero-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--ds-space-3);
+  min-height: var(--ds-space-12);
+  padding: var(--ds-space-3) var(--ds-space-6);
+  border: var(--ds-border-width) solid transparent;
+  border-radius: var(--ds-radius-md);
+  font-size: var(--ds-text-lg);
+  font-weight: var(--ds-weight-bold);
+  text-decoration: none;
+  transition:
+    background-color var(--ds-duration) var(--ds-ease),
+    border-color var(--ds-duration) var(--ds-ease),
+    color var(--ds-duration) var(--ds-ease);
+}
+
+.hero-cta {
+  background: var(--ds-accent);
+  color: var(--ds-on-accent);
+}
+
+.hero-cta:hover {
+  background: var(--ds-accent-hover);
+}
+
+.hero-secondary {
+  border-color: var(--ds-border-strong);
+  background: var(--ds-surface-1);
+  color: var(--ds-text);
+  font-weight: var(--ds-weight-medium);
+}
+
+.hero-secondary:hover {
+  border-color: var(--ds-link);
+  background: var(--ds-surface-2);
+}
+
+.hero-cta:focus-visible,
+.hero-secondary:focus-visible {
+  outline: none;
+  box-shadow: var(--ds-focus-ring);
+}
+
+.trust-badges {
+  gap: var(--ds-space-3) var(--ds-space-6);
+  margin-top: var(--ds-space-8);
+}
+
+.trust-badge {
+  font-size: var(--ds-text-sm);
+}
+
+.trust-badge svg {
+  color: var(--ds-link);
+}
+
+/* --- Workspace-Karte ------------------------------------------------------ */
+.converter-section {
+  max-width: 920px;
+  margin-bottom: var(--ds-space-16);
+  scroll-margin-top: 90px;
+}
+
+.converter-wrapper {
+  padding: clamp(20px, 4vw, 40px);
+  border-radius: var(--ds-radius-lg);
+}
+
+.converter-intro {
+  margin-bottom: var(--ds-space-6);
+}
+
+.converter-step {
+  display: block;
+  margin-bottom: var(--ds-space-2);
+  color: var(--ds-link);
+  font-size: var(--ds-text-xs);
+  font-weight: var(--ds-weight-bold);
+  letter-spacing: 0.12em;
+}
+
+.converter-intro h2 {
+  margin: 0 0 var(--ds-space-2);
+  font-size: clamp(24px, 3vw, 32px);
+  line-height: var(--ds-leading-tight);
+}
+
+.converter-intro p {
+  margin: 0;
+  color: var(--ds-text-2);
+  font-size: var(--ds-text-md);
+}
+
+/* Abstand zwischen den Panels im Workspace */
+.converter-wrapper .main-content {
+  gap: var(--ds-space-5);
+}
+
+/* --- Upload (Visualizer: gestrichelte Fläche, Icon und Hover in Link-Farbe) - */
+.drop-area {
+  min-height: 180px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-width: 2px;
+  border-radius: var(--ds-radius-lg);
+  background: var(--ds-surface-2);
+}
+
+.drop-area:hover {
+  border-color: var(--ds-link);
+  background: var(--ds-surface-2);
+}
+
+.drop-area.drag-over {
+  border-color: var(--ds-link);
+  border-style: solid;
+  background: var(--ds-surface-3);
+}
+
+.upload-icon-wrap {
+  border: var(--ds-border-width) solid var(--ds-border);
+  background: var(--ds-surface-1);
+  color: var(--ds-link);
+}
+
+.drop-area.drag-over .upload-icon-wrap {
+  border-color: var(--ds-link);
+  background: var(--ds-link);
+  color: var(--ds-surface-1);
+}
+
+.drop-title {
+  font-size: var(--ds-text-lg);
+  font-weight: var(--ds-weight-semibold);
+}
+
+/* --- Panels: Playliste, Einstellungen, Ergebnisse -------------------------
+   Wie die Seitenleisten-Abschnitte des Visualizers: Rahmen, großer Radius,
+   Kopfzeile auf Fläche 2 mit Trennlinie, darunter der Inhalt. */
+.file-list-section,
+.options-section,
+.converted-list-section {
+  padding: 0 var(--ds-space-4) var(--ds-space-4);
+  border: var(--ds-border-width) solid var(--ds-border);
+  border-radius: var(--ds-radius-lg);
+  background: var(--ds-surface-1);
+  overflow: hidden;
+}
+
+.file-list-section .section-heading,
+.options-section .section-heading,
+.converted-list-section .section-heading {
+  display: flex;
+  align-items: center;
+  gap: var(--ds-space-2);
+  min-height: var(--ds-row-height);
+  margin: 0 calc(-1 * var(--ds-space-4)) var(--ds-space-4);
+  padding: var(--ds-space-2) var(--ds-space-4);
+  border-bottom: var(--ds-border-width) solid var(--ds-border);
+  background: var(--ds-surface-2);
+  color: var(--ds-text);
+  font-size: var(--ds-text-sm);
+  font-weight: var(--ds-weight-bold);
+  letter-spacing: 0.055em;
+  text-transform: uppercase;
+}
+
+/* Kennpunkt vor dem Titel: Blau für Eingaben, Grün für fertige Ergebnisse */
+.file-list-section .section-heading::before,
+.options-section .section-heading::before,
+.converted-list-section .section-heading::before {
+  content: '';
+  flex-shrink: 0;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--ds-link);
+}
+
+.converted-list-section .section-heading::before {
+  background: var(--ds-success);
+}
+
+/* --- Dateiliste ----------------------------------------------------------- */
+.file-list-section .file-list {
+  counter-reset: track;
+}
+
+.file-list-section .file-item {
+  counter-increment: track;
+}
+
+/* Spurnummer 01, 02, … vor dem Abspielknopf (rein dekorativ) */
+.file-list-section .file-item::before {
+  content: counter(track, decimal-leading-zero);
+  flex-shrink: 0;
+  min-width: 2ch;
+  color: var(--ds-text-3);
+  font-family: var(--ds-font-mono);
+  font-size: var(--ds-text-xs);
+  font-variant-numeric: tabular-nums;
+}
+
+.file-item {
+  background: var(--ds-surface-0);
+}
+
+.file-item:hover {
+  border-color: var(--ds-border-strong);
+}
+
+.file-list-section .file-item.is-active {
+  background: var(--ds-accent-soft);
+  border-color: var(--ds-accent);
+}
+
+.file-list-section .file-item.is-active::before {
+  color: var(--ds-text);
+}
+
+.play-file-btn {
+  border-color: var(--ds-border);
+  background: var(--ds-surface-1);
+  color: var(--ds-link);
+}
+
+.play-file-btn:hover {
+  border-color: var(--ds-link);
+  background: var(--ds-surface-2);
+}
+
+.file-name {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+}
+
+.file-size {
+  color: var(--ds-text-3);
+}
+
+.now-playing-badge {
+  flex-shrink: 0;
+}
+
+/* --- Einstellungen -------------------------------------------------------- */
+.option-label {
+  font-size: var(--ds-text-xs);
+  font-weight: var(--ds-weight-bold);
+  letter-spacing: 0.055em;
+  text-transform: uppercase;
+  color: var(--ds-text-2);
+}
+
+.option-group {
+  gap: var(--ds-space-2);
+}
+
+.option-select {
+  height: var(--ds-control-lg);
+  background: var(--ds-surface-0);
+  border-color: var(--ds-border);
+}
+
+.option-select:hover {
+  border-color: var(--ds-border-strong);
+}
+
+.option-select:focus-visible {
+  border-color: var(--ds-link);
+}
+
+.select-chevron {
+  color: var(--ds-link);
+}
+
+.options-footer {
+  padding-top: var(--ds-space-4);
+  border-top: var(--ds-border-width) solid var(--ds-border);
+}
+
+.format-chip {
+  border: var(--ds-border-width) solid var(--ds-border);
+  background: var(--ds-surface-0);
+  font-size: var(--ds-text-xs);
+}
+
+.format-chip svg {
+  color: var(--ds-link);
+}
+
+/* --- Aktionen ------------------------------------------------------------- */
+.convert-btn {
+  height: var(--ds-space-12);
+  font-size: var(--ds-text-lg);
+  font-weight: var(--ds-weight-bold);
+}
+
+/* --- Fortschritt (Visualizer-Player: Spur, Füllung, Griff) ----------------- */
+.progress-section {
+  padding: var(--ds-space-4);
+  border: var(--ds-border-width) solid var(--ds-border);
+  border-radius: var(--ds-radius-lg);
+  background: var(--ds-surface-2);
+  animation: fadeIn var(--ds-duration-slow) var(--ds-ease);
+}
+
+.progress-container {
+  gap: var(--ds-space-4);
+}
+
+.progress-bar-container {
+  height: 10px;
+  background: var(--ds-surface-0);
+  border: var(--ds-border-width) solid var(--ds-border);
+}
+
+/* Unbestimmter Anteil (Serververarbeitung) in Link-Farbe, Fortschritt in Gold */
+.progress-bar-container.shimmer-active::after {
+  background: var(--ds-link);
+}
+
+.progress-text {
+  min-width: 5ch;
+  color: var(--ds-text);
+  font-size: var(--ds-text-lg);
+  font-weight: var(--ds-weight-bold);
+}
+
+/* --- Ergebnisse ----------------------------------------------------------- */
+.converted-hint {
+  font-size: var(--ds-text-sm);
+}
+
+/* Fertige Datei: grüner Kennstrich links (Erfolg nur als Akzent, nicht als Fläche) */
+.converted-item {
+  border-left: 3px solid var(--ds-success);
+}
+
+.converted-item .file-name {
+  font-weight: var(--ds-weight-semibold);
+}
+
+.save-file-btn {
+  border-color: var(--ds-link);
+  background: var(--ds-surface-1);
+  color: var(--ds-link);
+  font-weight: var(--ds-weight-semibold);
+}
+
+.save-file-btn:hover {
+  background: var(--ds-surface-2);
+}
+
+/* --- Status (Callout mit farbigem Kennstrich) ------------------------------ */
+.status {
+  padding: var(--ds-space-3) var(--ds-space-4);
+  border: var(--ds-border-width) solid var(--ds-border);
+  border-left: 3px solid var(--ds-info);
+}
+
+.status--success {
+  border-left-color: var(--ds-success);
+}
+
+.status--error {
+  border-left-color: var(--ds-danger);
+}
+
+.status--warning {
+  border-left-color: var(--ds-warning);
+}
+
+/* --- Inhaltsabschnitte der Landingpage (Visualizer: Kopf mit Untertitel) ---- */
+.features,
+.other-tools-section,
+.faq-section {
+  padding: clamp(64px, 9vw, 100px) var(--ds-gutter);
+  scroll-margin-top: 80px;
+}
+
+.section-header {
+  max-width: 640px;
+  margin: 0 auto var(--ds-space-12);
+  text-align: center;
+}
+
+.section-eyebrow {
+  display: block;
+  margin-bottom: var(--ds-space-3);
+  color: var(--ds-link);
+  font-size: var(--ds-text-xs);
+  font-weight: var(--ds-weight-bold);
+  letter-spacing: 0.12em;
+}
+
+.section-header .section-title {
+  margin: 0 0 var(--ds-space-4);
+  font-size: clamp(28px, 4vw, 40px);
+  letter-spacing: -0.02em;
+}
+
+.section-subtitle {
+  margin: 0;
+  color: var(--ds-text-2);
+  font-size: var(--ds-text-lg);
+  line-height: 1.65;
+}
+
+.features-grid,
+.tools-grid {
+  gap: var(--ds-space-5);
+}
+
+/* Feature-Karten linksbündig wie im Visualizer, Icon-Kachel in Link-Farbe */
+.feature-card {
+  align-items: flex-start;
+  gap: var(--ds-space-3);
+  padding: var(--ds-space-8) var(--ds-space-6);
+  text-align: left;
+}
+
+.feature-icon,
+.tool-icon {
+  width: var(--ds-space-12);
+  height: var(--ds-space-12);
+  border: var(--ds-border-width) solid var(--ds-border);
+  color: var(--ds-link);
+}
+
+.feature-icon {
+  margin-bottom: var(--ds-space-2);
+}
+
+.feature-card h3 {
+  font-size: var(--ds-text-xl);
+}
+
+.feature-card p {
+  font-size: var(--ds-text-md);
+  line-height: 1.7;
+}
+
+.tool-card:hover .tool-arrow {
+  color: var(--ds-link);
+}
+
+/* FAQ: geöffneter Eintrag mit Gold-Rahmen, Pfeil in Link-Farbe */
+.faq-item {
+  transition: border-color var(--ds-duration) var(--ds-ease);
+}
+
+.faq-item[open] {
+  border-color: var(--ds-accent);
+}
+
+.faq-toggle {
+  color: var(--ds-link);
+}
+
+.faq-answer {
+  color: var(--ds-text-2);
+  line-height: 1.7;
+}
+
+/* --- Mobil ---------------------------------------------------------------- */
+@media (max-width: 640px) {
+  .hero {
+    padding: var(--ds-space-12) var(--ds-space-4) var(--ds-space-8);
+  }
+
+  .hero h1 {
+    font-size: clamp(36px, 9vw, 48px);
+  }
+
+  .hero-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .hero-cta,
+  .hero-secondary {
+    width: 100%;
+  }
+
+  .trust-badges {
+    gap: var(--ds-space-2) var(--ds-space-4);
+  }
+
+  .converter-section {
+    padding: 0 var(--ds-space-3);
+  }
+
+  .converter-wrapper {
+    padding: var(--ds-space-4);
+  }
+
+  .drop-area {
+    min-height: 150px;
+  }
+
+  .file-list-section,
+  .options-section,
+  .converted-list-section {
+    padding: 0 var(--ds-space-3) var(--ds-space-3);
+  }
+
+  .file-list-section .section-heading,
+  .options-section .section-heading,
+  .converted-list-section .section-heading {
+    margin: 0 calc(-1 * var(--ds-space-3)) var(--ds-space-3);
+    padding: var(--ds-space-2) var(--ds-space-3);
+  }
+
+  .file-item {
+    gap: var(--ds-space-2);
+    padding: var(--ds-space-2);
+  }
+
+  /* Speichern auf schmalen Bildschirmen nur als Icon, Name bleibt lesbar;
+     der zugängliche Name kommt weiter aus aria-label */
+  .save-file-btn span {
+    display: none;
+  }
+
+  .save-file-btn {
+    width: var(--ds-control-md);
+    padding: 0;
+  }
+
+  .section-header {
+    margin-bottom: var(--ds-space-8);
+  }
+
+  .section-header .section-title {
+    margin-bottom: var(--ds-space-3);
+    font-size: var(--ds-text-2xl);
+  }
+
+  .section-subtitle {
+    font-size: var(--ds-text-md);
+  }
+
+  .feature-card {
+    padding: var(--ds-space-6) var(--ds-space-5);
+  }
+}

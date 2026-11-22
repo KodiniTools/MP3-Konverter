@@ -7,12 +7,15 @@
     "toggleLanguage": "Toggle language"
   },
   "hero": {
-    "title": "Convert to MP3 in seconds",
-    "subtitle": "Fast, secure and free - Professional audio conversion on German servers",
+    "title": "Your audio. Your format.",
+    "subtitle": "Convert WAV, FLAC, OGG, M4A and other supported audio formats to MP3 right here, without signing up.",
     "trustBadge1": "100% Secure",
     "trustBadge2": "Lightning Fast",
     "trustBadge3": "Free",
-    "trustBadge4": "GDPR Compliant"
+    "trustBadge4": "GDPR Compliant",
+    "eyebrow": "KODINITOOLS · AUDIO TOOLS",
+    "cta": "Convert audio files now",
+    "learnMore": "Learn more"
   },
   "converter": {
     "title": "MP3 Converter",
@@ -98,7 +101,9 @@
       "downloaded": "Downloaded: {name}",
       "notifyDoneTitle": "Conversion complete!",
       "notifyDoneBody": "{count} file(s) converted successfully."
-    }
+    },
+    "introLabel": "YOUR WORKSPACE",
+    "introText": "Add files, choose audio quality and download the converted results."
   },
   "features": {
     "title": "Why choose our MP3 Converter?",
@@ -125,7 +130,9 @@
     "responsive": {
       "title": "Available Everywhere",
       "desc": "Works perfectly on desktop, tablet and smartphone"
-    }
+    },
+    "eyebrow": "BENEFITS",
+    "subtitle": "Everything you need for clean MP3 files, with no installation and no account."
   },
   "tools": {
     "title": "Discover Our Other Tools",
@@ -143,7 +150,9 @@
       "icon": "🖼️",
       "title": "Batch Image Editor",
       "desc": "Edit multiple images at once – resize, crop, and apply effects with ease."
-    }
+    },
+    "eyebrow": "MORE FROM KODINITOOLS",
+    "subtitle": "More free tools for audio and images."
   },
   "faq": {
     "title": "Frequently Asked Questions",
@@ -166,6 +175,8 @@
     "q5": {
       "question": "Are my files stored?",
       "answer": "No, all files are only processed temporarily on our German servers and automatically deleted immediately after conversion."
-    }
+    },
+    "eyebrow": "HELP",
+    "subtitle": "Answers to the most common questions about converting."
   }
 }

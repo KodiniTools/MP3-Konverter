@@ -10,6 +10,11 @@
     <section class="converter-section" id="main-content">
       <div class="converter-wrapper">
         <div class="container">
+          <div class="converter-intro">
+            <span class="converter-step">{{ $t('converter.introLabel') }}</span>
+            <h2>{{ $t('converter.title') }}</h2>
+            <p>{{ $t('converter.introText') }}</p>
+          </div>
           <!-- Main Converter Content -->
           <main class="main-content">
             <FileUpload @files-selected="handleFilesSelected" />

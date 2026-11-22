@@ -7,12 +7,15 @@
     "toggleLanguage": "Sprache wechseln"
   },
   "hero": {
-    "title": "MP3-Konvertierung in Sekunden",
-    "subtitle": "Schnell, sicher und kostenlos - Professionelle Audio-Konvertierung auf deutschen Servern",
+    "title": "Deine Audiodateien. Dein Format.",
+    "subtitle": "Wandle WAV, FLAC, OGG, M4A und weitere unterstützte Audioformate in MP3 um – direkt hier, ohne Registrierung.",
     "trustBadge1": "100% Sicher",
     "trustBadge2": "Blitzschnell",
     "trustBadge3": "Kostenlos",
-    "trustBadge4": "DSGVO-konform"
+    "trustBadge4": "DSGVO-konform",
+    "eyebrow": "KODINITOOLS · AUDIO-WERKZEUGE",
+    "cta": "Jetzt Audiodateien konvertieren",
+    "learnMore": "Mehr erfahren"
   },
   "converter": {
     "title": "MP3 Konverter",
@@ -98,7 +101,9 @@
       "downloaded": "Heruntergeladen: {name}",
       "notifyDoneTitle": "Konvertierung abgeschlossen!",
       "notifyDoneBody": "{count} Datei(en) erfolgreich konvertiert."
-    }
+    },
+    "introLabel": "DEIN WORKSPACE",
+    "introText": "Dateien hinzufügen, Audioqualität einstellen und die fertigen Dateien herunterladen."
   },
   "features": {
     "title": "Warum unser MP3 Konverter?",
@@ -125,7 +130,9 @@
     "responsive": {
       "title": "Überall verfügbar",
       "desc": "Funktioniert perfekt auf Desktop, Tablet und Smartphone"
-    }
+    },
+    "eyebrow": "VORTEILE",
+    "subtitle": "Alles für saubere MP3-Dateien – ohne Installation und ohne Konto."
   },
   "tools": {
     "title": "Entdecken Sie unsere anderen Tools",
@@ -143,7 +150,9 @@
       "icon": "🖼️",
       "title": "Bild Stapelverarbeitung",
       "desc": "Bearbeiten Sie mehrere Bilder gleichzeitig – Größe ändern, zuschneiden und Effekte anwenden."
-    }
+    },
+    "eyebrow": "MEHR VON KODINITOOLS",
+    "subtitle": "Weitere kostenlose Werkzeuge für Audio und Bild."
   },
   "faq": {
     "title": "Häufig gestellte Fragen",
@@ -166,6 +175,8 @@
     "q5": {
       "question": "Werden meine Dateien gespeichert?",
       "answer": "Nein, alle Dateien werden nur temporär auf unseren deutschen Servern verarbeitet und unmittelbar nach der Konvertierung automatisch gelöscht."
-    }
+    },
+    "eyebrow": "HILFE",
+    "subtitle": "Antworten auf die häufigsten Fragen zur Konvertierung."
   }
 }
