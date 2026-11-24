@@ -18,6 +18,18 @@ const styles = readFileSync(join(SRC, 'assets/styles/main.scss'), 'utf8')
 const stylesNoComments = styles.replace(/\/\*[\s\S]*?\*\//g, '')
 const tokensCss = readFileSync(join(SRC, 'design-system/tokens-v2.css'), 'utf8')
 const rootBlock = parseBlock(tokensCss, ':root', 'tokens-v2.css')
+// Ergänzung aus dem Playlist Generator (Tokens, die der Collage Maker noch nicht hat)
+const pgTokensCss = readFileSync(join(SRC, 'design-system/tokens-playlist-generator.css'), 'utf8')
+const pgRootBlock = parseBlock(pgTokensCss, ':root', 'tokens-playlist-generator.css')
+const PG_TOKENS = [
+  '--ds-accent-fill',
+  '--ds-accent-fill-hover',
+  '--ds-on-accent-fill',
+  '--ds-heading-accent',
+  '--ds-app-glow',
+  '--ds-landing-glow',
+  '--ds-card-gradient'
+]
 
 function collectFiles(dir, ext, out = []) {
   for (const entry of readdirSync(dir)) {
@@ -53,10 +65,29 @@ describe('main.scss auf Tokens v2', () => {
     expect(stylesNoComments.match(/#[0-9a-fA-F]{3,8}\b|\brgba?\(|\bhsla?\(/g) ?? []).toEqual([])
   })
 
-  it('referenziert nur --ds-* Variablen, die tokens-v2.css definiert', () => {
+  it('referenziert nur --ds-* Variablen, die tokens-v2.css oder die Playlist-Generator-Ergänzung definiert', () => {
     const referenced = [...new Set([...stylesNoComments.matchAll(/var\((--[\w-]+)/g)].map((m) => m[1]))]
     expect(referenced.length).toBeGreaterThan(40)
-    expect(referenced.filter((variable) => rootBlock[variable] === undefined)).toEqual([])
+    expect(
+      referenced.filter((variable) => rootBlock[variable] === undefined && pgRootBlock[variable] === undefined)
+    ).toEqual([])
+  })
+
+  it('die Playlist-Generator-Ergänzung definiert nur fehlende Tokens, in jedem Theme vollständig', () => {
+    expect(Object.keys(pgRootBlock).sort()).toEqual([...PG_TOKENS].sort())
+    expect(PG_TOKENS.filter((token) => rootBlock[token] !== undefined)).toEqual([])
+    for (const selector of ['.light-theme', ":root[data-theme='contrast-dark']"]) {
+      const block = parseBlock(pgTokensCss, selector, 'tokens-playlist-generator.css')
+      expect(Object.keys(block).sort()).toEqual([...PG_TOKENS].sort())
+    }
+  })
+
+  it('Landingpage-Button und gefüllte Goldflächen wie im Playlist Generator (dunkles Gold, weiße Schrift)', () => {
+    expect(pgRootBlock['--ds-accent-fill']).toBe('#8f6320')
+    expect(pgRootBlock['--ds-on-accent-fill']).toBe('#ffffff')
+    expect(styles).toMatch(/body \.landing-page \.hero-cta \{[^}]*background: var\(--ds-accent-fill\);[^}]*color: var\(--ds-on-accent-fill\);/)
+    expect(styles).toMatch(/html body \.landing-page \*[^{]*\{[^}]*font-weight: var\(--ds-weight-regular\);/)
+    expect(styles).toMatch(/body \.landing-page \{[^}]*background-image: var\(--ds-landing-glow\);/)
   })
 
   it('nutzt keine Verläufe, keine Unschärfe, kein color-mix und keine eigenen Schatten', () => {

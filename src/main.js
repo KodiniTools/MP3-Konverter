@@ -5,9 +5,11 @@ import i18n from './i18n'
 import { createAppRouter } from './router'
 import { useLocaleStore } from './stores/locale'
 // Design-Tokens v2 (--ds-*, gemeinsam mit Collage Maker und Playlist Generator), danach die
-// Kontrast-Erweiterung dieser App, danach die Styles, die beide nutzen
+// Kontrast-Erweiterung dieser App, die Landing-Tokens des Playlist Generators, danach die Styles, die beide nutzen
 import './design-system/tokens-v2.css'
 import './design-system/tokens-contrast.css'
+// Landing-Tokens, die nur der Playlist Generator hat (Buttons, Hintergrund, Karten)
+import './design-system/tokens-playlist-generator.css'
 import './assets/styles/main.scss'
 
 // Create Vue App

@@ -2299,7 +2299,6 @@ body.player-active {
   margin-bottom: var(--ds-space-3);
   color: var(--ds-text);
   font-size: var(--ds-text-xl);
-  font-weight: var(--ds-weight-semibold);
 }
 
 .hero-media {
@@ -2310,9 +2309,6 @@ body.player-active {
   display: block;
   width: 100%;
   height: auto;
-  border: var(--ds-border-width) solid var(--ds-border);
-  border-radius: var(--ds-radius-lg);
-  background: var(--ds-surface-1);
 }
 
 @media (min-width: 1024px) {
@@ -2480,5 +2476,319 @@ body.player-active {
 
   .converter-page {
     padding-top: var(--ds-space-6);
+  }
+}
+
+/* ==========================================================================
+   Angleichung an den Playlist Generator (Landingpage, Buttons, Hintergrund)
+   --------------------------------------------------------------------------
+   Vorbild: KodiniTools/Playlist-Generator, src/assets/kodini-landing-modern.css
+   (Hero, Button .btn-hero, Sektionen, Karten) und kodini-layout-stage1.css
+   (Hintergrund der App). Maße, Schriftgrößen und Farben 1:1 übernommen.
+   Tokens, die nur der Playlist Generator hat (--ds-accent-fill,
+   --ds-heading-accent, --ds-landing-glow, --ds-app-glow, --ds-card-gradient),
+   kommen aus src/design-system/tokens-playlist-generator.css.
+
+   - Landingpage durchgehend Supreme Regular 400, ohne synthetisches Fett.
+   - Gefüllte Goldflächen: dunkles Gold (--ds-accent-fill) mit weißer Schrift.
+   ========================================================================== */
+
+/* --- Seite: Hintergrund mit Landing-Verlauf -------------------------------- */
+body .landing-page {
+  display: block;
+  min-height: 100vh;
+  background-color: var(--ds-surface-0);
+  background-image: var(--ds-landing-glow);
+  background-repeat: no-repeat;
+  background-size: 100% 42rem;
+  color: var(--ds-text);
+  font-size: var(--ds-text-md);
+  line-height: var(--ds-leading);
+}
+
+/* Keine fetten Überschriften: alles in Regular, wie im Vorbild */
+html body .landing-page,
+html body .landing-page * {
+  font-weight: var(--ds-weight-regular);
+  font-synthesis: none;
+}
+
+/* --- Hero ------------------------------------------------------------------ */
+body .landing-page .hero--landing {
+  padding: clamp(var(--ds-space-8), 7vw, 6rem) 0 clamp(var(--ds-space-8), 5vw, 4rem);
+  text-align: center;
+}
+
+body .landing-page .hero--landing .hero-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+  align-items: center;
+  gap: clamp(var(--ds-space-6), 5vw, var(--ds-space-16));
+  max-width: 1160px;
+  margin: 0 auto;
+  padding-inline: clamp(var(--ds-space-3), 3vw, var(--ds-space-6));
+}
+
+body .landing-page .hero-copy {
+  max-width: 680px;
+  margin: 0;
+  text-align: start;
+}
+
+body .landing-page .hero-eyebrow {
+  margin-bottom: var(--ds-space-4);
+}
+
+/* Display-Größe nur hier: die Token-Skala endet bei 32 px */
+body .landing-page .hero--landing h1 {
+  max-width: none;
+  margin: 0 0 var(--ds-space-3);
+  font-size: clamp(2.25rem, 5.25vw, 4.5rem);
+  line-height: 1.05;
+  letter-spacing: -0.045em;
+  overflow-wrap: anywhere;
+  color: var(--ds-text);
+  text-wrap: wrap;
+}
+
+body .landing-page .hero--landing .hero-lead {
+  max-width: none;
+  margin: 0 0 var(--ds-space-3);
+  font-size: var(--ds-text-lg);
+  line-height: var(--ds-leading);
+  color: var(--ds-heading-accent);
+}
+
+body .landing-page .hero--landing .hero-lead + p {
+  max-width: none;
+  margin: 0 0 var(--ds-space-6);
+  font-size: var(--ds-text-md);
+  line-height: var(--ds-leading);
+  color: var(--ds-text-2);
+}
+
+body .landing-page .hero--landing .hero-actions {
+  justify-content: flex-start;
+  margin-top: 0;
+}
+
+body .landing-page .hero--landing .trust-badges {
+  justify-content: flex-start;
+  margin-top: var(--ds-space-6);
+}
+
+/* Button wie .btn-hero im Playlist Generator */
+body .landing-page :is(.hero-cta, .hero-secondary) {
+  gap: var(--ds-space-2);
+  height: var(--ds-control-lg);
+  min-height: 0;
+  padding: 0 var(--ds-space-5);
+  border-radius: var(--ds-radius-md);
+  font-size: var(--ds-text-lg);
+  text-decoration: none;
+}
+
+body .landing-page .hero-cta {
+  border: 0;
+  background: var(--ds-accent-fill);
+  color: var(--ds-on-accent-fill);
+}
+
+body .landing-page .hero-cta:hover {
+  background: var(--ds-accent-fill-hover);
+  color: var(--ds-on-accent-fill);
+}
+
+body .landing-page .hero-cta svg {
+  width: var(--ds-icon-sm);
+  height: var(--ds-icon-sm);
+}
+
+/* Bild: Rahmen, Fläche 2 und Overlay-Schatten wie im Vorbild */
+body .landing-page .hero-media {
+  max-width: 800px;
+  margin: 0;
+  overflow: hidden;
+  border: var(--ds-border-width) solid var(--ds-border-strong);
+  border-radius: var(--ds-radius-lg);
+  background: var(--ds-surface-2);
+  box-shadow: var(--ds-shadow-overlay);
+}
+
+body .landing-page .hero-media img {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 1536 / 1024;
+}
+
+/* --- Sektionen: abwechselnd Panel- und Seitenfläche ------------------------ */
+body .landing-page :is(.features, .how-it-works-section, .other-tools-section, .faq-section, .cta-section) {
+  padding: clamp(var(--ds-space-8), 5vw, var(--ds-space-16)) 0;
+  border-top: 0;
+  background: transparent;
+}
+
+body .landing-page :is(.features, .faq-section) {
+  border-top: var(--ds-border-width) solid var(--ds-border);
+  border-bottom: var(--ds-border-width) solid var(--ds-border);
+  background: var(--ds-surface-1);
+}
+
+body .landing-page :is(.features-container, .how-it-works-container, .other-tools-container, .faq-container, .cta-inner) {
+  margin-inline: auto;
+}
+
+body .landing-page :is(.features-container, .how-it-works-container, .other-tools-container) {
+  max-width: 1160px;
+  padding-inline: clamp(var(--ds-space-3), 3vw, var(--ds-space-6));
+}
+
+body .landing-page :is(.faq-section, .cta-section) {
+  padding-inline: clamp(var(--ds-space-3), 3vw, var(--ds-space-6));
+}
+
+body .landing-page .section-header {
+  margin-bottom: var(--ds-space-8);
+}
+
+body .landing-page .section-header .section-title {
+  margin: 0 0 var(--ds-space-2);
+  font-size: var(--ds-text-2xl);
+  line-height: var(--ds-leading-tight);
+  letter-spacing: var(--ds-tracking-tight);
+}
+
+body .landing-page .section-subtitle {
+  font-size: var(--ds-text-md);
+  line-height: var(--ds-leading);
+}
+
+/* --- Karten: Verlaufsfläche, Hairline, großer Radius ----------------------- */
+body .landing-page :is(.features-grid, .steps-grid, .tools-grid) {
+  gap: var(--ds-gap);
+}
+
+body .landing-page :is(.feature-card, .step-card, .tool-card, .faq-item, .cta-inner) {
+  border: var(--ds-border-width) solid var(--ds-border);
+  background: var(--ds-card-gradient);
+}
+
+body .landing-page :is(.feature-card, .step-card, .tool-card) {
+  padding: var(--ds-space-5);
+  border-radius: var(--ds-radius-lg);
+}
+
+body .landing-page :is(.feature-card, .step-card, .tool-card, .faq-item):hover {
+  border-color: var(--ds-border-strong);
+}
+
+body .landing-page :is(.feature-icon, .step-icon, .tool-icon) {
+  width: var(--ds-control-lg);
+  height: var(--ds-control-lg);
+  margin-bottom: var(--ds-space-1);
+  border: 0;
+  border-radius: var(--ds-radius-md);
+  background: var(--ds-surface-2);
+  color: var(--ds-heading-accent);
+}
+
+body .landing-page :is(.feature-card, .step-card, .tool-card) h3 {
+  font-size: var(--ds-text-lg);
+  line-height: var(--ds-leading-tight);
+}
+
+body .landing-page :is(.feature-card, .step-card, .tool-card) p {
+  font-size: var(--ds-text-md);
+  line-height: var(--ds-leading);
+}
+
+body .landing-page .step-number {
+  top: var(--ds-space-5);
+  right: var(--ds-space-5);
+}
+
+body .landing-page .faq-item {
+  border-radius: var(--ds-radius-md);
+}
+
+body .landing-page .faq-item[open] {
+  border-color: var(--ds-border-strong);
+}
+
+body .landing-page .faq-question {
+  font-size: var(--ds-text-lg);
+}
+
+body .landing-page .cta-inner h2 {
+  font-size: var(--ds-text-2xl);
+}
+
+body .landing-page .cta-inner p {
+  font-size: var(--ds-text-md);
+}
+
+/* --- App (/app/): Hintergrund wie die App des Playlist Generators ---------- */
+body .converter-page {
+  min-height: 100vh;
+  background-image: var(--ds-app-glow);
+  background-repeat: no-repeat;
+}
+
+/* --- Gefüllte Goldflächen überall: dunkles Gold mit weißer Schrift --------- */
+.action-btn,
+.file-item.is-active .play-file-btn,
+.file-list-section .file-item.is-active .play-file-btn,
+.player-btn--primary,
+.skip-link {
+  background: var(--ds-accent-fill);
+  color: var(--ds-on-accent-fill);
+}
+
+.action-btn:hover:not(:disabled),
+.file-item.is-active .play-file-btn:hover,
+.file-list-section .file-item.is-active .play-file-btn:hover,
+.player-btn--primary:hover:not(:disabled) {
+  background: var(--ds-accent-fill-hover);
+  color: var(--ds-on-accent-fill);
+}
+
+/* Abbrechen und Erneut versuchen (.cancel-btn/.retry-btn.action-btn) behalten ihre
+   Flächen: ihre Selektoren sind spezifischer. */
+
+/* Aktive Sprache in der Navigation wie im Playlist Generator */
+body > :not(#app):not(script) .global-nav-lang-btn.active {
+  background-color: var(--ds-accent-fill) !important;
+  color: var(--ds-on-accent-fill) !important;
+}
+
+@media (max-width: 760px) {
+  body .landing-page .hero--landing .hero-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 480px) {
+  body .landing-page .hero--landing .hero-lead {
+    font-size: var(--ds-text-md);
+  }
+
+  body .landing-page .hero-media {
+    border-radius: var(--ds-radius-md);
+  }
+
+  body .landing-page .hero--landing .hero-actions {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  body .landing-page :is(.hero-cta, .hero-secondary) {
+    width: 100%;
+    max-width: 320px;
+    height: var(--ds-row-height);
+  }
+
+  body .landing-page :is(.feature-card, .step-card, .tool-card) {
+    padding: var(--ds-space-4);
   }
 }
