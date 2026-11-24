@@ -1,34 +1,54 @@
 <template>
-  <section class="hero">
-    <div class="hero-container">
-      <div class="hero-eyebrow"><span class="hero-status-dot" aria-hidden="true"></span>{{ $t('hero.eyebrow') }}</div>
-      <h1>{{ $t('hero.title') }}</h1>
-      <p>{{ $t('hero.subtitle') }}</p>
-      <div class="hero-actions">
-        <a class="hero-cta" href="#main-content">
-          {{ $t('hero.cta') }}
-          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg>
-        </a>
-        <a class="hero-secondary" href="#features">{{ $t('hero.learnMore') }}</a>
-      </div>
+  <section class="hero hero--landing" aria-labelledby="hero-title">
+    <div class="hero-container hero-grid">
+      <div class="hero-copy">
+        <div class="hero-eyebrow"><span class="hero-status-dot" aria-hidden="true"></span>{{ $t('hero.eyebrow') }}</div>
+        <h1 id="hero-title">{{ $t('hero.title') }}</h1>
+        <p class="hero-lead">{{ $t('hero.lead') }}</p>
+        <p>{{ $t('hero.subtitle') }}</p>
+        <div class="hero-actions">
+          <RouterLink class="hero-cta" :to="{ name: 'app' }">
+            {{ $t('hero.cta') }}
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg>
+          </RouterLink>
+          <a class="hero-secondary" href="#features">{{ $t('hero.learnMore') }}</a>
+        </div>
 
-      <div class="trust-badges">
-        <div
-          v-for="badge in trustBadges"
-          :key="badge.text"
-          class="trust-badge"
-        >
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <path v-for="(d, index) in badge.paths" :key="index" :d="d" />
-          </svg>
-          <span>{{ $t(badge.text) }}</span>
+        <div class="trust-badges">
+          <div
+            v-for="badge in trustBadges"
+            :key="badge.text"
+            class="trust-badge"
+          >
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path v-for="(d, index) in badge.paths" :key="index" :d="d" />
+            </svg>
+            <span>{{ $t(badge.text) }}</span>
+          </div>
         </div>
       </div>
+
+      <!-- Bild der Landingpage: WAV, FLAC, M4A und OGG werden zu MP3 (WebP in zwei Breiten) -->
+      <figure class="hero-media">
+        <img
+          :src="heroImage1536"
+          :srcset="`${heroImage768} 768w, ${heroImage1536} 1536w`"
+          sizes="(min-width: 1024px) 560px, calc(100vw - 32px)"
+          width="1536"
+          height="1024"
+          :alt="$t('hero.imageAlt')"
+          fetchpriority="high"
+          decoding="async"
+        />
+      </figure>
     </div>
   </section>
 </template>
 
 <script setup>
+import heroImage768 from '../../assets/images/landing-hero-768.webp'
+import heroImage1536 from '../../assets/images/landing-hero-1536.webp'
+
 // Trust-Badges mit SVG-Icons statt Emoji (Schloss, Blitz, Euro, Schild)
 const trustBadges = [
   {

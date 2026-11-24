@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 import { createPinia, setActivePinia } from 'pinia'
-import { LOCALES, PAGE_META, SITE_URL, useLocaleStore } from '../src/stores/locale'
+import { LOCALES, PAGE_META, PAGES, SITE_URL, useLocaleStore } from '../src/stores/locale'
 import { SSI_NAV_TRANSLATIONS, syncNavLangButtons, translateSsiNav } from '../src/stores/ssiNavTranslations'
 import i18n from '../src/i18n'
 
@@ -138,5 +138,47 @@ describe('Locale-Store', () => {
     document.querySelectorAll('.global-nav-lang-btn')[1].click()
     await flush()
     expect(store.locale).toBe('de')
+  })
+})
+
+describe('Locale-Store: Head je Seite (Landingpage und /app/)', () => {
+  let store
+
+  beforeEach(() => {
+    localStorage.clear()
+    document.body.innerHTML = NAV
+    setActivePinia(createPinia())
+  })
+
+  afterEach(() => {
+    store?.cleanup()
+  })
+
+  it('setzt für /app/ Titel und Canonical der Anwendung und folgt danach der Sprache', async () => {
+    store = useLocaleStore()
+    expect(store.page).toBe('landing')
+    expect(document.querySelector('link[rel="canonical"]').getAttribute('href')).toBe(SITE_URL)
+
+    store.setPage('app')
+    await flush()
+    expect(document.title).toBe(PAGES.app.meta.de.title)
+    expect(document.querySelector('link[rel="canonical"]').getAttribute('href')).toBe(PAGES.app.url)
+    expect(document.querySelector('link[rel="alternate"][hreflang="en"]').getAttribute('href')).toBe(`${PAGES.app.url}?lang=en`)
+
+    store.setLocale('en')
+    await flush()
+    expect(document.title).toBe(PAGES.app.meta.en.title)
+    expect(document.querySelector('link[rel="canonical"]').getAttribute('href')).toBe(`${PAGES.app.url}?lang=en`)
+
+    store.setPage('landing')
+    await flush()
+    expect(document.title).toBe(PAGE_META.en.title)
+    expect(document.querySelector('link[rel="canonical"]').getAttribute('href')).toBe(`${SITE_URL}?lang=en`)
+  })
+
+  it('fällt bei unbekannter Seite auf die Landingpage zurück', () => {
+    store = useLocaleStore()
+    store.setPage('gibt-es-nicht')
+    expect(store.page).toBe('landing')
   })
 })

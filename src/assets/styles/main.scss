@@ -2267,3 +2267,218 @@ body.player-active {
     padding: var(--ds-space-6) var(--ds-space-5);
   }
 }
+
+/* ==========================================================================
+   Landingpage (/) und Anwendung (/app/)
+   --------------------------------------------------------------------------
+   Die Landingpage trägt Hero mit Bild, Funktionen, Ablauf, weitere Tools, FAQ
+   und einen Abschluss-Aufruf. /app/ zeigt nur noch die Konverter-Karte.
+   Gleiche Regeln wie oben: nur Tokens, flach, Hover ändert nur Farbe.
+   ========================================================================== */
+
+/* --- Hero mit Bild: Text links, Bild rechts; mobil untereinander ---------- */
+.hero--landing {
+  padding: clamp(40px, 7vw, 88px) var(--ds-gutter) clamp(48px, 7vw, 88px);
+}
+
+.hero--landing .hero-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-items: center;
+  gap: var(--ds-space-10);
+  max-width: var(--ds-container);
+}
+
+.hero--landing h1 {
+  font-size: clamp(36px, 4.6vw, 60px);
+  line-height: 1.08;
+  letter-spacing: -0.035em;
+}
+
+.hero--landing .hero-lead {
+  margin-bottom: var(--ds-space-3);
+  color: var(--ds-text);
+  font-size: var(--ds-text-xl);
+  font-weight: var(--ds-weight-semibold);
+}
+
+.hero-media {
+  margin: 0;
+}
+
+.hero-media img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border: var(--ds-border-width) solid var(--ds-border);
+  border-radius: var(--ds-radius-lg);
+  background: var(--ds-surface-1);
+}
+
+@media (min-width: 1024px) {
+  .hero--landing {
+    text-align: left;
+  }
+
+  .hero--landing .hero-grid {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr);
+    gap: var(--ds-space-12);
+  }
+
+  .hero--landing h1,
+  .hero--landing p {
+    margin-left: 0;
+    margin-right: 0;
+  }
+
+  .hero--landing .hero-actions,
+  .hero--landing .trust-badges {
+    justify-content: flex-start;
+  }
+}
+
+/* --- Ablauf in drei Schritten ---------------------------------------------- */
+.how-it-works-section,
+.cta-section {
+  padding: clamp(64px, 9vw, 100px) var(--ds-gutter);
+  border-top: var(--ds-border-width) solid var(--ds-border);
+  scroll-margin-top: 80px;
+}
+
+.how-it-works-container {
+  max-width: var(--ds-container);
+  margin: 0 auto;
+}
+
+.steps-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--ds-space-5);
+  list-style: none;
+}
+
+.step-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--ds-space-3);
+  padding: var(--ds-space-8) var(--ds-space-6);
+}
+
+.step-number {
+  position: absolute;
+  top: var(--ds-space-6);
+  right: var(--ds-space-6);
+  color: var(--ds-text-3);
+  font-size: var(--ds-text-sm);
+  font-weight: var(--ds-weight-bold);
+  letter-spacing: 0.08em;
+}
+
+.step-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--ds-space-12);
+  height: var(--ds-space-12);
+  margin-bottom: var(--ds-space-2);
+  border: var(--ds-border-width) solid var(--ds-border);
+  border-radius: var(--ds-radius-md);
+  background: var(--ds-surface-2);
+  color: var(--ds-link);
+}
+
+.step-icon svg {
+  width: var(--ds-icon-md);
+  height: var(--ds-icon-md);
+}
+
+.step-card h3 {
+  margin: 0;
+  color: var(--ds-text);
+  font-size: var(--ds-text-xl);
+  font-weight: var(--ds-weight-semibold);
+}
+
+.step-card p {
+  margin: 0;
+  color: var(--ds-text-2);
+  font-size: var(--ds-text-md);
+  line-height: 1.7;
+}
+
+@media (min-width: 768px) {
+  .steps-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* --- Abschluss-Aufruf ------------------------------------------------------ */
+.cta-inner {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: var(--ds-space-12) var(--ds-space-10);
+  border: var(--ds-border-width) solid var(--ds-border);
+  border-radius: var(--ds-radius-lg);
+  background: var(--ds-surface-1);
+  text-align: center;
+}
+
+.cta-inner h2 {
+  margin: 0 0 var(--ds-space-3);
+  color: var(--ds-text);
+  font-size: var(--ds-text-2xl);
+  font-weight: var(--ds-weight-bold);
+}
+
+.cta-inner p {
+  margin: 0 0 var(--ds-space-6);
+  color: var(--ds-text-2);
+  font-size: var(--ds-text-lg);
+}
+
+/* --- Anwendung /app/: nur die Konverter-Karte, Titel als h1 ---------------- */
+.converter-page {
+  padding-top: clamp(32px, 6vw, 64px);
+}
+
+.converter-intro h1 {
+  margin: 0 0 var(--ds-space-2);
+  font-size: clamp(24px, 3vw, 32px);
+  line-height: var(--ds-leading-tight);
+}
+
+@media (max-width: 640px) {
+  .hero--landing {
+    padding: var(--ds-space-10) var(--ds-space-4) var(--ds-space-12);
+  }
+
+  .hero--landing .hero-grid {
+    gap: var(--ds-space-8);
+  }
+
+  .hero--landing .hero-lead {
+    font-size: var(--ds-text-lg);
+  }
+
+  .how-it-works-section,
+  .cta-section {
+    padding: var(--ds-space-12) var(--ds-space-4);
+  }
+
+  .step-card {
+    padding: var(--ds-space-6) var(--ds-space-5);
+  }
+
+  .cta-inner {
+    padding: var(--ds-space-8) var(--ds-space-5);
+  }
+
+  .cta-inner .hero-cta {
+    width: 100%;
+  }
+
+  .converter-page {
+    padding-top: var(--ds-space-6);
+  }
+}

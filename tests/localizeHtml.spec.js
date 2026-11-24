@@ -94,3 +94,28 @@ test('maskiert Sonderzeichen und bricht bei fehlenden oder doppelten Pflicht-Tag
   )
   assert.throws(() => localizeHtml('<html lang="de"><title>x</title>', head), /head/)
 })
+
+test('App-Seite (/app/): eigener Head und hreflang-Ziele, Body unverändert', async () => {
+  const { APP_PAGE_META, APP_URL } = await import('../src/config/pageMeta.js')
+  const { localeUrls } = await import('../src/utils/localeSeo.js')
+  for (const locale of ['de', 'en']) {
+    const { canonical: url, alternates } = localeUrls(APP_URL, locale)
+    const out = localizeHtml(html, { lang: locale, ...APP_PAGE_META[locale], canonical: url, alternates })
+    assert.equal(lang(out), locale)
+    assert.equal(title(out), APP_PAGE_META[locale].title)
+    assert.equal(canonical(out), url)
+    assert.equal(meta(out, 'og:url'), url)
+    const hrefs = hreflangs(out).map((tag) => tag.match(/\shref="([^"]*)"/)[1])
+    assert.deepEqual(hrefs.sort(), [APP_URL, APP_URL, `${APP_URL}?lang=en`].sort())
+    assert.equal(out.slice(out.search(/<\/head>/i)), html.slice(html.search(/<\/head>/i)))
+    assert.ok(APP_PAGE_META[locale].title.length <= 70)
+    assert.ok(APP_PAGE_META[locale].description.length >= 120 && APP_PAGE_META[locale].description.length <= 160)
+  }
+})
+
+test('alternates: fehlendes hreflang bricht ab', () => {
+  assert.throws(
+    () => localizeHtml(html, { lang: 'en', ...EN, canonical: EN_URL, alternates: [{ hreflang: 'fr', href: 'x' }] }),
+    /hreflang=fr/,
+  )
+})

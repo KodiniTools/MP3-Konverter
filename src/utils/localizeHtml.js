@@ -11,6 +11,8 @@
  * @property {string} title
  * @property {string} description
  * @property {string} canonical Absolute kanonische URL dieser Sprachfassung.
+ * @property {Array<{hreflang: string, href: string}>} [alternates] Optional: hreflang-Ziele,
+ *   z. B. für eine Unterseite (/app/). Jedes genannte hreflang muss genau einmal vorkommen.
  */
 
 /** @type {Record<string, string>} */
@@ -70,7 +72,7 @@ const metaTag = (name) =>
 /**
  * Liefert `html` mit dem Head für `head.lang`. Pflicht: `<html lang>`, `<title>`,
  * meta description und canonical. og:* und twitter:title/description werden angepasst,
- * wenn vorhanden. hreflang-Links und der Body bleiben unverändert.
+ * wenn vorhanden. hreflang-Links ändern sich nur mit `head.alternates`; der Body bleibt unverändert.
  * @param {string} html
  * @param {LocalizedHead} head
  * @returns {string}
@@ -121,6 +123,16 @@ export function localizeHtml(html, head) {
   ]
   for (const [name, value] of optional) {
     out = setTagAttr(out, metaTag(name), 'content', value, false, `meta ${name}`)
+  }
+  for (const { hreflang, href } of head.alternates ?? []) {
+    out = setTagAttr(
+      out,
+      new RegExp(`<link\\b[^>]*\\shreflang="${escapeRegExp(hreflang)}"[^>]*>`),
+      'href',
+      href,
+      true,
+      `link hreflang=${hreflang}`,
+    )
   }
   return out + rest
 }

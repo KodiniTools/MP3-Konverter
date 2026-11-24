@@ -20,3 +20,26 @@ export const PAGE_META = {
       'Convert audio files to MP3 for free: WAV, FLAC, M4A, OGG and AAC up to 100 MB. No sign-up, processed on GDPR-compliant servers.'
   }
 }
+
+/** Öffentliche URL der Konvertierungsanwendung (Route /app/). */
+export const APP_URL = `${SITE_URL}app/`
+
+/** Titel und Beschreibung der Anwendung unter /app/ (Build: dist/app/index.html, index.en.html). */
+export const APP_PAGE_META = {
+  de: {
+    title: 'MP3 Konverter – Audiodateien jetzt in MP3 umwandeln | KodiniTools',
+    description:
+      'Dateien hochladen, Bitrate wählen, MP3 speichern: WAV, FLAC, M4A, OGG und AAC bis 100 MB kostenlos umwandeln, ohne Registrierung und DSGVO-konform.'
+  },
+  en: {
+    title: 'MP3 Converter – Convert Audio Files to MP3 Now | KodiniTools',
+    description:
+      'Upload files, pick a bitrate, save your MP3: convert WAV, FLAC, M4A, OGG and AAC up to 100 MB for free, without sign-up and GDPR-compliant.'
+  }
+}
+
+/** Seiten mit eigener URL und eigenem Head; Schlüssel entsprechen `meta.page` im Router. */
+export const PAGES = {
+  landing: { url: SITE_URL, meta: PAGE_META },
+  app: { url: APP_URL, meta: APP_PAGE_META }
+}
