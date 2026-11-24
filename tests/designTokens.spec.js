@@ -28,7 +28,15 @@ const PG_TOKENS = [
   '--ds-heading-accent',
   '--ds-app-glow',
   '--ds-landing-glow',
-  '--ds-card-gradient'
+  '--ds-card-gradient',
+  '--ds-tint',
+  '--ds-subnav-bg',
+  '--ds-subnav-border',
+  '--ds-subnav-hover-bg',
+  '--ds-subnav-hover-border',
+  '--ds-subnav-active-bg',
+  '--ds-subnav-active-border',
+  '--ds-subnav-active-line'
 ]
 
 function collectFiles(dir, ext, out = []) {
@@ -93,7 +101,7 @@ describe('main.scss auf Tokens v2', () => {
   it('nutzt keine Verläufe, keine Unschärfe, kein color-mix und keine eigenen Schatten', () => {
     expect(stylesNoComments.match(/gradient\(|backdrop-filter|filter:\s*blur|color-mix\(/g) ?? []).toEqual([])
     const shadows = [...stylesNoComments.matchAll(/box-shadow:\s*([^;]+);/g)].map((m) => m[1].trim())
-    expect(shadows.filter((value) => !['var(--ds-focus-ring)', 'var(--ds-shadow-overlay)', 'none'].includes(value))).toEqual([])
+    expect(shadows.filter((value) => !['var(--ds-focus-ring)', 'var(--ds-shadow-overlay)', 'var(--ds-subnav-active-line)', 'none'].includes(value))).toEqual([])
   })
 
   it('hebt oder skaliert bei Hover nichts (Hover ändert nur Farbe)', () => {

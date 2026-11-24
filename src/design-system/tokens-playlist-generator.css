@@ -28,6 +28,15 @@
     radial-gradient(ellipse at 85% 0%, rgba(38, 167, 187, 0.16), transparent 68%),
     radial-gradient(ellipse at 12% 0%, rgba(55, 114, 202, 0.2), transparent 62%);
   --ds-card-gradient: linear-gradient(150deg, var(--ds-surface-1), var(--ds-surface-0));
+  /* Unternavigation (AppHeader des Playlist Generators): Tönung Blau-Cyan, aktive Seite Gold */
+  --ds-tint: #3c98b9;
+  --ds-subnav-bg: color-mix(in srgb, var(--ds-surface-1) 94%, var(--ds-tint) 6%);
+  --ds-subnav-border: color-mix(in srgb, var(--ds-border) 78%, var(--ds-tint) 22%);
+  --ds-subnav-hover-bg: color-mix(in srgb, var(--ds-surface-2) 84%, var(--ds-tint) 16%);
+  --ds-subnav-hover-border: color-mix(in srgb, var(--ds-border) 72%, var(--ds-tint) 28%);
+  --ds-subnav-active-bg: color-mix(in srgb, var(--ds-surface-2) 90%, var(--ds-accent) 10%);
+  --ds-subnav-active-border: color-mix(in srgb, var(--ds-border) 64%, var(--ds-accent) 36%);
+  --ds-subnav-active-line: inset 0 -2px 0 var(--ds-accent);
 }
 
 /* === Hell (App-Klasse und SSI-Partials, wie in tokens-v2.css) === */
@@ -44,6 +53,15 @@
     radial-gradient(ellipse at 85% 0%, rgba(35, 162, 195, 0.16), transparent 68%),
     radial-gradient(ellipse at 12% 0%, rgba(86, 147, 216, 0.15), transparent 62%);
   --ds-card-gradient: linear-gradient(150deg, var(--ds-surface-1), var(--ds-surface-0));
+  /* Unternavigation (AppHeader des Playlist Generators): Tönung Blau-Cyan, aktive Seite Gold */
+  --ds-tint: #3c98b9;
+  --ds-subnav-bg: color-mix(in srgb, var(--ds-surface-1) 94%, var(--ds-tint) 6%);
+  --ds-subnav-border: color-mix(in srgb, var(--ds-border) 78%, var(--ds-tint) 22%);
+  --ds-subnav-hover-bg: color-mix(in srgb, var(--ds-surface-2) 84%, var(--ds-tint) 16%);
+  --ds-subnav-hover-border: color-mix(in srgb, var(--ds-border) 72%, var(--ds-tint) 28%);
+  --ds-subnav-active-bg: color-mix(in srgb, var(--ds-surface-2) 90%, var(--ds-accent-fill) 10%);
+  --ds-subnav-active-border: color-mix(in srgb, var(--ds-border) 64%, var(--ds-accent-fill) 36%);
+  --ds-subnav-active-line: inset 0 -2px 0 var(--ds-accent-fill);
 }
 
 /* === Kontrast (hell und dunkel): flach, Akzent aus tokens-contrast.css === */
@@ -57,4 +75,12 @@
   --ds-app-glow: none;
   --ds-landing-glow: none;
   --ds-card-gradient: var(--ds-surface-1);
+  --ds-tint: var(--ds-link);
+  --ds-subnav-bg: var(--ds-surface-1);
+  --ds-subnav-border: var(--ds-border);
+  --ds-subnav-hover-bg: var(--ds-surface-2);
+  --ds-subnav-hover-border: var(--ds-border-strong);
+  --ds-subnav-active-bg: var(--ds-surface-2);
+  --ds-subnav-active-border: var(--ds-text);
+  --ds-subnav-active-line: inset 0 -2px 0 var(--ds-text);
 }

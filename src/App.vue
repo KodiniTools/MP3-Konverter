@@ -3,6 +3,9 @@
     <!-- Skip Link: jede Seite trägt id="main-content" -->
     <a href="#main-content" class="skip-link">{{ $t('common.skipToMain') }}</a>
 
+    <!-- Unternavigation: verbindet Startseite und App (wie im Playlist Generator) -->
+    <AppHeader />
+
     <!-- Landingpage (/) oder Konverter (/app/) -->
     <RouterView />
 
@@ -11,6 +14,7 @@
 </template>
 
 <script setup>
+import AppHeader from './components/layout/AppHeader.vue'
 import { useThemeStore } from './stores/theme'
 import { useLocaleStore } from './stores/locale'
 

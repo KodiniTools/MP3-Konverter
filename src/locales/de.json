@@ -6,6 +6,11 @@
     "toggleTheme": "Theme wechseln",
     "toggleLanguage": "Sprache wechseln"
   },
+  "nav": {
+    "label": "Seitennavigation",
+    "home": "Startseite",
+    "app": "App"
+  },
   "hero": {
     "title": "MP3 Konverter online – einfach & schnell",
     "subtitle": "Wandle WAV, FLAC, OGG, M4A und weitere unterstützte Audioformate in MP3 um – direkt hier, ohne Registrierung.",

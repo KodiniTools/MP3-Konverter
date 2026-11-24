@@ -6,6 +6,11 @@
     "toggleTheme": "Toggle theme",
     "toggleLanguage": "Toggle language"
   },
+  "nav": {
+    "label": "Page navigation",
+    "home": "Home",
+    "app": "App"
+  },
   "hero": {
     "title": "Online MP3 Converter – simple & fast",
     "subtitle": "Convert WAV, FLAC, OGG, M4A and other supported audio formats to MP3 right here, without signing up.",
