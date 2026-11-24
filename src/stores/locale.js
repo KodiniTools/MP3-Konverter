@@ -3,9 +3,9 @@ import { ref, watch } from 'vue'
 import i18n from '../i18n'
 import { syncNavLangButtons, translateSsiNav } from './ssiNavTranslations'
 import { applyLocaleHead, resolveInitialLocale } from '../utils/localeSeo'
-import { PAGE_META, SITE_URL } from '../config/pageMeta'
+import { PAGE_META, PAGES, SITE_URL } from '../config/pageMeta'
 
-export { PAGE_META, SITE_URL }
+export { PAGE_META, PAGES, SITE_URL }
 
 /** Sprachen der App und der globalen Navigation. */
 export const LOCALES = ['de', 'en']
@@ -38,11 +38,24 @@ export const useLocaleStore = defineStore('locale', () => {
   // ?lang=de|en (hreflang-Ziel) hat Vorrang vor der gespeicherten Sprache, sonst Deutsch
   const locale = ref(resolveInitialLocale(globalThis.location?.search ?? '', readStorage('locale')))
 
+  // Aktuelle Seite (Schlüssel aus PAGES); der Router setzt sie nach jeder Navigation
+  const page = ref('landing')
+
+  // Head (Canonical, hreflang, Titel, Beschreibung) folgt Sprache und Seite
+  watch(
+    page,
+    (newPage) => {
+      const { url, meta } = PAGES[newPage]
+      applyLocaleHead(url, locale.value, meta[locale.value])
+    }
+  )
+
   watch(
     locale,
     (newLocale) => {
       writeStorage('locale', newLocale)
-      applyLocaleHead(SITE_URL, newLocale, PAGE_META[newLocale])
+      const { url, meta } = PAGES[page.value]
+      applyLocaleHead(url, newLocale, meta[newLocale])
       i18n.global.locale.value = newLocale
 
       syncNavLangButtons(newLocale)
@@ -83,6 +96,11 @@ export const useLocaleStore = defineStore('locale', () => {
     }
   }
 
+  /** Seite wechseln (unbekannte Schlüssel fallen auf die Landingpage zurück). */
+  function setPage(newPage) {
+    page.value = Object.hasOwn(PAGES, newPage) ? newPage : 'landing'
+  }
+
   function cleanup() {
     window.removeEventListener('locale-changed', onLocaleChanged)
     document.removeEventListener('click', handleNavLangClick)
@@ -90,7 +108,9 @@ export const useLocaleStore = defineStore('locale', () => {
 
   return {
     locale,
+    page,
     setLocale,
+    setPage,
     cleanup
   }
 })

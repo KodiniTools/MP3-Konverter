@@ -7,7 +7,7 @@
     "toggleLanguage": "Toggle language"
   },
   "hero": {
-    "title": "Your audio. Your format.",
+    "title": "Online MP3 Converter – simple & fast",
     "subtitle": "Convert WAV, FLAC, OGG, M4A and other supported audio formats to MP3 right here, without signing up.",
     "trustBadge1": "100% Secure",
     "trustBadge2": "Lightning Fast",
@@ -15,7 +15,9 @@
     "trustBadge4": "GDPR Compliant",
     "eyebrow": "KODINITOOLS · AUDIO TOOLS",
     "cta": "Convert audio files now",
-    "learnMore": "Learn more"
+    "learnMore": "Learn more",
+    "lead": "Convert audio files. No sign-up.",
+    "imageAlt": "Audio files in WAV, FLAC, M4A and OGG format being converted into an MP3 file"
   },
   "converter": {
     "title": "MP3 Converter",
@@ -134,6 +136,23 @@
     "eyebrow": "BENEFITS",
     "subtitle": "Everything you need for clean MP3 files, with no installation and no account."
   },
+  "howItWorks": {
+    "eyebrow": "HOW IT WORKS",
+    "title": "Three steps to MP3",
+    "subtitle": "A clear workflow with the most important settings in one place.",
+    "select": {
+      "title": "Select files",
+      "desc": "Add one or more audio files – by click, drag & drop or from the clipboard."
+    },
+    "configure": {
+      "title": "Configure output",
+      "desc": "Choose the format and the audio quality you want."
+    },
+    "download": {
+      "title": "Save the result",
+      "desc": "Download the finished files after conversion."
+    }
+  },
   "tools": {
     "title": "Discover Our Other Tools",
     "tool1": {
@@ -178,5 +197,10 @@
     },
     "eyebrow": "HELP",
     "subtitle": "Answers to the most common questions about converting."
+  },
+  "cta": {
+    "title": "Ready to convert your audio files?",
+    "text": "Get started with the free KodiniTools MP3 Converter – no registration needed.",
+    "button": "Open MP3 Converter"
   }
 }

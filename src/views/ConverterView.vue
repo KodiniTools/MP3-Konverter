@@ -1,0 +1,244 @@
+<template>
+  <!-- Reine Konvertierungsanwendung (/app/): ohne Hero und Inhaltsabschnitte der Landingpage -->
+  <div class="converter-page">
+    <section class="converter-section" id="main-content">
+      <div class="converter-wrapper">
+        <div class="container">
+          <div class="converter-intro">
+            <span class="converter-step">{{ $t('converter.introLabel') }}</span>
+            <h1>{{ $t('converter.title') }}</h1>
+            <p>{{ $t('converter.introText') }}</p>
+          </div>
+          <!-- Main Converter Content -->
+          <main class="main-content">
+            <FileUpload @files-selected="handleFilesSelected" />
+            
+            <FileList 
+              v-if="files.length > 0"
+              :files="files"
+              @remove-file="removeFile"
+            />
+            
+            <ConversionOptions 
+              v-model:codec="conversionSettings.codec"
+              v-model:bitrate="conversionSettings.bitrate"
+              :output-format="outputFormat"
+            />
+            
+            <ActionButtons
+              :disabled="!canConvert"
+              :is-converting="isConverting"
+              :is-cancelling="isCancelling"
+              @convert="startConversion"
+              @cancel="cancelConversion"
+              @retry="retryConversion"
+              :show-retry="showRetry"
+            />
+            
+            <ProgressSection
+              v-if="showProgress"
+              :progress="progress"
+              :is-processing="isProcessingFile"
+            />
+
+            <ConvertedFiles
+              v-if="convertedFiles.length > 0"
+              :files="convertedFiles"
+              @save="saveConvertedFile"
+              @remove="removeConvertedFile"
+            />
+
+            <StatusMessage
+              v-if="statusMessage"
+              :message="statusMessage"
+              :type="statusType"
+            />
+          </main>
+        </div>
+      </div>
+    </section>
+
+    <!-- Sticky Player Bar für die interaktive Playlist -->
+    <PlayerStickyBar />
+  </div>
+</template>
+
+<script setup>
+import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { useConverterStore } from '../stores/converter'
+
+// Components
+import FileUpload from '../components/converter/FileUpload.vue'
+import FileList from '../components/converter/FileList.vue'
+import ConversionOptions from '../components/converter/ConversionOptions.vue'
+import ActionButtons from '../components/converter/ActionButtons.vue'
+import ProgressSection from '../components/converter/ProgressSection.vue'
+import ConvertedFiles from '../components/converter/ConvertedFiles.vue'
+import StatusMessage from '../components/converter/StatusMessage.vue'
+import PlayerStickyBar from '../components/converter/PlayerStickyBar.vue'
+
+// Composables
+const converterStore = useConverterStore()
+
+// Reactive state
+const files = computed(() => converterStore.files)
+const convertedFiles = computed(() => converterStore.convertedFiles)
+const conversionSettings = computed(() => converterStore.settings)
+const isConverting = computed(() => converterStore.isConverting)
+const isCancelling = computed(() => converterStore.isCancelling)
+const isProcessingFile = computed(() => converterStore.isProcessingFile)
+const progress = computed(() => converterStore.progress)
+const showProgress = computed(() => converterStore.showProgress)
+const statusMessage = computed(() => converterStore.statusMessage)
+const statusType = computed(() => converterStore.statusType)
+const showRetry = computed(() => converterStore.showRetry)
+
+const canConvert = computed(() => {
+  return files.value.length > 0 && 
+         !isConverting.value
+})
+
+const outputFormat = computed(() => {
+  return converterStore.getOutputFormat()
+})
+
+// Methods
+function handleFilesSelected(newFiles) {
+  converterStore.addFiles(newFiles)
+}
+
+// Audiodateien aus der Zwischenablage (Strg+V / Cmd+V) einfügen
+function handlePaste(event) {
+  // Nicht eingreifen, wenn der Nutzer gerade in ein Eingabefeld schreibt
+  if (event.target.tagName === 'INPUT' || event.target.tagName === 'TEXTAREA') {
+    return
+  }
+
+  const clipboardData = event.clipboardData || window.clipboardData
+  if (!clipboardData) return
+
+  const pastedFiles = []
+
+  // Bevorzugt die items-API nutzen (liefert auch Blobs ohne Dateinamen)
+  if (clipboardData.items && clipboardData.items.length > 0) {
+    for (const item of clipboardData.items) {
+      if (item.kind !== 'file') continue
+      const file = item.getAsFile()
+      if (file) pastedFiles.push(file)
+    }
+  }
+
+  // Fallback: direkte files-Liste
+  if (pastedFiles.length === 0 && clipboardData.files && clipboardData.files.length > 0) {
+    for (const file of clipboardData.files) {
+      pastedFiles.push(file)
+    }
+  }
+
+  // Nur Audio-Dateien berücksichtigen
+  const audioFiles = pastedFiles.filter(file =>
+    file.type.startsWith('audio/') ||
+    /\.(mp3|wav|ogg|m4a|flac|aac|wma)$/i.test(file.name || '')
+  )
+
+  if (audioFiles.length === 0) return
+
+  // Verhindert, dass der Audio-Blob z. B. in ein Textfeld eingefügt wird
+  event.preventDefault()
+
+  // Aus der Zwischenablage kopierte Blobs haben oft keinen (sinnvollen) Namen
+  const normalizedFiles = audioFiles.map((file, index) => {
+    if (file.name && /\.[^/.]+$/.test(file.name)) {
+      return file
+    }
+    const ext = (file.type.split('/')[1] || 'audio').replace('x-', '')
+    const suffix = audioFiles.length > 1 ? `-${index + 1}` : ''
+    const name = `zwischenablage${suffix}.${ext}`
+    return new File([file], name, { type: file.type })
+  })
+
+  converterStore.addFiles(normalizedFiles)
+}
+
+function removeFile(index) {
+  converterStore.removeFile(index)
+}
+
+function saveConvertedFile(index) {
+  converterStore.saveConvertedFile(index)
+}
+
+function removeConvertedFile(index) {
+  converterStore.removeConvertedFile(index)
+}
+
+async function startConversion() {
+  await converterStore.startConversion()
+}
+
+function cancelConversion() {
+  converterStore.cancelConversion()
+}
+
+function retryConversion() {
+  converterStore.retryConversion()
+}
+
+// Tastaturkürzel
+function handleKeydown(event) {
+  // Ignoriere wenn in einem Input-Feld
+  if (event.target.tagName === 'INPUT' || event.target.tagName === 'TEXTAREA') {
+    return
+  }
+
+  // Strg+O: Dateien auswählen
+  if (event.ctrlKey && event.key === 'o') {
+    event.preventDefault()
+    const fileInput = document.querySelector('.file-input')
+    if (fileInput) fileInput.click()
+  }
+
+  // Enter: Konvertierung starten (wenn möglich)
+  if (event.key === 'Enter' && !event.ctrlKey && !event.shiftKey) {
+    if (canConvert.value) {
+      event.preventDefault()
+      startConversion()
+    }
+  }
+
+  // Escape: Dateien löschen
+  if (event.key === 'Escape') {
+    if (files.value.length > 0 && !isConverting.value) {
+      event.preventDefault()
+      // Alle Dateien entfernen
+      while (converterStore.files.length > 0) {
+        converterStore.removeFile(0)
+      }
+    }
+  }
+}
+
+// Beim Verlassen der Seite noch offene Ergebnisse serverseitig aufräumen.
+// 'pagehide' deckt auch mobile Browser ab, in denen 'beforeunload' nicht feuert.
+function handlePageHide() {
+  converterStore.cleanupOnUnload()
+}
+
+onMounted(() => {
+  document.addEventListener('keydown', handleKeydown)
+  document.addEventListener('paste', handlePaste)
+  window.addEventListener('pagehide', handlePageHide)
+})
+
+onUnmounted(() => {
+  document.removeEventListener('keydown', handleKeydown)
+  document.removeEventListener('paste', handlePaste)
+  window.removeEventListener('pagehide', handlePageHide)
+  // Beim Wechsel auf die Landingpage verstummt die Wiedergabe; Dateien und Ergebnisse bleiben im Store
+  converterStore.setPlaying(false)
+})
+
+// Initialize - Backend version needs no initialization
+console.log('MP3 Konverter - Backend Mode')
+
+</script>
