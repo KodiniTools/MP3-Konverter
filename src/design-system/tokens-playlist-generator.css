@@ -1,0 +1,60 @@
+/* ==========================================================================
+   MP3 Konverter · Landing-Tokens aus dem Playlist Generator
+   --------------------------------------------------------------------------
+   tokens-v2.css bleibt die unveränderte Kopie aus dem Collage Maker. Diese
+   Datei ergänzt nur die Tokens, die der Playlist Generator
+   (KodiniTools/Playlist-Generator, src/design-system/tokens-v2.css) zusätzlich
+   hat und die der Collage Maker noch nicht kennt. Werte 1:1 übernommen, damit
+   Landingpage, Buttons und Hintergrund pixelgleich zum Playlist Generator sind.
+
+   Abweichung im Namen: Der Playlist Generator setzt --ds-on-accent global auf
+   Weiß. Hier heißt die Schriftfarbe auf --ds-accent-fill --ds-on-accent-fill,
+   damit --ds-on-accent aus tokens-v2.css unverändert bleibt.
+
+   Kontrast-Themes (tokens-contrast.css): Füllung und Schrift folgen den
+   Kontrast-Akzenten, Verläufe entfallen.
+   ========================================================================== */
+
+/* === Dunkel (Standard auf :root) === */
+:root {
+  --ds-accent-fill: #8f6320;
+  --ds-accent-fill-hover: #9a6b24;
+  --ds-on-accent-fill: #ffffff;
+  --ds-heading-accent: #69d7e9;
+  --ds-app-glow:
+    radial-gradient(ellipse 72% 38% at 82% 4%, rgba(37, 105, 157, 0.13), transparent 75%),
+    radial-gradient(ellipse 58% 38% at 5% 42%, rgba(27, 91, 130, 0.07), transparent 76%);
+  --ds-landing-glow:
+    radial-gradient(ellipse at 85% 0%, rgba(38, 167, 187, 0.16), transparent 68%),
+    radial-gradient(ellipse at 12% 0%, rgba(55, 114, 202, 0.2), transparent 62%);
+  --ds-card-gradient: linear-gradient(150deg, var(--ds-surface-1), var(--ds-surface-0));
+}
+
+/* === Hell (App-Klasse und SSI-Partials, wie in tokens-v2.css) === */
+.light-theme,
+:root[data-theme='light'] {
+  --ds-accent-fill: #8f6320;
+  --ds-accent-fill-hover: #7d561c;
+  --ds-on-accent-fill: #ffffff;
+  --ds-heading-accent: #086a80;
+  --ds-app-glow:
+    radial-gradient(ellipse 72% 38% at 82% 4%, rgba(54, 135, 183, 0.075), transparent 75%),
+    radial-gradient(ellipse 58% 38% at 5% 42%, rgba(75, 137, 169, 0.045), transparent 76%);
+  --ds-landing-glow:
+    radial-gradient(ellipse at 85% 0%, rgba(35, 162, 195, 0.16), transparent 68%),
+    radial-gradient(ellipse at 12% 0%, rgba(86, 147, 216, 0.15), transparent 62%);
+  --ds-card-gradient: linear-gradient(150deg, var(--ds-surface-1), var(--ds-surface-0));
+}
+
+/* === Kontrast (hell und dunkel): flach, Akzent aus tokens-contrast.css === */
+:root[data-theme='contrast-light'],
+:root[data-theme='contrast-light'] .light-theme,
+:root[data-theme='contrast-dark'] {
+  --ds-accent-fill: var(--ds-accent);
+  --ds-accent-fill-hover: var(--ds-accent-hover);
+  --ds-on-accent-fill: var(--ds-on-accent);
+  --ds-heading-accent: var(--ds-link);
+  --ds-app-glow: none;
+  --ds-landing-glow: none;
+  --ds-card-gradient: var(--ds-surface-1);
+}
