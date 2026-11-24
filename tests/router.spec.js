@@ -2,6 +2,9 @@ import { describe, expect, it } from 'vitest'
 import { createMemoryHistory } from 'vue-router'
 import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
+import { mount } from '@vue/test-utils'
+import AppHeader from '../src/components/layout/AppHeader.vue'
+import i18n from '../src/i18n'
 import { createAppRouter, scrollBehavior } from '../src/router'
 
 const SRC = join(__dirname, '..', 'src')
@@ -51,9 +54,9 @@ describe('Seiteninhalt', () => {
     expect(hero).toContain(":alt=\"$t('hero.imageAlt')\"")
   })
 
-  it('App.vue rendert nur Skip-Link und RouterView', () => {
+  it('App.vue rendert Skip-Link, Unternavigation und RouterView', () => {
     const app = read('App.vue')
-    expect(app).toContain('<RouterView />')
+    expect(app).toMatch(/<AppHeader \/>[\s\S]*<RouterView \/>/)
     expect(app).not.toContain('Section')
   })
 
@@ -66,5 +69,27 @@ describe('Seiteninhalt', () => {
       expect(Object.keys(messages.howItWorks).sort()).toEqual(['configure', 'download', 'eyebrow', 'select', 'subtitle', 'title'])
       expect(Object.keys(messages.cta).sort()).toEqual(['button', 'text', 'title'])
     }
+  })
+})
+
+describe('Unternavigation (AppHeader)', () => {
+  async function mountAt(path) {
+    const router = createAppRouter(createMemoryHistory('/mp3konverter/'))
+    await router.push(path)
+    await router.isReady()
+    return mount(AppHeader, { global: { plugins: [router, i18n] } })
+  }
+
+  it('verlinkt Startseite und App und markiert die aktive Seite', async () => {
+    const onApp = await mountAt('/app/')
+    const links = onApp.findAll('a.app-header__link')
+    expect(links.map((a) => a.attributes('href'))).toEqual(['/mp3konverter/', '/mp3konverter/app/'])
+    expect(links.map((a) => a.text())).toEqual(['Startseite', 'App'])
+    expect(links[1].classes()).toContain('app-header__link--active')
+    expect(links[0].classes()).not.toContain('app-header__link--active')
+    expect(links[1].attributes('aria-current')).toBe('page')
+
+    const onLanding = await mountAt('/')
+    expect(onLanding.findAll('a.app-header__link')[0].classes()).toContain('app-header__link--active')
   })
 })

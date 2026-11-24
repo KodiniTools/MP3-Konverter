@@ -393,34 +393,6 @@ body
   flex-direction: column;
 }
 
-/* Website-Header (AppHeader.vue, derzeit nicht eingebunden) */
-.website-header {
-  position: sticky;
-  top: 0;
-  z-index: var(--ds-z-topbar);
-  background: var(--ds-surface-1);
-  border-bottom: var(--ds-border-width) solid var(--ds-border);
-}
-
-.website-header-container {
-  max-width: var(--ds-container);
-  min-height: var(--ds-topbar-height);
-  margin: 0 auto;
-  padding: 0 var(--ds-gutter);
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.website-logo {
-  font-size: var(--ds-text-xl);
-  font-weight: var(--ds-weight-bold);
-  color: var(--ds-text);
-  display: flex;
-  align-items: center;
-  gap: var(--ds-space-2);
-}
-
 .main-content {
   flex: 1;
   display: flex;
@@ -1576,7 +1548,7 @@ body.player-active {
 
 /* === Druck === */
 @media print {
-  .website-header,
+  .app-header,
   .cookie-banner,
   .player-sticky-bar {
     display: none !important;
@@ -2790,5 +2762,79 @@ body > :not(#app):not(script) .global-nav-lang-btn.active {
 
   body .landing-page :is(.feature-card, .step-card, .tool-card) {
     padding: var(--ds-space-4);
+  }
+}
+
+/* ==========================================================================
+   Unternavigation Startseite / App (wie AppHeader im Playlist Generator)
+   --------------------------------------------------------------------------
+   Vorbild: Playlist-Generator/src/components/AppHeader.vue und
+   src/assets/kodini-header-stage2.css. Die gemischten Farben (color-mix) stehen
+   als --ds-subnav-* in tokens-playlist-generator.css.
+   ========================================================================== */
+.app-header {
+  background: var(--ds-subnav-bg);
+  border-bottom: var(--ds-border-width) solid var(--ds-subnav-border);
+}
+
+.app-header__inner {
+  display: flex;
+  align-items: center;
+  gap: clamp(8px, 1.5vw, 20px);
+  min-height: var(--ds-topbar-height);
+  max-width: var(--ds-container);
+  margin: 0 auto;
+  padding: var(--ds-space-2) var(--ds-gutter);
+}
+
+.app-header__nav {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--ds-space-1);
+}
+
+.app-header__link {
+  display: inline-flex;
+  align-items: center;
+  height: var(--ds-control-sm);
+  padding: 0 var(--ds-space-3);
+  border: var(--ds-border-width) solid transparent;
+  border-radius: var(--ds-radius-md);
+  color: var(--ds-text-2);
+  font-size: var(--ds-text-md);
+  font-weight: var(--ds-weight-medium);
+  white-space: nowrap;
+  text-decoration: none;
+  transition:
+    background-color var(--ds-duration) var(--ds-ease),
+    color var(--ds-duration) var(--ds-ease);
+}
+
+.app-header__link:hover {
+  border-color: var(--ds-subnav-hover-border);
+  background: var(--ds-subnav-hover-bg);
+  color: var(--ds-text);
+}
+
+.app-header__link--active,
+.app-header__link--active:hover {
+  border-color: var(--ds-subnav-active-border);
+  background: var(--ds-subnav-active-bg);
+  color: var(--ds-text);
+  box-shadow: var(--ds-subnav-active-line);
+}
+
+/* Fokus-Ring und Gold-Linie teilen sich box-shadow: beim Fokus gilt der Ring */
+.app-header__link:focus-visible,
+.app-header__link--active:focus-visible {
+  outline: none;
+  box-shadow: var(--ds-focus-ring);
+}
+
+@media (max-width: 480px) {
+  .app-header__link {
+    padding: 0 var(--ds-space-2);
+    font-size: var(--ds-text-sm);
   }
 }
