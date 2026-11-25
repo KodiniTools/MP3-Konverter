@@ -2562,12 +2562,12 @@ body .landing-page :is(.hero-cta, .hero-secondary) {
 
 body .landing-page .hero-cta {
   border: 0;
-  background: var(--ds-accent-fill);
+  background: var(--ds-accent-fill) var(--ds-accent-fill-grad);
   color: var(--ds-on-accent-fill);
 }
 
 body .landing-page .hero-cta:hover {
-  background: var(--ds-accent-fill-hover);
+  background: var(--ds-accent-fill-hover) var(--ds-accent-fill-grad-hover);
   color: var(--ds-on-accent-fill);
 }
 
@@ -2713,7 +2713,7 @@ body .converter-page {
 .file-list-section .file-item.is-active .play-file-btn,
 .player-btn--primary,
 .skip-link {
-  background: var(--ds-accent-fill);
+  background: var(--ds-accent-fill) var(--ds-accent-fill-grad);
   color: var(--ds-on-accent-fill);
 }
 
@@ -2721,7 +2721,7 @@ body .converter-page {
 .file-item.is-active .play-file-btn:hover,
 .file-list-section .file-item.is-active .play-file-btn:hover,
 .player-btn--primary:hover:not(:disabled) {
-  background: var(--ds-accent-fill-hover);
+  background: var(--ds-accent-fill-hover) var(--ds-accent-fill-grad-hover);
   color: var(--ds-on-accent-fill);
 }
 
@@ -2731,7 +2731,12 @@ body .converter-page {
 /* Aktive Sprache in der Navigation wie im Playlist Generator */
 body > :not(#app):not(script) .global-nav-lang-btn.active {
   background-color: var(--ds-accent-fill) !important;
+  background-image: var(--ds-accent-fill-grad) !important;
   color: var(--ds-on-accent-fill) !important;
+}
+
+body > :not(#app):not(script) .global-nav-lang-btn.active:hover {
+  background-image: var(--ds-accent-fill-grad-hover) !important;
 }
 
 @media (max-width: 760px) {

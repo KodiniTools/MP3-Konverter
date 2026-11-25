@@ -25,6 +25,8 @@ const PG_TOKENS = [
   '--ds-accent-fill',
   '--ds-accent-fill-hover',
   '--ds-on-accent-fill',
+  '--ds-accent-fill-grad',
+  '--ds-accent-fill-grad-hover',
   '--ds-heading-accent',
   '--ds-app-glow',
   '--ds-landing-glow',
@@ -93,9 +95,32 @@ describe('main.scss auf Tokens v2', () => {
   it('Landingpage-Button und gefüllte Goldflächen wie im Playlist Generator (dunkles Gold, weiße Schrift)', () => {
     expect(pgRootBlock['--ds-accent-fill']).toBe('#8f6320')
     expect(pgRootBlock['--ds-on-accent-fill']).toBe('#ffffff')
-    expect(styles).toMatch(/body \.landing-page \.hero-cta \{[^}]*background: var\(--ds-accent-fill\);[^}]*color: var\(--ds-on-accent-fill\);/)
+    expect(styles).toMatch(/body \.landing-page \.hero-cta \{[^}]*background: var\(--ds-accent-fill\) var\(--ds-accent-fill-grad\);[^}]*color: var\(--ds-on-accent-fill\);/)
+    expect(styles).toMatch(/\.action-btn,[^{]*\.player-btn--primary,[^{]*\{[^}]*background: var\(--ds-accent-fill\) var\(--ds-accent-fill-grad\);/)
+    expect(styles).toMatch(/\.global-nav-lang-btn\.active \{[^}]*background-image: var\(--ds-accent-fill-grad\) !important;/)
     expect(styles).toMatch(/html body \.landing-page \*[^{]*\{[^}]*font-weight: var\(--ds-weight-regular\);/)
     expect(styles).toMatch(/body \.landing-page \{[^}]*background-image: var\(--ds-landing-glow\);/)
+  })
+
+  it('Button-Verlauf: jeder Stopp erreicht mit weißer Schrift WCAG AA, Kontrast-Themes bleiben flach', () => {
+    const lum = (hex) => {
+      const [r, g, b] = [1, 3, 5].map((i) => {
+        const c = parseInt(hex.slice(i, i + 2), 16) / 255
+        return c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4
+      })
+      return 0.2126 * r + 0.7152 * g + 0.0722 * b
+    }
+    for (const selector of [':root', '.light-theme']) {
+      const block = parseBlock(pgTokensCss, selector, 'tokens-playlist-generator.css')
+      for (const token of ['--ds-accent-fill-grad', '--ds-accent-fill-grad-hover']) {
+        const stops = block[token].match(/#[0-9a-f]{6}/gi) ?? []
+        expect(stops).toHaveLength(3)
+        for (const stop of stops) expect(1.05 / (lum(stop) + 0.05)).toBeGreaterThanOrEqual(4.5)
+      }
+    }
+    const contrast = parseBlock(pgTokensCss, ":root[data-theme='contrast-dark']", 'tokens-playlist-generator.css')
+    expect(contrast['--ds-accent-fill-grad']).toBe('none')
+    expect(contrast['--ds-accent-fill-grad-hover']).toBe('none')
   })
 
   it('nutzt keine Verläufe, keine Unschärfe, kein color-mix und keine eigenen Schatten', () => {
