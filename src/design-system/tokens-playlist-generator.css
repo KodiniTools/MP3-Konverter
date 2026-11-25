@@ -15,11 +15,16 @@
    Kontrast-Akzenten, Verläufe entfallen.
    ========================================================================== */
 
+/* Button-Verlauf (Equalizer-19-Muster): --ds-accent-fill-grad(-hover) liegt über
+   --ds-accent-fill; jeder Stopp erreicht mit Weiß mindestens 4,5:1. */
+
 /* === Dunkel (Standard auf :root) === */
 :root {
   --ds-accent-fill: #8f6320;
   --ds-accent-fill-hover: #9a6b24;
   --ds-on-accent-fill: #ffffff;
+  --ds-accent-fill-grad: linear-gradient(180deg, #9c6c26 0%, #7a5218 45%, #4a2f0a 100%);
+  --ds-accent-fill-grad-hover: linear-gradient(180deg, #8c5f1f 0%, #6a4614 45%, #402908 100%);
   --ds-heading-accent: #69d7e9;
   --ds-app-glow:
     radial-gradient(ellipse 72% 38% at 82% 4%, rgba(37, 105, 157, 0.13), transparent 75%),
@@ -45,6 +50,8 @@
   --ds-accent-fill: #8f6320;
   --ds-accent-fill-hover: #7d561c;
   --ds-on-accent-fill: #ffffff;
+  --ds-accent-fill-grad: linear-gradient(180deg, #9c6c26 0%, #7a5218 45%, #4a2f0a 100%);
+  --ds-accent-fill-grad-hover: linear-gradient(180deg, #8c5f1f 0%, #6a4614 45%, #402908 100%);
   --ds-heading-accent: #086a80;
   --ds-app-glow:
     radial-gradient(ellipse 72% 38% at 82% 4%, rgba(54, 135, 183, 0.075), transparent 75%),
@@ -71,6 +78,8 @@
   --ds-accent-fill: var(--ds-accent);
   --ds-accent-fill-hover: var(--ds-accent-hover);
   --ds-on-accent-fill: var(--ds-on-accent);
+  --ds-accent-fill-grad: none;
+  --ds-accent-fill-grad-hover: none;
   --ds-heading-accent: var(--ds-link);
   --ds-app-glow: none;
   --ds-landing-glow: none;
