@@ -32,14 +32,14 @@
         </div>
       </div>
 
-      <!-- Bild der Landingpage: WAV, FLAC, M4A und OGG werden zu MP3 (WebP in zwei Breiten) -->
+      <!-- Bild der Landingpage im Format 16:9: WAV, FLAC, M4A und OGG werden zu MP3 (WebP in zwei Breiten) -->
       <figure class="hero-media">
         <img
           :src="heroImage1536"
           :srcset="`${heroImage768} 768w, ${heroImage1536} 1536w`"
           sizes="(min-width: 1024px) 560px, calc(100vw - 32px)"
           width="1536"
-          height="1024"
+          height="864"
           :alt="$t('hero.imageAlt')"
           fetchpriority="high"
           decoding="async"
