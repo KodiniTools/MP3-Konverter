@@ -32,7 +32,7 @@
         </div>
       </div>
 
-      <!-- Bild der Landingpage im Format 16:9: WAV, FLAC, M4A und OGG werden zu MP3 (WebP in zwei Breiten) -->
+      <!-- Bild der Landingpage im Format 16:9: Tonstudio mit Mischpult, MP3-Note und Formatkarten (WebP in zwei Breiten) -->
       <figure class="hero-media">
         <img
           :src="heroImage1536"
