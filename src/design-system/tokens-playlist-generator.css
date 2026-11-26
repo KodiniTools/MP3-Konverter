@@ -42,6 +42,10 @@
   --ds-subnav-active-bg: color-mix(in srgb, var(--ds-surface-2) 90%, var(--ds-accent) 10%);
   --ds-subnav-active-border: color-mix(in srgb, var(--ds-border) 64%, var(--ds-accent) 36%);
   --ds-subnav-active-line: inset 0 -2px 0 var(--ds-accent);
+  /* Hero-Titel (MP3 Konverter): erster Teil dunkles Gold, zweiter Teil Logo-Blau.
+     Dunkel heller, damit beide auf Navy lesbar bleiben. */
+  --ds-hero-title-gold: #d4a257;
+  --ds-hero-title-blue: #48a0d8;
 }
 
 /* === Hell (App-Klasse und SSI-Partials, wie in tokens-v2.css) === */
@@ -69,6 +73,9 @@
   --ds-subnav-active-bg: color-mix(in srgb, var(--ds-surface-2) 90%, var(--ds-accent-fill) 10%);
   --ds-subnav-active-border: color-mix(in srgb, var(--ds-border) 64%, var(--ds-accent-fill) 36%);
   --ds-subnav-active-line: inset 0 -2px 0 var(--ds-accent-fill);
+  /* Hero-Titel (MP3 Konverter): dunkles Gold und Logo-Blau (#0058a0, gemessen im Logo) */
+  --ds-hero-title-gold: #8f6320;
+  --ds-hero-title-blue: #0058a0;
 }
 
 /* === Kontrast (hell und dunkel): flach, Akzent aus tokens-contrast.css === */
@@ -92,4 +99,6 @@
   --ds-subnav-active-bg: var(--ds-surface-2);
   --ds-subnav-active-border: var(--ds-text);
   --ds-subnav-active-line: inset 0 -2px 0 var(--ds-text);
+  --ds-hero-title-gold: var(--ds-text);
+  --ds-hero-title-blue: var(--ds-link);
 }

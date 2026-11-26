@@ -2728,7 +2728,11 @@ body .converter-page {
 /* Abbrechen und Erneut versuchen (.cancel-btn/.retry-btn.action-btn) behalten ihre
    Flächen: ihre Selektoren sind spezifischer. */
 
-/* Aktive Sprache in der Navigation wie im Playlist Generator */
+/* Aktive Sprache in der Navigation wie im Playlist Generator: weiße Schrift.
+   Gleicher Präfix wie die Partial-Regel oben plus [data-lang], damit diese Regel gewinnt. */
+body
+  > :not(#app):not(script):not(.cookie-banner):not(.cookie-consent):not([class*='cookie']):not([id*='cookie'])
+  [data-lang].global-nav-lang-btn.active.active,
 body > :not(#app):not(script) .global-nav-lang-btn.active {
   background-color: var(--ds-accent-fill) !important;
   background-image: var(--ds-accent-fill-grad) !important;
@@ -2842,4 +2846,13 @@ body > :not(#app):not(script) .global-nav-lang-btn.active:hover {
     padding: 0 var(--ds-space-2);
     font-size: var(--ds-text-sm);
   }
+}
+
+/* --- Hero-Titel zweifarbig: dunkles Gold, dann Logo-Blau -------------------- */
+body .landing-page .hero--landing .hero-title-lead {
+  color: var(--ds-hero-title-gold);
+}
+
+body .landing-page .hero--landing .hero-title-accent {
+  color: var(--ds-hero-title-blue);
 }
