@@ -3,7 +3,11 @@
     <div class="hero-container hero-grid">
       <div class="hero-copy">
         <div class="hero-eyebrow"><span class="hero-status-dot" aria-hidden="true"></span>{{ $t('hero.eyebrow') }}</div>
-        <h1 id="hero-title">{{ $t('hero.title') }}</h1>
+        <h1 id="hero-title">
+          <span class="hero-title-lead">{{ $t('hero.titleLead') }}</span>
+          {{ ' ' }}
+          <span class="hero-title-accent">{{ $t('hero.titleAccent') }}</span>
+        </h1>
         <p class="hero-lead">{{ $t('hero.lead') }}</p>
         <p>{{ $t('hero.subtitle') }}</p>
         <div class="hero-actions">

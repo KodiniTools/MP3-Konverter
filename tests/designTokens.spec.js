@@ -38,7 +38,9 @@ const PG_TOKENS = [
   '--ds-subnav-hover-border',
   '--ds-subnav-active-bg',
   '--ds-subnav-active-border',
-  '--ds-subnav-active-line'
+  '--ds-subnav-active-line',
+  '--ds-hero-title-gold',
+  '--ds-hero-title-blue'
 ]
 
 function collectFiles(dir, ext, out = []) {
